@@ -1,15 +1,15 @@
 ## Changelog:
-# CG 0.0.1 2023-02-21: initial programming 
+# CG 0.0.1 2023-02-21: initial programming
 
 
 
 ## Documentation
 #' @title Create Empty Internal List
-#' @description Creates an empty internal list of predefined structure. The 
-#' list will subsequently be filled while the function  
-#' \code{\link{fit_panel_sem}} is running. 
+#' @description Creates an empty internal list of predefined structure. The
+#' list will subsequently be filled while the function
+#' \code{\link{fit_panel_sem}} is running.
 #' @param verbose Integer number describing verbosity of console output.
-#' 0...no output (default); 1...user messages; 2...debugging-relevant messages. 
+#' 0...no output (default); 1...user messages; 2...debugging-relevant messages.
 #' @return An empty internal list with the following structure:\cr
 #'  \tabular{lll}{
 #'     List of XX\cr
@@ -29,6 +29,7 @@
 #'    \code{$info_variables}: List of XX        \tab \tab \cr
 #'      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
 #'      \code{..$generic_names_time_varying}: \code{char[0,0]}   \tab \tab Generic names of observed time-varying variables. \cr
+#'      \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
 #'      \code{..$info_time_invariant}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unobserved}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
@@ -47,14 +48,14 @@
 #'      \code{..$print}: \code{data.frame}  \tab \tab Information for \code{\link{print.panelSEM}}  function.\cr
 #'      \code{..$coef}: \code{data.frame}  \tab \tab Information for \code{\link{coef.panelSEM}}  function.
 #'  }
-#'  
-#' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible 
-#' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87, 
+#'
+#' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
+#' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 #' 868–901. https://doi.org/10.1007/s11336-021-09811-z
 #' @references Gische, C., West, S.G., & Voelkle, M.C. (2021) Forecasting Causal
-#'  Effects of Interventions versus Predicting Future Outcomes, Structural 
-#'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492, 
-#'  DOI: 10.1080/10705511.2020.1780598 
+#'  Effects of Interventions versus Predicting Future Outcomes, Structural
+#'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
+#'  DOI: 10.1080/10705511.2020.1780598
 
 
 ## Function definition
@@ -77,28 +78,28 @@ create_empty_list <- function( verbose = NULL ){
 	                                Sys.time(), "\n" ) )
 
 	# internal list
-	
+
 	internal_list <- list(
 
 		# data
 	  info_data = list(
-	    
-	    # data set 
-	    # data.frame object 
+
+	    # data set
+	    # data.frame object
 	    "data" = data.frame(0),
-	    
-	    # number of observations 
-	    # Integer number 
+
+	    # number of observations
+	    # Integer number
 	    "n_obs" = integer(0),
-	    
+
 	    # total number of observed variables in data set
-	    # Integer number 
+	    # Integer number
 	    "n_var" = integer(0),
-	    
+
 	    # names of observed variables in data set
 	    # character vector
 	    "var_names" = character(0)
-	    
+
 	  ), # end of data list
 
 		# model info
@@ -111,96 +112,100 @@ create_empty_list <- function( verbose = NULL ){
 			# number of dynamic processes
 			# a single number, normally an integer
 			"n_processes" = as.integer(0),
-			
+
 			# number of observed time-invariant variables
 			# a single number, normally an integer
 			"n_time_invariant" = as.integer(0),
-			
-			# Does the model contain unobserved heterogeneity? 
+
+			# Does the model contain unobserved heterogeneity?
 			# If yes, homogenous == FALSE.
 			# a single logical value
 			"homogeneous" = logical(0),
-			
-			# Is the model linear in observed variables? 
+
+			# Is the model linear in observed variables?
 			# If yes, linear == TRUE.
 			# a single logical value
 			"linear" = logical(0),
-			
-			# Is the model additive in observed heterogeneity? 
+
+			# Is the model additive in observed heterogeneity?
 			# If yes, additive == TRUE.
 			# a single logical value
 			"additive" = logical(0),
-			
+
 			# Is OpenMx used?
 			# If yes, use_open_mx == TRUE. If FALSE, lavaan is used.
 			# a single logical value
 			"use_open_mx" = logical(0)
-			
+
 		), # end info_model_list
-		
+
 		info_variables = list(
-		  
+
 		  # user-specified names of observed time-varying variables
 		  # character matrix
 		  "user_names_time_varying" = character(0),
-		  
+
 		  # generic names of observed time-varying variables
 		  # character matrix
 		  "generic_names_time_varying" = character(0),
-		  
+
+		  # names of dynamic processes
+		  # character matrix
+		  "names_processes" = character(0),
+
 		  # names and causal structure of observed time-invariant variables
 		  # character matrix
 		  "info_time_invariant_variables" = character(0),
-		  
+
 		  # names of observed time-invariant variables
 		  # character matrix
 		  "names_time_invariant_unique" = character(0),
-		  
+
 		  # names of unobserved time-invariant variables
 		  # character matrix
 		  "names_time_invariant_unobserved" = character(0)
-		  
+
 		), # end info_variables list
-		
+
 		info_parameters = list(
-		  
+
 		  # complete list of unique and functionally independent model parameters
 		  # list contains labels, starting values and several other information
 		  # data.frame
-		  
+
 		  "paramater_list" = data.frame(0)
-		  
+
 		), # end info_parameter list
-		
+
 		model_syntax = list(
-		  
+
 		  # model syntax for lavaan
 		  # list of characters
-		  
-		  "lavaan" = character(0), 
-		  
+
+		  "lavaan" = character(0),
+
 		  # model syntax for lavaan
 		  # list of characters
-		  
+
 		  "OpenMx" = character(0)
-		  
+
 		), # end of model_syntax list
-		
+
 		model_matrices = list(
-		  
-		  # matrix of labels of structural coefficients 
-		  
+
+		  # matrix of labels of structural coefficients
+
 		  "C_labels" = character(0),
 		  "Psi_labels" = character(0)
-		  
+
 		), # end model_matrices list
 
-			
+
 		# control list
-		control = list( 
-		
+		control = list(
+
 		# verbosity of console output
-		# a number, 0...no output (default), 1...user messages, 
+		# a number, 0...no output (default), 1...user messages,
 		# 2...debugging-relevant messages
 		"verbose" = verbose
 
