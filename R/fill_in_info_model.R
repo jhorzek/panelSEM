@@ -408,4 +408,4 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 ## test/development
 
-internal_list$info_variables
+
