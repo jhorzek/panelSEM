@@ -169,10 +169,6 @@ create_empty_list <- function( verbose = NULL ){
 
 		info_parameters = list(
 
-		  # lists of model parameters
-
-		  paramater_list = list(
-
 		    # list of structural coefficients contains labels, starting values and
 		    # several other information
 		    "C_table" = data.frame(0),
@@ -181,7 +177,6 @@ create_empty_list <- function( verbose = NULL ){
 		    # several other information
 		    "Psi_table" = data.frame(0)
 
-		  ), # end of info_parameter list
 		), # end info_parameter list
 
 		model_syntax = list(
