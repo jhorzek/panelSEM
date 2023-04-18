@@ -493,7 +493,7 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 	# fill into internal_list
 
-	internal_list$info_parameters$paramater_list$C_table <- param_list_C
+	internal_list$info_parameters$C_table <- param_list_C
 
 
 	# COVARIANCE MATRIX PSI
@@ -764,7 +764,7 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 	# fill into internal list
 
-	internal_list$info_parameters$paramater_list$Psi_table <- param_list_Psi
+	internal_list$info_parameters$Psi_table <- param_list_Psi
 
 	# MATRIX OF STRUCTURAL COEFFICIENTS
 	## compute total number of variables in the model
