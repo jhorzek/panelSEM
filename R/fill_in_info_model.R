@@ -15,6 +15,8 @@
 #' @param homogeneous Logical (TRUE / FALSE = default) indicating if the model contains unobserved heterogeneity (TRUE).
 #' @param linear Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).
 #' @param additive Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).
+#' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
+#' should be used.
 #' @return The inputted internal_list with several slots filled in:
 #' \tabular{lll}{
 #'  \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
@@ -38,7 +40,8 @@ fill_in_info_model <- function(internal_list = NULL,
                                time_invariant_variables = NULL,
                                homogeneous = FALSE,
                                linear = TRUE,
-                               additive  = TRUE){
+                               additive  = TRUE,
+                               use_open_mx = FALSE){
 
 	# function name
 	fun.name <- "fill_in_info_model"
@@ -57,11 +60,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	                                Sys.time(), "\n" ) )
 
 	# TODO: Argument checks
-	# - give warning if homogeneous and additive are both set
-	# TODO: DELETE THIS LINE: internal_list <- vector(mode = "list")
-
-
-	if(additive == TRUE && linear == TRUE && homogeneous == FALSE){
 
 	# GENERAL MODEL INFORMATION
 	## extract model information from the arguments

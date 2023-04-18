@@ -10,7 +10,8 @@ fill_in_info_model(
   time_invariant_variables = NULL,
   homogeneous = FALSE,
   linear = TRUE,
-  additive = TRUE
+  additive = TRUE,
+  use_open_mx = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ variables. List must have the same length as list in argument \code{time_varying
 
 \item{additive}{Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).}
 
+\item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
+should be used.}
+
 \item{n_occasions}{Integer number indicating the number of measurement occasions.}
 }
 \value{
@@ -46,12 +50,12 @@ The inputted internal_list with several slots filled in:
 Provide information about the dynamic panel data model.
 }
 \references{
-Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible 
-Framework for Studying Causal Effects Using Linear Models. Psychometrika 87, 
+Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
+Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 868–901. https://doi.org/10.1007/s11336-021-09811-z
 
 Gische, C., West, S.G., & Voelkle, M.C. (2021) Forecasting Causal
- Effects of Interventions versus Predicting Future Outcomes, Structural 
- Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492, 
+ Effects of Interventions versus Predicting Future Outcomes, Structural
+ Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
  DOI: 10.1080/10705511.2020.1780598
 }
