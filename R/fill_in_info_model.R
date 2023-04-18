@@ -60,6 +60,10 @@ fill_in_info_model <- function(internal_list = NULL,
 	                                Sys.time(), "\n" ) )
 
 	# TODO: Argument checks
+	# - give warning if homogeneous and additive are both set to conflicting values
+	# TODO: DELETE THIS LINE: internal_list <- vector(mode = "list")
+
+	if(additive == TRUE && linear == TRUE && homogeneous == FALSE){
 
 	# GENERAL MODEL INFORMATION
 	## extract model information from the arguments
