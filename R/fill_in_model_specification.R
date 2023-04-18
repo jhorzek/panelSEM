@@ -37,7 +37,13 @@ fill_in_model_specification <- function(internal_list){
 #' @param internal_list internal list object
 #' @return internal_list, where OpenMx model is added to internal_list$model_syntax
 fill_in_model_specification_open_mx <- function(internal_list){
-  fun.version <- "0_0_1 2023_04_18" #note: OpenMx does not allow for the format used
+
+  # function details for debugging
+  fun.name <- "fill_in_model_specification"
+  fun.version <- "0_0_2 2023_04_18"
+  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+
+  #note: OpenMx does not allow for the format used
   # in the other functions
 
   # extract directed and undirected effects:
@@ -107,7 +113,12 @@ fill_in_model_specification_open_mx <- function(internal_list){
 
   internal_list$model_syntax$OpenMx <- model
 
+  # console output
+  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                  Sys.time(), "\n" ) )
+  # return internal list
   return(internal_list)
+
 }
 
 #' fill_in_model_specification_lavaan
@@ -116,7 +127,11 @@ fill_in_model_specification_open_mx <- function(internal_list){
 #' @param internal_list internal list object
 #' @return internal_list, where lavaan is added to internal_list$model_syntax
 fill_in_model_specification_lavaan <- function(internal_list){
-  fun.version <- "0.0.1 2023-04-18"
+
+  # function details for debugging
+  fun.name <- "fill_in_model_specification"
+  fun.version <- "0_0_2 2023_04_18"
+  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
   # extract directed and undirected effects:
 
