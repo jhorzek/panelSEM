@@ -1,9 +1,30 @@
+## Changelog:
+# CG 0.0.2 2023-04-18: insert console output for debugging
+# JO 0.0.1 2023-04-18: initial programming
+
 #' fill_in_model_specification
 #'
 #' Creates a lavaan or OpenMx model based in the user specification in internal_list
 #' @param internal_list internal list object
 #' @return internal_list, where lavaan or OpenMx model is added to internal_list$model_syntax
 fill_in_model_specification <- function(internal_list){
+
+  # function name
+  fun.name <- "fill_in_model_specification"
+
+  # function version
+  fun.version <- "0.0.2 2023-04-18"
+
+  # function name+version
+  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+
+  # get verbose argument
+  verbose <- internal_list$control$verbose
+
+  # console output
+  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
+                                  Sys.time(), "\n" ) )
+
   if(internal_list$info_model$use_open_mx)
     return(fill_in_model_specification_open_mx(internal_list))
 
@@ -134,5 +155,9 @@ fill_in_model_specification_lavaan <- function(internal_list){
 
   internal_list$model_syntax$lavaan <- model_syntax
 
+  # console output
+  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                  Sys.time(), "\n" ) )
+  # return internal list
   return(internal_list)
 }
