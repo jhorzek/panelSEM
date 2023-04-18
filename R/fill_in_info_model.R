@@ -57,7 +57,11 @@ fill_in_info_model <- function(internal_list = NULL,
 	                                Sys.time(), "\n" ) )
 
 	# TODO: Argument checks
-	internal_list <- vector(mode = "list")
+	# - give warning if homogeneous and additive are both set
+	# TODO: DELETE THIS LINE: internal_list <- vector(mode = "list")
+
+
+	if(additive == TRUE && linear == TRUE && homogeneous == FALSE){
 
 	# GENERAL MODEL INFORMATION
 	## extract model information from the arguments
@@ -802,6 +806,23 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
   selection_matrix <- cbind(selection_matrix_1, selection_matrix_2)
 
   internal_list$model_matrices$select_observed_only <- selection_matrix
+
+	} else if (additive == TRUE && linear == FALSE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (additive == FALSE && linear == TRUE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (additive == FALSE && linear == FALSE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (homogeneous == TRUE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+	}
 
 	# console output
 	if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
