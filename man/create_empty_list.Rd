@@ -30,6 +30,7 @@ An empty internal list with the following structure:\cr
    \code{$info_variables}: List of XX        \tab \tab \cr
      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
      \code{..$generic_names_time_varying}: \code{char[0,0]}   \tab \tab Generic names of observed time-varying variables. \cr
+     \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
      \code{..$info_time_invariant}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
      \code{..$names_time_invariant_unobserved}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
@@ -50,17 +51,17 @@ An empty internal list with the following structure:\cr
  }
 }
 \description{
-Creates an empty internal list of predefined structure. The 
-list will subsequently be filled while the function  
+Creates an empty internal list of predefined structure. The
+list will subsequently be filled while the function
 \code{\link{fit_panel_sem}} is running.
 }
 \references{
-Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible 
-Framework for Studying Causal Effects Using Linear Models. Psychometrika 87, 
+Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
+Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 868–901. https://doi.org/10.1007/s11336-021-09811-z
 
 Gische, C., West, S.G., & Voelkle, M.C. (2021) Forecasting Causal
- Effects of Interventions versus Predicting Future Outcomes, Structural 
- Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492, 
+ Effects of Interventions versus Predicting Future Outcomes, Structural
+ Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
  DOI: 10.1080/10705511.2020.1780598
 }
