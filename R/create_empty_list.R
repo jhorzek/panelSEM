@@ -169,11 +169,13 @@ create_empty_list <- function( verbose = NULL ){
 
 		info_parameters = list(
 
-		  # complete list of unique and functionally independent model parameters
-		  # list contains labels, starting values and several other information
-		  # data.frame
+		    # list of structural coefficients contains labels, starting values and
+		    # several other information
+		    "C_table" = data.frame(0),
 
-		  "paramater_list" = data.frame(0)
+		    # list of covariance parameters contains labels, starting values and
+		    # several other information
+		    "Psi_table" = data.frame(0)
 
 		), # end info_parameter list
 
@@ -195,7 +197,10 @@ create_empty_list <- function( verbose = NULL ){
 
 		  # matrix of labels of structural coefficients
 
+		  # matrix of structural coefficients
 		  "C_labels" = character(0),
+
+		  # covariance matrix
 		  "Psi_labels" = character(0)
 
 		), # end model_matrices list
