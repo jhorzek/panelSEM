@@ -143,7 +143,7 @@ population_parameters$time_points <- time_points
 data <- do.call(what = simulate_data,
                 args = population_parameters)
 
-model_syntax <- fit_panel_sem(data = data,
+model <- fit_panel_sem(data = data,
                               labels_time_varying_variables = list(paste0("x", 1:time_points),
                                                                    paste0("y", 1:time_points)),
                               labels_time_invariant_variables = list(c("z1", "z2"),

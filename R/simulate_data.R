@@ -45,6 +45,7 @@
 #' @param psi_x_x
 #' @param psi_y_y
 #' @return a data.frame of data of observed variables
+#' @export
 simulate_data <- function(
     # sample size and time points
   N,

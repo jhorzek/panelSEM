@@ -57,7 +57,8 @@ fill_in_info_model <- function(internal_list = NULL,
 	                                Sys.time(), "\n" ) )
 
 	# TODO: Argument checks
-	internal_list <- vector(mode = "list")
+	#internal_list <- vector(mode = "list") # I removed this line because it
+	# empties the internal list, so all information about the data, etc is lost.
 
 	# GENERAL MODEL INFORMATION
 	## extract model information from the arguments
