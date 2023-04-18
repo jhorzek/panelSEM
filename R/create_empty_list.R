@@ -179,6 +179,21 @@ create_empty_list <- function( verbose = NULL ){
 
 		), # end info_parameter list
 
+		model_matrices = list(
+
+		  # matrix of labels of structural coefficients
+
+		  # matrix of structural coefficients
+		  "C_labels" = character(0),
+
+		  # covariance matrix
+		  "Psi_labels" = character(0),
+
+		  # filter matrix / selection matrix for selecting observed variables only
+		  "select_observed_only" = numeric(0)
+
+		), # end model_matrices list
+
 		model_syntax = list(
 
 		  # model syntax for lavaan
@@ -192,19 +207,6 @@ create_empty_list <- function( verbose = NULL ){
 		  "OpenMx" = character(0)
 
 		), # end of model_syntax list
-
-		model_matrices = list(
-
-		  # matrix of labels of structural coefficients
-
-		  # matrix of structural coefficients
-		  "C_labels" = character(0),
-
-		  # covariance matrix
-		  "Psi_labels" = character(0)
-
-		), # end model_matrices list
-
 
 		# control list
 		control = list(

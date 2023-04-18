@@ -60,8 +60,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	                                Sys.time(), "\n" ) )
 
 	# TODO: Argument checks
-	#internal_list <- vector(mode = "list") # I removed this line because it
-	# empties the internal list, so all information about the data, etc is lost.
 
 	# GENERAL MODEL INFORMATION
 	## extract model information from the arguments
@@ -594,7 +592,7 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	rownames(Psi_time_varying) <- colnames(Psi_time_varying) <-
 	  as.character(
 	    internal_list$info_variables$user_names_time_varying[,
-	                                                         2:internal_list$info_model$n_occasions])
+	                                 2:internal_list$info_model$n_occasions])
 
 	labels_psi_time_varying <-
 	  vector(mode = "list",
@@ -610,7 +608,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 	}
 
-	Psi_time_varying[,] <- 0
 	diag(Psi_time_varying) <-
 	  unlist(
 	    rep(
@@ -776,7 +773,54 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	C <- matrix(ncol = n_total,
 	            nrow = n_total)
 
-	rownames(C) <- colnames(C) <- names_variables
+  rownames(C) <- colnames(C) <- names_variables
+
+	 for (i in 1:nrow(internal_list$info_parameters$C_table)){
+
+	    row_name <- internal_list$info_parameters$C_table$incoming[i]
+	    col_name <- internal_list$info_parameters$C_table$outgoing[i]
+
+	    if (internal_list$info_parameters$C_table$constrain[i] == FALSE){
+	    C[row_name,col_name] <- internal_list$info_parameters$C_table$label[i]
+	    } else {
+	      C[row_name,col_name] <- internal_list$info_parameters$C_table$value[i]
+	      }
+	 }
+
+  internal_list$model_matrices$C_labels <- C
+
+  # FILTER / SELECTION MATRIX TO SELECT OBSERVED VARIABLES ONLY
+  ## compute total number of variables in the model
+
+  seletion_matrix <- matrix(ncol = n_total,
+                            nrow = n_total - internal_list$info_model$n_processes)
+
+  selection_matrix_1 <- matrix(ncol = internal_list$info_model$n_processes,
+                               nrow = n_total - internal_list$info_model$n_processes)
+
+  selection_matrix_1[, ] <- 0
+  selection_matrix_2 <- diag(n_total - internal_list$info_model$n_processes)
+
+  selection_matrix <- cbind(selection_matrix_1, selection_matrix_2)
+
+  internal_list$model_matrices$select_observed_only <- selection_matrix
+
+	} else if (additive == TRUE && linear == FALSE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (additive == FALSE && linear == TRUE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (additive == FALSE && linear == FALSE && homogeneous == FALSE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	} else if (homogeneous == TRUE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+	}
 
 	# console output
 	if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
