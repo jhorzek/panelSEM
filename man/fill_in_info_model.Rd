@@ -10,7 +10,8 @@ fill_in_info_model(
   time_invariant_variables = NULL,
   homogeneous = FALSE,
   linear = TRUE,
-  additive = TRUE
+  additive = TRUE,
+  use_open_mx = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ variables. List must have the same length as list in argument \code{time_varying
 \item{linear}{Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).}
 
 \item{additive}{Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).}
+
+\item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
+should be used.}
 
 \item{n_occasions}{Integer number indicating the number of measurement occasions.}
 }

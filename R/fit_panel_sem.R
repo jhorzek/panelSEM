@@ -175,7 +175,8 @@ fit_panel_sem <- function(data = NULL,
                        time_invariant_variables = time_invariant_variables,
                        homogeneous = homogeneous,
                        linear = linear,
-                       additive  = additive)
+                       additive  = additive,
+                       use_open_mx = use_open_mx)
 
   # fill in model syntax to the list
   internal_list <-

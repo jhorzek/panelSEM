@@ -122,7 +122,7 @@ test_that("multiplication works", {
                                                          c("z2", "z3")),
                          use_open_mx = TRUE)
 
-  fit_openmx <- mxTryHard(internal_list$model_syntax$OpenMx)
+  fit_openmx <- mxTryHard(model$model_syntax$OpenMx)
 
   stop("OpenMx version not yet working!")
 

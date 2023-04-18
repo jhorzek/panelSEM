@@ -19,6 +19,13 @@ fill_in_model_specification_open_mx <- function(internal_list){
   fun.version <- "0_0_1 2023_04_18" #note: OpenMx does not allow for the format used
   # in the other functions
 
+  # extract directed and undirected effects:
+
+  directed <- internal_list$info_parameters$C_table
+  undirected <- internal_list$info_parameters$Psi_table
+
+  # separate latent and manifest
+
   latents <- unique(c(directed$outgoing[!directed$outgoing %in% internal_list$info_data$var_names],
                       directed$incoming[!directed$incoming %in% internal_list$info_data$var_names]))
   manifests <- unique(c(directed$outgoing[directed$outgoing %in% internal_list$info_data$var_names],
@@ -33,10 +40,7 @@ fill_in_model_specification_open_mx <- function(internal_list){
                            OpenMx::mxData(observed = internal_list$info_data$data,
                                           type = "raw"))
 
-  # extract directed and undirected effects:
-
-  directed <- internal_list$info_parameters$C_table
-
+  # DIRECTED EFFECTS
   # The value field of directed mixes actual values and the
   # parameter labels. This is very useful for lavaan, but not for
   # OpenMx. We must therefore separate the two cases first:
@@ -58,8 +62,7 @@ fill_in_model_specification_open_mx <- function(internal_list){
                                           arrows = 1)
   )
 
-  undirected <- internal_list$info_parameters$Psi_table
-
+  # UNDIRECTED EFFECTS
   # The value field of undirected mixes actual values and the
   # parameter labels. This is very useful for lavaan, but not for
   # OpenMx. We must therefore separate the two cases first:
