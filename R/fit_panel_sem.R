@@ -182,11 +182,14 @@ fit_panel_sem <- function(data = NULL,
   internal_list <-
    fill_in_model_specification(internal_list = internal_list)
 
+  # fill in starting values to the list
+  internal_list <- starting_values(internal_list = internal_list)
+
   # TODO: decide on default settings for (i) when to include resampling and
   # (ii) the default settings of the resampling procedure
   # if (use_resamples == TRUE){
 
-    # fill in estimation results to the list
+  # fill in estimation results to the list
   #  internal_list <- fill_in_resample(internal_list = internal_list)
 
   #}

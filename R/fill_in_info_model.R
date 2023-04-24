@@ -79,11 +79,9 @@ fill_in_info_model <- function(internal_list = NULL,
 	internal_list$info_model$homogeneous  <- homogeneous
 	internal_list$info_model$use_open_mx <- use_open_mx
 
-
 	# OBSERVED VARIABLES
 	## time-varying variables
 	### generic names time-varying variables
-
 	table_generic_names_colnames <-
 	  as.character(1:internal_list$info_model$n_occasions)
 	table_generic_names_rownames <-
@@ -106,14 +104,11 @@ fill_in_info_model <- function(internal_list = NULL,
 	  table_generic_names
 
 	### user-specified names time-varying variables
-
 	table_user_names <- matrix(ncol = internal_list$info_model$n_occasions,
 	                            nrow = internal_list$info_model$n_processes)
 
 	for (i in 1:internal_list$info_model$n_processes){
-
 	table_user_names[i,] <- time_varying_variables[[i]]
-
 	}
 
 	rownames(table_user_names) <- table_generic_names_rownames
@@ -123,7 +118,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	  table_user_names
 
 	### names of processes
-
 	user_names_processes <-
 	  vector("character", length = internal_list$info_model$n_processes)
 
@@ -159,7 +153,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	  table_names_processes
 
 	## time-invariant variables
-
 	user_names_time_invariant_variables <- time_invariant_variables
 	names(user_names_time_invariant_variables) <-
 	  rownames(table_user_names)
@@ -187,7 +180,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	# variables
 
 	## time-invariant variables
-
 	time_invariant_variables_unobserved_user_names <-
 	paste0("eta", user_names_processes)
 
@@ -211,7 +203,10 @@ fill_in_info_model <- function(internal_list = NULL,
 	internal_list$info_variables$names_time_invariant_unobserved <-
 	  table_user_names_processes
 
-	# PARAMETER LIST FOR STRUCTURAL COEFFICIENT
+  ############################################
+	# PARAMETER LIST FOR STRUCTURAL COEFFICIENTS
+	############################################
+
 	## compute total number of structural coefficients in the model
 	### eta-variables onto initial variables
 	n_param_C <- internal_list$info_model$n_processes *
@@ -239,12 +234,14 @@ fill_in_info_model <- function(internal_list = NULL,
 
 	## create parameter table of structural coefficients
 	param_list_C <- matrix(nrow = n_param_C,
-	                              ncol = 5)
+	                              ncol = 7)
 	colnames(param_list_C) <- c("incoming",
-	                                   "outgoing",
-	                                   "label",
-	                                   "constrain",
-	                                   "value")
+	                            "outgoing",
+	                            "label",
+	                            "constrain",
+	                            "value",
+	                            "start_1",
+	                            "start_2")
 
 	param_list_C <- as.data.frame(param_list_C)
 
@@ -278,6 +275,10 @@ fill_in_info_model <- function(internal_list = NULL,
 	         "_",
 	         param_list_C[start_fill:end_fill,"outgoing"])
 
+	#### value
+	param_list_C[start_fill:end_fill, "value"] <-
+	  param_list_C[start_fill:end_fill, "label"]
+
 	### z-variables onto initial variables
 	#### number of edges
 	start_fill <- min(which(is.na(param_list_C[,"incoming"])))
@@ -298,15 +299,16 @@ fill_in_info_model <- function(internal_list = NULL,
 	#### constrained
 	param_list_C[start_fill:end_fill,"constrain"] <- FALSE
 
-	#### value
-	param_list_C[start_fill:end_fill,"value"] <- NA
-
 	#### label
 	param_list_C[start_fill:end_fill, "label"] <-
 	  paste0("c_",
 	         param_list_C[start_fill:end_fill,"incoming"],
 	         "_",
 	         param_list_C[start_fill:end_fill,"outgoing"])
+
+	#### value
+	param_list_C[start_fill:end_fill, "value"] <-
+	  param_list_C[start_fill:end_fill, "label"]
 
 	### eta variables onto NON-initial time-varying variables
 	#### number of edges
@@ -342,7 +344,6 @@ fill_in_info_model <- function(internal_list = NULL,
 
 	### z variables onto NON-initial time-varying variables
   #### number of edges
-
 	start_fill <- min(which(is.na(param_list_C[,"incoming"])))
 	number_entries <-
 	  sum(lengths(internal_list$info_variables$info_time_invariant_variables)) *
@@ -366,7 +367,6 @@ fill_in_info_model <- function(internal_list = NULL,
 	  as.vector(unlist(name_incoming_variables))
 
   #### name outgoing variable
-
 	name_outgoing_variables <-
 	  vector(mode = "list",
 	         length = internal_list$info_model$n_processes)
@@ -384,7 +384,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_C[start_fill:end_fill,"constrain"] <- TRUE
 
 	#### value
-
 	labels_constrained <-
 	  vector(mode = "list",
 	         length = internal_list$info_model$n_processes)
@@ -396,10 +395,7 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	       internal_list$info_variables$names_processes["user_names",i],
 	       "_",
 	       internal_list$info_variables$info_time_invariant_variables[[i]])
-
 	}
-
-
 
 	param_list_C[start_fill:end_fill,"value"] <-
 	  unlist(
@@ -414,10 +410,8 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	         "_",
 	         param_list_C[start_fill:end_fill,"outgoing"])
 
-
 	### time-varying variables onto time-varying variables
   #### number of edges
-
 	start_fill <- min(which(is.na(param_list_C[,"incoming"])))
 	number_entries <-
 	  (internal_list$info_model$n_occasions-1) *
@@ -425,7 +419,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	end_fill <- start_fill + number_entries - 1
 
   #### name incoming variable
-
 	name_incoming_variables <-
 	  vector(mode = "list",
 	         length = (internal_list$info_model$n_occasions - 1))
@@ -440,7 +433,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	  name_incoming_variables_step[[i]] <-
 	  rep(internal_list$info_variables$user_names_time_varying[i, t],
 	    internal_list$info_model$n_processes)
-
 	}
 	  name_incoming_variables[[t-1]] <- name_incoming_variables_step
 	}
@@ -449,17 +441,14 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	  as.vector(unlist(name_incoming_variables))
 
   #### name outgoing variable
-
 	name_outgoing_variables <-
 	  vector(mode = "list",
 	         length = (internal_list$info_model$n_occasions - 1))
 
 	for (t in 1:(internal_list$info_model$n_occasions - 1)){
-
 	    name_outgoing_variables[[t]] <-
 	      rep(internal_list$info_variables$user_names_time_varying[ , t],
 	          internal_list$info_model$n_processes)
-
 	    }
 
 	param_list_C[start_fill:end_fill,"outgoing"] <-
@@ -469,7 +458,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_C[start_fill:end_fill,"constrain"] <- TRUE
 
 	#### value
-
 	labels_constrained <-
 	  vector(mode = "list",
 	         length = internal_list$info_model$n_processes)
@@ -481,7 +469,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	           internal_list$info_variables$names_processes["user_names",i],
 	           "_",
 	           internal_list$info_variables$names_processes["user_names",])
-
 	}
 
 	param_list_C[start_fill:end_fill,"value"] <-
@@ -498,22 +485,42 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	         param_list_C[start_fill:end_fill,"outgoing"])
 
 	# fill into internal_list
-
 	internal_list$info_parameters$C_table <- param_list_C
 
+	############################################
+	# MATRIX OF STRUCTURAL COEFFICIENTS
+	############################################
 
-	# COVARIANCE MATRIX PSI
 	## compute total number of variables in the model
-
 	n_total <- internal_list$info_model$n_occasions *
 	  internal_list$info_model$n_processes +
 	  internal_list$info_model$n_time_invariant +
 	  internal_list$info_model$n_processes
 
 	names_variables <-
-	  c(internal_list$info_variables$names_time_invariant_unobserved["user_names",],
-	    internal_list$info_variables$names_time_invariant_unique["user_names",],
-	    c(internal_list$info_variables$user_names_time_varying))
+	c(internal_list$info_variables$names_time_invariant_unobserved["user_names",],
+	  internal_list$info_variables$names_time_invariant_unique["user_names",],
+	  c(internal_list$info_variables$user_names_time_varying))
+
+	C <- matrix(ncol = n_total,
+	            nrow = n_total)
+
+	rownames(C) <- colnames(C) <- names_variables
+
+	for (i in 1:nrow(internal_list$info_parameters$C_table)){
+
+	  row_name <- internal_list$info_parameters$C_table$incoming[i]
+	  col_name <- internal_list$info_parameters$C_table$outgoing[i]
+
+	  C[row_name,col_name] <- internal_list$info_parameters$C_table$value[i]
+
+	}
+
+	internal_list$model_matrices$C_labels <- C
+
+  ###########################
+	# COVARIANCE MATRIX PSI
+	###########################
 
 	Psi <- matrix(ncol = n_total,
 	              nrow = n_total)
@@ -539,7 +546,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 	Psi[1:internal_list$info_model$n_processes,
 	    1:internal_list$info_model$n_processes] <- Psi_eta
-
 
 	### (co-)variances among z-variables
 	Psi_z <-
@@ -609,7 +615,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	           internal_list$info_variables$names_processes["user_names",i],
 	           "_",
 	           internal_list$info_variables$names_processes["user_names",i])
-
 	}
 
 	diag(Psi_time_varying) <-
@@ -624,14 +629,11 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	Psi[start_fill:end_fill,
 	    start_fill:end_fill] <- Psi_time_varying
 
-
 	## fill in Covariance Matrix
-
 	internal_list$model_matrices$Psi_labels <- Psi
 
 	# PARAMETER TABLE FOR COVARIANCE MATRIX
 	## create parameter table of covariance parameters
-
 	Psi_vector <- Psi[t(upper.tri(Psi, diag = TRUE))]
 
 	Psi_vector <- Psi_vector[!is.na(Psi_vector)]
@@ -641,13 +643,15 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	n_param_Psi = length(Psi_vector)
 
 	param_list_Psi <- matrix(nrow = n_param_Psi,
-	                         ncol = 5)
+	                         ncol = 7)
 
 	colnames(param_list_Psi) <- c("incoming",
 	                              "outgoing",
 	                              "label",
 	                              "constrain",
-	                              "value")
+	                              "value",
+	                              "start_1",
+	                              "start_2")
 
 	param_list_Psi <- as.data.frame(param_list_Psi)
 
@@ -657,18 +661,13 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	end_time_varying <- nrow(param_list_Psi)
 
 	## fill in column value
-
-	param_list_Psi$value[start_time_varying:end_time_varying] <-
-	  Psi_vector[start_time_varying:end_time_varying]
+	param_list_Psi$value <- Psi_vector
 
 	## fill in column constrain
-
 	param_list_Psi$constrain <- FALSE
 	param_list_Psi$constrain[start_time_varying:end_time_varying] <- TRUE
 
-
 	## fill in column label
-
 	Psi_vector[start_time_varying:end_time_varying] <-
 	  paste0("psi_",
 	         as.vector(
@@ -685,9 +684,7 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_Psi$label <- Psi_vector
 
 	## fill in column incoming and outgoing
-
 	### (co-)variances among eta-variables
-
 	start_fill <- 1
 	end_fill <- ncol(Psi_eta) * (ncol(Psi_eta) + 1) / 2
 
@@ -709,7 +706,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_Psi$outgoing[start_fill:end_fill] <- Psi_outgoing
 
 	### (co-)variances among z-variables
-
 	start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
 	number_entries <- ncol(Psi_z) * (ncol(Psi_z) + 1) / 2
 	end_fill <- start_fill + number_entries -1
@@ -731,7 +727,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_Psi$outgoing[start_fill:end_fill] <- Psi_outgoing
 
 	### (co-)variances among initial variables
-
 	start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
 	number_entries <- ncol(Psi_init) * (ncol(Psi_init) + 1) / 2
 	end_fill <- start_fill + number_entries -1
@@ -754,7 +749,6 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	param_list_Psi$outgoing[start_fill:end_fill] <- Psi_outgoing
 
 	### (co-)variances among NON-initial time-varying variables
-
 	start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
 	number_entries <- internal_list$info_model$n_processes *
 	  (internal_list$info_model$n_occasions - 1)
@@ -768,34 +762,11 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 	      2:internal_list$info_model$n_occasions])
 
 	# fill into internal list
-
 	internal_list$info_parameters$Psi_table <- param_list_Psi
 
-	# MATRIX OF STRUCTURAL COEFFICIENTS
-	## compute total number of variables in the model
-
-	C <- matrix(ncol = n_total,
-	            nrow = n_total)
-
-  rownames(C) <- colnames(C) <- names_variables
-
-	 for (i in 1:nrow(internal_list$info_parameters$C_table)){
-
-	    row_name <- internal_list$info_parameters$C_table$incoming[i]
-	    col_name <- internal_list$info_parameters$C_table$outgoing[i]
-
-	    if (internal_list$info_parameters$C_table$constrain[i] == FALSE){
-	    C[row_name,col_name] <- internal_list$info_parameters$C_table$label[i]
-	    } else {
-	      C[row_name,col_name] <- internal_list$info_parameters$C_table$value[i]
-	      }
-	 }
-
-  internal_list$model_matrices$C_labels <- C
-
+	#############################################################
   # FILTER / SELECTION MATRIX TO SELECT OBSERVED VARIABLES ONLY
-  ## compute total number of variables in the model
-
+	#############################################################
   seletion_matrix <- matrix(ncol = n_total,
                             nrow = n_total - internal_list$info_model$n_processes)
 
@@ -821,7 +792,11 @@ rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
 
 	  stop(paste0( fun.name.version, " does not yet support this model class"))
 
-	} else if (homogeneous == TRUE){
+	} else if (linear == TRUE && homogeneous == TRUE){
+
+	  stop(paste0( fun.name.version, " does not yet support this model class"))
+
+	}  else if (linear == FALSE && homogeneous == TRUE){
 
 	  stop(paste0( fun.name.version, " does not yet support this model class"))
 	}
