@@ -82,13 +82,38 @@ starting_values <- function(internal_list = NULL){
   parameter_list_C <- internal_list$info_parameters$C_table
   parameter_list_Psi <- internal_list$info_parameters$Psi_table
 
-if (is.null(labels_time_invariant_variables)){
+  #------------------------------------------
+  # linear homogeneous model
+  #------------------------------------------
+
+  if(homogeneous == TRUE &&
+     linear == TRUE){
+
+  # console output
+  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                  Sys.time(), "\n" ) )
+  # return output
+  return(internal_list)
+    }
+
+  #------------------------------------------
+  # linear model with additive heterogeneity
+  #------------------------------------------
+
+  if(homogeneous == FALSE &&
+     linear == TRUE &&
+     additive  == TRUE){
+
+  if (is.null(labels_time_invariant_variables)){
 
   # This part is for the model WITHOUT Z-variables. Let's fill in the
   # "else"-part (i.e., the model WITH Z-variables) below first and
   # then copy paste parts of it into the "if" part.
 
 } else {
+
+  parameter_list_Psi$start_1 <- NA
+  parameter_list_C$start_1 <- NA
 
   labels_processes <-
     internal_list$info_variables$names_processes["user_names",]
@@ -544,6 +569,7 @@ if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
                                 Sys.time(), "\n" ) )
 # return output
 return(internal_list)
+  }
 
 }
 
