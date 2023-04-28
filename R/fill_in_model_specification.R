@@ -113,6 +113,9 @@ fill_in_model_specification_open_mx <- function(internal_list){
 
   internal_list$model_syntax$OpenMx <- model
 
+  # get verbose argument
+  verbose <- internal_list$control$verbose
+
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
                                   Sys.time(), "\n" ) )
@@ -175,6 +178,9 @@ fill_in_model_specification_lavaan <- function(internal_list){
   )
 
   internal_list$model_syntax$lavaan <- model_syntax
+
+  # get verbose argument
+  verbose <- internal_list$control$verbose
 
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

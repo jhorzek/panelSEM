@@ -85,6 +85,7 @@ starting_values <- function(internal_list = NULL){
   #------------------------------------------
   # linear homogeneous model
   #------------------------------------------
+  homogeneous <- internal_list$info_model$homogeneous
 
   if(homogeneous == TRUE &&
      linear == TRUE){
