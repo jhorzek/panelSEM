@@ -566,6 +566,35 @@ internal_list_aux <-
                   additive  = additive,
                   use_open_mx = use_open_mx,
                   verbose = verbose)
+
+model_hom <- internal_list_aux $model_syntax$lavaan
+fit_hom <- sem(model_hom, data = d_standard)
+
+coef_lav_hom <- lavaan::coef(fit_hom)
+coef_lav_hom_labels <- unique(names(coef_lav_hom))
+coef_lav_hom <- coef_lav_hom[coef_lav_hom_labels]
+
+
+## fill in starting values for structural coefficients
+for (i in names(coef_lav_hom)){
+  select_row <- which(parameter_list_C$value == i)
+
+    if (all(is.na(parameter_list_C$start_1[select_row]))){
+      parameter_list_C$start_1[select_row] <-
+      coef_lav_hom[names(coef_lav_hom) == i]
+  }
+}
+
+## fill in starting values for covariance matrix
+for (i in names(coef_lav_hom)){
+  select_row <- which(internal_list$info_parameters$Psi_table$value == i)
+
+  if (all(is.na(parameter_list_Psi$start_1[select_row]))){
+    parameter_list_Psi$start_1[select_row] <-
+      coef_lav_hom[names(coef_lav_hom) == i]
+  }
+}
+
   }
 }
 
