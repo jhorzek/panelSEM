@@ -8,42 +8,42 @@
 ## Documentation
 #' @title simulate_data
 #' @description create data.frame of observed variables
-#' @param N
-#' @param time_points
-#' @param c_x1_etax
-#' @param c_y1_etax
-#' @param c_x1_etay
-#' @param c_y1_etay
-#' @param c_x_etax
-#' @param c_y_etay
-#' @param c_x1_z1
-#' @param c_x1_z2
-#' @param c_x1_z3
-#' @param c_y1_z1
-#' @param c_y1_z2
-#' @param c_y1_z3
-#' @param c_x_z1
-#' @param c_x_z2
-#' @param c_y_z2
-#' @param c_y_z3
-#' @param c_x_x
-#' @param c_x_y
-#' @param c_y_x
-#' @param c_y_y
-#' @param psi_etax_etax
-#' @param psi_etax_etay
-#' @param psi_etay_etay
-#' @param psi_z1_z1
-#' @param psi_z1_z2
-#' @param psi_z1_z3
-#' @param psi_z2_z2
-#' @param psi_z2_z3
-#' @param psi_z3_z3
-#' @param psi_x1_x1
-#' @param psi_x1_y1
-#' @param psi_y1_y1
-#' @param psi_x_x
-#' @param psi_y_y
+#' @param N Integer number reflecting number of units (e.g. persons).
+#' @param time_points Integer number reflecting number of measurement occasions.
+#' @param c_x1_etax Numeric parameter value.
+#' @param c_y1_etax Numeric parameter value.
+#' @param c_x1_etay Numeric parameter value.
+#' @param c_y1_etay Numeric parameter value.
+#' @param c_x_etax Numeric parameter value.
+#' @param c_y_etay Numeric parameter value.
+#' @param c_x1_z1 Numeric parameter value.
+#' @param c_x1_z2 Numeric parameter value.
+#' @param c_x1_z3 Numeric parameter value.
+#' @param c_y1_z1 Numeric parameter value.
+#' @param c_y1_z2 Numeric parameter value.
+#' @param c_y1_z3 Numeric parameter value.
+#' @param c_x_z1 Numeric parameter value.
+#' @param c_x_z2 Numeric parameter value.
+#' @param c_y_z2 Numeric parameter value.
+#' @param c_y_z3 Numeric parameter value.
+#' @param c_x_x Numeric parameter value.
+#' @param c_x_y Numeric parameter value.
+#' @param c_y_x Numeric parameter value.
+#' @param c_y_y Numeric parameter value.
+#' @param psi_etax_etax Numeric parameter value.
+#' @param psi_etax_etay Numeric parameter value.
+#' @param psi_etay_etay Numeric parameter value.
+#' @param psi_z1_z1 Numeric parameter value.
+#' @param psi_z1_z2 Numeric parameter value.
+#' @param psi_z1_z3 Numeric parameter value.
+#' @param psi_z2_z2 Numeric parameter value.
+#' @param psi_z2_z3 Numeric parameter value.
+#' @param psi_z3_z3 Numeric parameter value.
+#' @param psi_x1_x1 Numeric parameter value.
+#' @param psi_x1_y1 Numeric parameter value.
+#' @param psi_y1_y1 Numeric parameter value.
+#' @param psi_x_x Numeric parameter value.
+#' @param psi_y_y Numeric parameter value.
 #' @return a data.frame of data of observed variables
 #' @export
 simulate_data <- function(

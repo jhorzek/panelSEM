@@ -555,9 +555,20 @@ starting_values <- function(internal_list = NULL){
     summary(sv_fit)
     internal_list$info_parameters$C_table
 
-  }
+  } else {
 
+internal_list_aux <-
+  auxiliary_model(time_varying_variables = time_varying_variables,
+                  time_invariant_variables = time_invariant_variables,
+                  homogeneous = TRUE,
+                  linear = linear,
+                  additive  = additive,
+                  use_open_mx = use_open_mx,
+                  verbose = verbose)
+  }
 }
+
+
 
 # prepare output
 
