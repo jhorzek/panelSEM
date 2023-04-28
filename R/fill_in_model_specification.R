@@ -113,6 +113,9 @@ fill_in_model_specification_open_mx <- function(internal_list){
 
   internal_list$model_syntax$OpenMx <- model
 
+  # get verbose argument
+  verbose <- internal_list$control$verbose
+
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
                                   Sys.time(), "\n" ) )
@@ -139,28 +142,34 @@ fill_in_model_specification_lavaan <- function(internal_list){
   latent_to_manifest <- (!directed$outgoing %in% internal_list$info_data$var_names) &
     (directed$incoming %in% internal_list$info_data$var_names)
 
-  model_syntax <-
-    paste0(directed$incoming[!latent_to_manifest],
-           " ~ ",
-           ifelse(is.na(directed$value[!latent_to_manifest]), "NA", directed$value[!latent_to_manifest]),
-           " * ",
-           directed$outgoing[!latent_to_manifest])
+  model_syntax <- c()
 
-  model_syntax <- c(model_syntax,
-                    paste0(directed$outgoing[latent_to_manifest],
-                           " =~ ",
-                           ifelse(is.na(directed$value[latent_to_manifest]), "NA", directed$value[latent_to_manifest]),
-                           " * ",
-                           directed$incoming[latent_to_manifest])
-  )
+  if(length(directed$incoming[!latent_to_manifest]) > 0)
+    model_syntax <- c(model_syntax,
+                      paste0(directed$incoming[!latent_to_manifest],
+                             " ~ ",
+                             ifelse(is.na(directed$value[!latent_to_manifest]), "NA", directed$value[!latent_to_manifest]),
+                             " * ",
+                             directed$outgoing[!latent_to_manifest])
+    )
+
+  if(length(directed$outgoing[latent_to_manifest]) > 0)
+    model_syntax <- c(model_syntax,
+                      paste0(directed$outgoing[latent_to_manifest],
+                             " =~ ",
+                             ifelse(is.na(directed$value[latent_to_manifest]), "NA", directed$value[latent_to_manifest]),
+                             " * ",
+                             directed$incoming[latent_to_manifest])
+    )
 
   undirected <- internal_list$info_parameters$Psi_table
 
-  model_syntax <- c(model_syntax,
-                    paste0(undirected$incoming, " ~~ ",
-                           ifelse(is.na(undirected$value), "", paste0(undirected$value, " * ")),
-                           undirected$outgoing)
-  )
+  if(length(undirected$incoming) > 0)
+    model_syntax <- c(model_syntax,
+                      paste0(undirected$incoming, " ~~ ",
+                             ifelse(is.na(undirected$value), "", paste0(undirected$value, " * ")),
+                             undirected$outgoing)
+    )
 
   model_syntax <- paste0(
     c(paste0("# panelSEM\n#-- Syntax generated with function version ", fun.version, " --"),
@@ -169,6 +178,9 @@ fill_in_model_specification_lavaan <- function(internal_list){
   )
 
   internal_list$model_syntax$lavaan <- model_syntax
+
+  # get verbose argument
+  verbose <- internal_list$control$verbose
 
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
