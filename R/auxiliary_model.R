@@ -1,4 +1,5 @@
 ## Changelog:
+# CG 0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.1 2023-03-23: initial programming
 
 ## Documentation
@@ -10,9 +11,8 @@
 #'  starting with the first measurement occasion.
 #' @param time_invariant_variables List of character vectors containing names of the time-invariant
 #'  variables. List must have the same length as list in argument \code{time_varying_variables}.
-#' @param homogeneous Logical (TRUE / FALSE = default) indicating if the model contains unobserved heterogeneity (TRUE).
 #' @param linear Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).
-#' @param additive Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).
+#' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
 #' @param verbose Integer number describing the verbosity of console output.
@@ -31,9 +31,8 @@
 
 auxiliary_model <- function(time_varying_variables = NULL,
                             time_invariant_variables = NULL,
-                            homogeneous = FALSE,
                             linear = TRUE,
-                            additive  = TRUE,
+                            heterogeneity  = NULL,
                             use_open_mx = FALSE,
                             verbose = NULL,
                             ...){
@@ -67,9 +66,8 @@ auxiliary_model <- function(time_varying_variables = NULL,
     fill_in_info_model(internal_list = internal_list,
                        time_varying_variables = time_varying_variables,
                        time_invariant_variables = time_invariant_variables,
-                       homogeneous = homogeneous,
                        linear = linear,
-                       additive  = additive,
+                       heterogeneity  = heterogeneity,
                        use_open_mx = use_open_mx)
 
   # fill in model syntax to the list

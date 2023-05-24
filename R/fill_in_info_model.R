@@ -1,4 +1,5 @@
 ## Changelog:
+# CG 0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.1 2023-02-20: initial programming
 
 ## Documentation
@@ -12,9 +13,8 @@
 #' @param time_invariant_variables List of character vectors containing names of the time-invariant
 #'  variables. List must have the same length as list in argument \code{time_varying_variables}.
 #' @param n_occasions Integer number indicating the number of measurement occasions.
-#' @param homogeneous Logical (TRUE / FALSE = default) indicating if the model contains unobserved heterogeneity (TRUE).
 #' @param linear Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).
-#' @param additive Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).
+#' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
 #' @return The inputted internal_list with several slots filled in:
@@ -38,9 +38,8 @@
 fill_in_info_model <- function(internal_list = NULL,
                                time_varying_variables = NULL,
                                time_invariant_variables = NULL,
-                               homogeneous = FALSE,
                                linear = TRUE,
-                               additive  = TRUE,
+                               heterogeneity  = NULL,
                                use_open_mx = FALSE){
 
 	# function name
@@ -73,10 +72,9 @@ fill_in_info_model <- function(internal_list = NULL,
 	  sum(lengths(time_varying_variables)) /
 	  internal_list$info_model$n_occasions
 	internal_list$info_model$n_time_invariant <-
-	  length(unique(unlist(time_invariant_variables)))
-	internal_list$info_model$additive <- additive
+	  length(unique(unlist(time_invariant_variables)))	
 	internal_list$info_model$linear <- linear
-	internal_list$info_model$homogeneous  <- homogeneous
+	internal_list$info_model$heterogeneity  <- heterogeneity
 	internal_list$info_model$use_open_mx <- use_open_mx
 
   ####################
@@ -182,7 +180,7 @@ fill_in_info_model <- function(internal_list = NULL,
 	# the error terms (epsilon-terms) of the time-varying and time-invariant
 	# variables
 
-	if(additive == TRUE && linear == TRUE && homogeneous == FALSE){
+	if("additive" %in% heterogeneity){
 
 	## time-invariant variables
 	time_invariant_variables_unobserved_user_names <-
@@ -208,6 +206,60 @@ fill_in_info_model <- function(internal_list = NULL,
 	internal_list$info_variables$names_time_invariant_unobserved <-
 	  table_user_names_processes
 	}
+
+######## BEGINN WORK IN PROGRESS ############
+
+	# TODO: find a way to capture all possible combinations of elements 
+	# from {"additive", "autoregressive" , "cross-lagged"}
+	
+	if("cross-lagged" %in% heterogeneity){	  
+
+	  ## time-invariant variables user names
+	  time_invariant_variables_unobserved_user_names_add <-
+	    paste0("eta", user_names_processes)
+
+	  cross_lagged <-
+	    matrix(ncol = internal_list$info_model$n_processes,
+	           nrow = internal_list$info_model$n_processes)
+
+	  rownames(cross_lagged) <- colnames(cross_lagged) <-
+	    user_names_processes
+
+	  cross_lagged[,] <-
+	    paste0("eta",
+	            apply(expand.grid(rownames(cross_lagged), colnames(cross_lagged)),
+	                 1,
+	                 paste,
+	                 collapse = ""))
+
+
+	  ## time-invariant variables user names
+	  time_invariant_variables_unobserved_generic_names <-
+	    paste0("eta",
+	           gsub("process_",
+	                "",
+	                rownames(internal_list$info_variables$user_names_time_varying)))
+
+	  table_user_names_processes <-
+	    matrix(ncol = internal_list$info_model$n_processes,
+	           nrow = 2)
+
+	  table_user_names_processes[1,] <-
+	    time_invariant_variables_unobserved_user_names
+	  table_user_names_processes[2,] <-
+	    time_invariant_variables_unobserved_generic_names
+
+	  rownames(table_user_names_processes) <- c("user_names","generic_names")
+
+	  internal_list$info_variables$names_time_invariant_unobserved <-
+	    table_user_names_processes
+
+######## END WORK IN PROGRESS ############
+	}
+
+	##############
+	###### END UNOBSERVED VARIABLES ##############
+	##############
 
 	# fill parameter list of structural coefficients into internal_list
 	internal_list$info_parameters$C_table <-
@@ -236,6 +288,10 @@ fill_in_info_model <- function(internal_list = NULL,
 	internal_list$model_matrices$select_observed_only <-
 	  create_model_matrix(internal_list = internal_list,
 	                      matrix_type = "selection")
+						  
+    ####################################
+	# TODO: find a way to capture all possible combinations of elements 
+	# from {"additive", "autoregressive" , "cross-lagged"}
 
   #} else if (additive == TRUE && linear == FALSE && homogeneous == FALSE){
 
@@ -257,6 +313,8 @@ fill_in_info_model <- function(internal_list = NULL,
 
 	#  stop(paste0( fun.name.version, " does not yet support this model class"))
 #	}
+#
+##########################################
 
 	# console output
 	if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

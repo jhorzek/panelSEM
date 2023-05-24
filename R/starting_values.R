@@ -1,4 +1,5 @@
 ## Changelog:
+# CG  0.0.4 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG  0.0.3 2023-04-24 change argument to internal_list
 # CDM 0.0.2 2023-03-01 add OpenMx part for certain starting values
 # CG  0.0.1 2023-02-06 initial programming
@@ -74,8 +75,8 @@ starting_values <- function(internal_list = NULL){
   labels_time_invariant_variables <-
     internal_list$info_variables$info_time_invariant_variables
 
-  additive <- internal_list$info_model$additive
   linear <- internal_list$info_model$linear
+  heterogeneity <- internal_list$info_model$heterogeneity
   verbose <- internal_list$control$verbose
   use_open_mx <- internal_list$info_model$use_open_mx
 
@@ -85,10 +86,9 @@ starting_values <- function(internal_list = NULL){
   #------------------------------------------
   # linear homogeneous model
   #------------------------------------------
-  homogeneous <- internal_list$info_model$homogeneous
 
-  if(homogeneous == TRUE &&
-     linear == TRUE){
+  if(linear == TRUE &&
+     identical("homogeneous", sort(heterogeneity)) ){
 
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
@@ -101,9 +101,8 @@ starting_values <- function(internal_list = NULL){
   # linear model with additive heterogeneity
   #------------------------------------------
 
-  if(homogeneous == FALSE &&
-     linear == TRUE &&
-     additive  == TRUE){
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity))){
 
   if (is.null(labels_time_invariant_variables)){
 
@@ -561,13 +560,12 @@ starting_values <- function(internal_list = NULL){
 internal_list_aux <-
   auxiliary_model(time_varying_variables = time_varying_variables,
                   time_invariant_variables = time_invariant_variables,
-                  homogeneous = TRUE,
                   linear = linear,
-                  additive  = additive,
+                  heterogeneity  = "homogeneous",
                   use_open_mx = use_open_mx,
                   verbose = verbose)
 
-model_hom <- internal_list_aux $model_syntax$lavaan
+model_hom <- internal_list_aux$model_syntax$lavaan
 fit_hom <- sem(model_hom, data = d_standard)
 
 coef_lav_hom <- lavaan::coef(fit_hom)

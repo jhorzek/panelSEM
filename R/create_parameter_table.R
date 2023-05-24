@@ -1,4 +1,5 @@
 ## Changelog:
+# CG 0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.1 2023-04-25: initial programming
 
 ## Documentation
@@ -55,10 +56,9 @@ create_parameter_table <- function(internal_list = NULL,
                                   " ", Sys.time(), "\n" ) )
 
   #TODO: check data argument
-
-  homogeneous <- internal_list$info_model$homogeneous
+  
   linear <- internal_list$info_model$linear
-  additive <- internal_list$info_model$additive
+  heterogeneity <- internal_list$info_model$heterogeneity
 
   #############################################
   # PARAMETER LISTS FOR STRUCTURAL COEFFICIENTS
@@ -69,7 +69,7 @@ create_parameter_table <- function(internal_list = NULL,
   #------------------------------------------
 
   if(linear == TRUE &&
-     homogeneous == TRUE &&
+     identical("homogeneous", sort(heterogeneity)) &&
      parameter_type == "C"){
 
     ## compute total number of structural coefficients in the model
@@ -283,9 +283,8 @@ create_parameter_table <- function(internal_list = NULL,
   # linear model with additive heterogeneity
   #------------------------------------------
 
-  if(additive == TRUE &&
-     linear == TRUE &&
-     homogeneous == FALSE &&
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity)) &&
      parameter_type == "C"){
 
     ## compute total number of structural coefficients in the model
@@ -572,6 +571,546 @@ create_parameter_table <- function(internal_list = NULL,
 
   }
 
+
+  #------------------------------------------
+  # linear model with additive heterogeneity
+  #------------------------------------------
+
+  if(linear == FALSE &&
+     identical("additive", sort(heterogeneity))  &&
+     parameter_type == "C"){
+
+    ## compute total number of structural coefficients in the model
+    ### additive eta-variables onto initial variables
+    n_param_C <- internal_list$info_model$n_processes *
+            internal_list$info_model$n_processes
+
+    ### nonadditive eta-variables for cross-lagged effects
+    ### onto initial variables
+    n_param_C <- n_param_C +
+      internal_list$info_model$n_processes *
+      internal_list$info_model$n_processes
+
+    ### z-variables onto initial variables
+    n_param_C <- n_param_C +
+      internal_list$info_model$n_processes *
+      internal_list$info_model$n_time_invariant
+
+    ### addtive eta variables onto time-varying NON-initial variables
+    n_param_C <- n_param_C +
+      (internal_list$info_model$n_processes *
+         (internal_list$info_model$n_occasions - 1))
+
+    ### linear effects of z variables onto time-varying NON-initial variables
+    n_param_C <- n_param_C +
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables)) *
+      (internal_list$info_model$n_occasions - 1)
+
+    ### linear effects of time-varying variables onto time-varying variables
+    n_param_C <- n_param_C +
+      (internal_list$info_model$n_occasions-1) *
+      internal_list$info_model$n_processes^2
+
+    ### nonlinear z variables for cross-lagged effects
+    ### onto time-varying NON-initial variables
+
+    n_param_C <- n_param_C +
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+
+    ### nonaddtive eta variables for cross-lagged effects
+    ### onto time-varying NON-initial variables
+    n_param_C <- n_param_C +
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      internal_list$info_model$n_processes
+
+    ## create parameter table of structural coefficients
+    param_list_C <- matrix(nrow = n_param_C,
+                           ncol = 6)
+    colnames(param_list_C) <- c("incoming",
+                                "outgoing",
+                                "label",
+                                "product",
+                                "constrain",
+                                "value")
+
+    param_list_C <- as.data.frame(param_list_C)
+
+    ### additive eta-variables onto initial variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      internal_list$info_model$n_processes
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      rep(internal_list$info_variables$user_names_time_varying[,1],
+          each = (internal_list$info_model$n_processes))
+
+    #### name outgoing variable
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      rep(internal_list$info_variables$names_time_invariant_unobserved[
+        "user_names",], internal_list$info_model$n_processes)
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- FALSE
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### value
+    param_list_C[start_fill:end_fill, "value"] <-
+      param_list_C[start_fill:end_fill, "label"]
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+    ### nonadditive eta-variables for cross-lagged coefficients
+    ### onto initial variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      internal_list$info_model$n_processes
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      rep(internal_list$info_variables$user_names_time_varying[,1],
+          each = (internal_list$info_model$n_processes))
+
+    #### name outgoing variable
+    matrix_labels <- matrix(nrow = internal_list$info_model$n_processes,
+                            ncol = internal_list$info_model$n_processes)
+
+    grid <-
+      expand.grid(internal_list$info_variables$names_processes["user_names",],
+                  internal_list$info_variables$names_processes["user_names",])
+
+    matrix_labels[,] <-
+      paste0("eta",
+             apply(grid,
+                   1,
+                   paste,
+                   collapse = ""))
+
+    labels_vector <- character(0)
+
+    for (i in 1:internal_list$info_model$n_processes){
+
+      select_labels <- seq(1,internal_list$info_model$n_processes)[-i]
+      add_labels <- matrix_labels[i, select_labels]
+
+      labels_vector <- c(labels_vector, add_labels)
+
+    }
+
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      rep(labels_vector, 2)
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- FALSE
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### value
+    param_list_C[start_fill:end_fill, "value"] <-
+      param_list_C[start_fill:end_fill, "label"]
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+    ### z-variables onto initial variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      internal_list$info_model$n_time_invariant
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      rep(internal_list$info_variables$user_names_time_varying[,1],
+          each = (internal_list$info_model$n_time_invariant))
+
+    #### name outgoing variable
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      rep(internal_list$info_variables$names_time_invariant_unique["user_names",],
+          internal_list$info_model$n_processes)
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- FALSE
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### value
+    param_list_C[start_fill:end_fill, "value"] <-
+      param_list_C[start_fill:end_fill, "label"]
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+    ### additive eta variables onto NON-initial time-varying variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      (internal_list$info_model$n_occasions - 1)
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      as.vector(
+        t(
+          internal_list$info_variables$user_names_time_varying[
+            , (2:internal_list$info_model$n_occasions)]))
+
+    #### name outgoing variable
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      rep(internal_list$info_variables$names_time_invariant_unobserved[
+        "user_names",], each = (internal_list$info_model$n_occasions - 1))
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- TRUE
+
+    #### value
+    param_list_C[start_fill:end_fill,"value"] <- 1
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+
+    ### linear z variables onto NON-initial time-varying variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <-
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables)) *
+      (internal_list$info_model$n_occasions - 1)
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    name_incoming_variables <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes) {
+      name_incoming_variables[[i]] <-
+        rep(internal_list$info_variables$user_names_time_varying[
+          i , (2:internal_list$info_model$n_occasions)],
+          each = lengths(
+            internal_list$info_variables$info_time_invariant_variables)[i])
+    }
+
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      as.vector(unlist(name_incoming_variables))
+
+    #### name outgoing variable
+    name_outgoing_variables <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes) {
+      name_outgoing_variables[[i]] <-
+        rep(as.vector(internal_list$info_variables$info_time_invariant_variables[[i]]),
+            (internal_list$info_model$n_occasions - 1))
+    }
+
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      as.vector(unlist(name_outgoing_variables))
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- TRUE
+
+    #### value
+    labels_constrained <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes){
+      labels_constrained[[i]] <-
+        paste0("c",
+               "_",
+               internal_list$info_variables$names_processes["user_names",i],
+               "_",
+               internal_list$info_variables$info_time_invariant_variables[[i]])
+    }
+
+    param_list_C[start_fill:end_fill,"value"] <-
+      unlist(
+        rep(
+          labels_constrained,
+          each = (internal_list$info_model$n_occasions - 1)))
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+    ### linear effects of time-varying variables onto time-varying variables
+    #### number of edges
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <-
+      (internal_list$info_model$n_occasions-1) *
+      internal_list$info_model$n_processes^2
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    name_incoming_variables <-
+      vector(mode = "list",
+             length = (internal_list$info_model$n_occasions - 1))
+
+    name_incoming_variables_step <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (t in 2:internal_list$info_model$n_occasions){
+      for (i in 1:internal_list$info_model$n_processes){
+
+        name_incoming_variables_step[[i]] <-
+          rep(internal_list$info_variables$user_names_time_varying[i, t],
+              internal_list$info_model$n_processes)
+      }
+      name_incoming_variables[[t-1]] <- name_incoming_variables_step
+    }
+
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      as.vector(unlist(name_incoming_variables))
+
+    #### name outgoing variable
+    name_outgoing_variables <-
+      vector(mode = "list",
+             length = (internal_list$info_model$n_occasions - 1))
+
+    for (t in 1:(internal_list$info_model$n_occasions - 1)){
+      name_outgoing_variables[[t]] <-
+        rep(internal_list$info_variables$user_names_time_varying[ , t],
+            internal_list$info_model$n_processes)
+    }
+
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      as.vector(unlist(name_outgoing_variables))
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- TRUE
+
+    #### value
+    labels_constrained <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes){
+      labels_constrained[[i]] <-
+        paste0("c",
+               "_",
+               internal_list$info_variables$names_processes["user_names",i],
+               "_",
+               internal_list$info_variables$names_processes["user_names",])
+    }
+
+    param_list_C[start_fill:end_fill,"value"] <-
+      unlist(
+        rep(
+          labels_constrained,
+          (internal_list$info_model$n_occasions - 1)))
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- FALSE
+
+    ### nonaddtive z variables for cross-lagged effects
+    ### onto time-varying NON-initial variables
+
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <-
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    name_incoming_variables <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes) {
+      name_incoming_variables[[i]] <-
+        rep(internal_list$info_variables$user_names_time_varying[
+          i , (2:internal_list$info_model$n_occasions)],
+          each = lengths(
+            internal_list$info_variables$info_time_invariant_variables)[i])
+    }
+
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      as.vector(unlist(name_incoming_variables))
+
+    #### name outgoing variable
+
+    name_outgoing_variables <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    product_terms_names <- character(0)
+
+    for (i in internal_list$info_model$n_processes:1){
+      names_product <-
+        as.vector(outer(
+          internal_list$info_variables$info_time_invariant_variables[[
+            (internal_list$info_model$n_processes + 1 - i)]],
+          internal_list$info_variables$user_names_time_varying[
+            i,
+            -internal_list$info_model$n_occasions],
+          paste,
+          sep="*"))
+
+      product_terms_names <- c(product_terms_names, names_product)
+    }
+
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      product_terms_names
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- FALSE
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### value
+    param_list_C[start_fill:end_fill, "value"] <-
+      param_list_C[start_fill:end_fill, "label"]
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- TRUE
+
+    ### nonlinear eta variables onto NON-initial time-varying variables
+    #### number of entries
+    start_fill <- min(which(is.na(param_list_C[,"incoming"])))
+    number_entries <-
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      internal_list$info_model$n_processes
+    end_fill <- start_fill + number_entries - 1
+
+    #### name incoming variable
+    name_incoming_variables <-
+      vector(mode = "list",
+             length = internal_list$info_model$n_processes)
+
+    for (i in 1:internal_list$info_model$n_processes) {
+      name_incoming_variables[[i]] <-
+        rep(internal_list$info_variables$user_names_time_varying[
+          i , (2:internal_list$info_model$n_occasions)],
+          each = (internal_list$info_model$n_processes - 1))
+    }
+
+    param_list_C[start_fill:end_fill,"incoming"] <-
+      as.vector(unlist(name_incoming_variables))
+
+    #### name outgoing variable
+    matrix_labels <- matrix(nrow = internal_list$info_model$n_processes,
+                            ncol = internal_list$info_model$n_processes)
+
+    grid <-
+      expand.grid(internal_list$info_variables$names_processes["user_names",],
+                  internal_list$info_variables$names_processes["user_names",])
+
+    matrix_labels[,] <-
+      paste0("eta",
+             apply(grid,
+                   1,
+                   paste,
+                   collapse = ""))
+
+    labels_vector <- character(0)
+
+    for (i in 1:internal_list$info_model$n_processes){
+
+      select_labels <- seq(1,internal_list$info_model$n_processes)[-i]
+      add_labels <- matrix_labels[i, select_labels]
+
+      labels_vector <- c(labels_vector, add_labels)
+
+    }
+
+    product_terms_names <- character(0)
+
+    for (i in internal_list$info_model$n_processes:1){
+      names_product <-
+        as.vector(outer(
+          labels_vector[(internal_list$info_model$n_processes + 1 - i)],
+          internal_list$info_variables$user_names_time_varying[
+            i,
+            -internal_list$info_model$n_occasions],
+          paste,
+          sep="*"))
+
+      product_terms_names <- c(product_terms_names, names_product)
+    }
+
+    param_list_C[start_fill:end_fill,"outgoing"] <-
+      product_terms_names
+
+    #### constrained
+    param_list_C[start_fill:end_fill,"constrain"] <- TRUE
+
+    #### label
+    param_list_C[start_fill:end_fill, "label"] <-
+      paste0("c_",
+             param_list_C[start_fill:end_fill,"incoming"],
+             "_",
+             param_list_C[start_fill:end_fill,"outgoing"])
+
+    #### value
+    param_list_C[start_fill:end_fill, "value"] <- 1
+
+    #### product
+    param_list_C[start_fill:end_fill, "product"] <- TRUE
+
+    ### prepare output
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+
+    #return output
+    return(param_list_C)
+
+  }
+
   #############################################
   # PARAMETER LISTS FOR COVARIANCE MATRIX
   #############################################
@@ -581,7 +1120,7 @@ create_parameter_table <- function(internal_list = NULL,
   #------------------------------------------
 
   if(linear == TRUE &&
-     homogeneous == TRUE &&
+     identical("homogeneous", sort(heterogeneity))  &&
      parameter_type == "Psi"){
 
     Psi <- internal_list$model_matrices$Psi_labels
@@ -824,9 +1363,8 @@ create_parameter_table <- function(internal_list = NULL,
   # linear model with additive heterogeneity
   #------------------------------------------
 
-  if(additive == TRUE &&
-     linear == TRUE &&
-     homogeneous == FALSE &&
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity))  &&
      parameter_type == "Psi"){
 
     Psi <- internal_list$model_matrices$Psi_labels

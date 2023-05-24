@@ -1,4 +1,5 @@
 ## Changelog:
+# CG 0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.1 2023-02-21: initial programming
 
 
@@ -22,9 +23,8 @@
 #'      \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
 #'      \code{..$n_processes}: \code{int(0)}  \tab \tab Number of dynamic processes. \cr
 #'      \code{..$n_time_invariant} \code{int(0)}  \tab \tab  Number of observed time-invariant variables \cr
-#'      \code{..$homogeneous} \code{logical(0)}  \tab \tab \code{TRUE} if the model does NOT contain unobserved heterogeneity. \cr
 #'      \code{..$linear} \code{logical(0)}  \tab \tab \code{TRUE} if the model is linear in observed variables.\cr
-#'      \code{..$additive} \code{logical(0)}  \tab \tab \code{TRUE} if the model is additive in observed heterogeneity.\cr
+#'      \code{..$heterogeneity} \code{logical(0)}  \tab \tab Specify type of observed heterogeneity.\cr
 #'      \code{..$use_open_mx} \code{logical(0)}  \tab \tab If \code{TRUE}, \code{OpenMx} is used, otherwise \code{lavaan}.\cr
 #'    \code{$info_variables}: List of XX        \tab \tab \cr
 #'      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
@@ -117,20 +117,14 @@ create_empty_list <- function( verbose = NULL ){
 			# a single number, normally an integer
 			"n_time_invariant" = as.integer(0),
 
-			# Does the model contain unobserved heterogeneity?
-			# If yes, homogenous == FALSE.
-			# a single logical value
-			"homogeneous" = logical(0),
-
 			# Is the model linear in observed variables?
 			# If yes, linear == TRUE.
 			# a single logical value
 			"linear" = logical(0),
 
-			# Is the model additive in observed heterogeneity?
-			# If yes, additive == TRUE.
-			# a single logical value
-			"additive" = logical(0),
+			# Type of unobserved heterogeneity.
+			# a character vector
+			"heterogeneity" = character(0),
 
 			# Is OpenMx used?
 			# If yes, use_open_mx == TRUE. If FALSE, lavaan is used.

@@ -1,4 +1,6 @@
 ## Changelog:
+# CG  0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
+#						added argument add_product_variables and corresponding section
 # CG  0.0.1 2023-02-06 initial programming
 
 ## Documentation
@@ -7,6 +9,9 @@
 #' @param data A data.frame containing the data in the wide format.
 #' @param internal_list A list with various information extracted from the
 #'    model.
+#' @param add_product_variables Logical value indicating if (\code{TRUE})
+#' product terms of observed variables should be added to the
+#' \code{..$info_data} slot.
 #' @return The inputted list with several slots in \code{..$info_data} filled
 #' in.
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
@@ -18,7 +23,8 @@
 #'  DOI: 10.1080/10705511.2020.1780598
 
 fill_in_data <- function(data = NULL,
-                         internal_list = NULL){
+                         internal_list = NULL,
+                         add_product_variables = FALSE){
 
 # function name
 fun.name <- "fill_in_data"
@@ -59,6 +65,48 @@ internal_list$info_data$n_obs <- nrow(data)
 internal_list$info_data$n_var <- ncol(data)
 internal_list$info_data$var_names <- colnames(data)
 
+# add product terms of observed variables models are nonlinear
+if(add_product_variables == TRUE){
+
+ product_terms_names <- character(0)
+
+ for (i in 1:internal_list$info_model$n_processes){
+   names_product <-
+   as.vector(outer(
+   internal_list$info_variables$info_time_invariant_variables[[i]],
+   internal_list$info_variables$user_names_time_varying[
+     i,
+     -internal_list$info_model$n_occasions],
+   paste,
+   sep="*"))
+
+   product_terms_names <- c(product_terms_names, names_product)
+ }
+
+   product_final <- numeric(0)
+
+   for (i in 1:internal_list$info_model$n_processes){
+       mat <- internal_list$info_variables$info_time_invariant_variables[[i]]
+       vec <- internal_list$info_variables$user_names_time_varying[
+         i,
+         -internal_list$info_model$n_occasions]
+
+       for (j in 1:(internal_list$info_model$n_occasions - 1)){
+         product <- sweep(as.matrix(data[, mat]),
+                          MARGIN=1,
+                          as.numeric(data[, vec[j]]),
+                          `*`)
+
+         product_final <- cbind(product_final, product)
+       }
+       }
+
+   data_product_terms <- as.data.frame(product_final)
+   colnames(data_product_terms) <- product_terms_names
+
+   internal_list$info_data$data_product_terms <- data_product_terms
+
+}
 
 # console output
 if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

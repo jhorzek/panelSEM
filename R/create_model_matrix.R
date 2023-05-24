@@ -1,4 +1,5 @@
 ## Changelog:
+# CG 0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.1 2023-02-20: initial programming
 
 ## Documentation
@@ -56,9 +57,8 @@ create_model_matrix <- function(internal_list = NULL,
 
   #TODO: check data argument
 
-  homogeneous <- internal_list$info_model$homogeneous
   linear <- internal_list$info_model$linear
-  additive <- internal_list$info_model$additive
+  heterogeneity <- internal_list$info_model$heterogeneity
 
   #############################################
   # COVARIANCE MATRIX
@@ -69,7 +69,7 @@ create_model_matrix <- function(internal_list = NULL,
   #------------------------------------------
 
   if(linear == TRUE &&
-     homogeneous == TRUE &&
+     identical("homogeneous", sort(heterogeneity)) &&
      matrix_type == "Psi"){
 
     n_total <- internal_list$info_model$n_occasions *
@@ -229,9 +229,8 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   # linear model with additive heterogeneity
   #------------------------------------------
 
-  if(additive == TRUE &&
-     linear == TRUE &&
-     homogeneous == FALSE &&
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity)) &&
      matrix_type == "Psi"){
 
     n_total <- internal_list$info_model$n_occasions *
@@ -366,8 +365,8 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   #------------------------------------------
   # linear homogeneous model
   #------------------------------------------
-  if(homogeneous == TRUE &&
-     linear == TRUE &&
+  if(linear == TRUE &&
+     identical("homogeneous", sort(heterogeneity)) &&
      matrix_type == "C" ){
 
     n_total <- internal_list$info_model$n_occasions *
@@ -405,9 +404,8 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   # linear model with additive heterogeneity
   #------------------------------------------
 
-  if(homogeneous == FALSE &&
-     linear == TRUE &&
-     additive  == TRUE &&
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity)) &&
      matrix_type == "C" ){
 
     n_total <- internal_list$info_model$n_occasions *
@@ -458,9 +456,8 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   #------------------------------------------
 
   if(matrix_type == "selection" &&
-     homogeneous == FALSE &&
      linear == TRUE &&
-     additive  == TRUE){
+     identical("additive", sort(heterogeneity))){
 
       n_total <- internal_list$info_model$n_occasions *
         internal_list$info_model$n_processes +

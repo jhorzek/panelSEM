@@ -1,12 +1,23 @@
 ## Changelog:
+# CG 0.0.3 2023-05-24: changed preamble to be consistent with other functions 
+# 					   replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.2 2023-04-18: insert console output for debugging
 # JO 0.0.1 2023-04-18: initial programming
 
-#' fill_in_model_specification
-#'
-#' Creates a lavaan or OpenMx model based in the user specification in internal_list
-#' @param internal_list internal list object
-#' @return internal_list, where lavaan or OpenMx model is added to internal_list$model_syntax
+## Documentation
+#' @title Specify the Model Syntax 
+#' @description Creates a \code{lavaan} or \code{OpenMx} model based in the user specified arguments in the \code{fit_panel_sem} function.
+#' @param internal_list A list with various information extracted from the
+#'    model.
+#' @return The inputted internal_list with slot \code{internal_list$model_syntax} filled in.
+#' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
+#' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
+#' 868–901. https://doi.org/10.1007/s11336-021-09811-z
+#' @references Gische, C., West, S.G., & Voelkle, M.C. (2021) Forecasting Causal
+#'  Effects of Interventions versus Predicting Future Outcomes, Structural
+#'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
+#'  DOI: 10.1080/10705511.2020.1780598
+
 fill_in_model_specification <- function(internal_list){
 
   # function name
