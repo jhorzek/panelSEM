@@ -36,9 +36,9 @@ fill_in_model_specification <- function(internal_list){
   if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
                                   Sys.time(), "\n" ) )
 
-  # CG: commented out this line since it was causing problems
-  #if(internal_list$info_model$use_open_mx)
-  #  return(fill_in_model_specification_open_mx(internal_list))
+
+  if(internal_list$info_model$use_open_mx)
+    return(fill_in_model_specification_open_mx(internal_list))
 
   return(fill_in_model_specification_lavaan(internal_list))
 }

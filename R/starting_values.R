@@ -1,4 +1,5 @@
 ## Changelog:
+# CG  0.0.5 2023-05-24: removed OpenMx == TRUE part for linear additive model
 # CG  0.0.4 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG  0.0.3 2023-04-24 change argument to internal_list
 # CDM 0.0.2 2023-03-01 add OpenMx part for certain starting values
@@ -481,81 +482,81 @@ starting_values <- function(internal_list = NULL){
   # values. MAYBE: include this change once the homogeneous model is implemented.
   # We might use lavaan since the repeated use of MxTry hard is time-consuming.
 
-  if(use_open_mx == TRUE){
+  #if(use_open_mx == TRUE){
 
-    require(OpenMx)
+  #  require(OpenMx)
 
-    psem.matA <- internal_list$model_matrices$C_labels
-    psem.matS <- internal_list$model_matrices$Psi_labels
+  #  psem.matA <- internal_list$model_matrices$C_labels
+  #  psem.matS <- internal_list$model_matrices$Psi_labels
     #psem.matF <- internal_list$model_matrices$select_observed_only
-    var_names <- internal_list$info_data$var_names
-    nvar <- internal_list$info_data$n_var
+  #  var_names <- internal_list$info_data$var_names
+  #  nvar <- internal_list$info_data$n_var
 
-    obsvar <- psem.matA[var_names,var_names]
-    labelsA <- as.vector(t(obsvar))
-    indicA <- ifelse(is.na(obsvar)==TRUE,0,1)
-    valuesA <- as.vector(t(indicA))
-    freeA <- ifelse(is.na(obsvar)==TRUE, F, T)
-    freeA_vec <- as.vector(t(freeA))
+  #  obsvar <- psem.matA[var_names,var_names]
+  #  labelsA <- as.vector(t(obsvar))
+  #  indicA <- ifelse(is.na(obsvar)==TRUE,0,1)
+  #  valuesA <- as.vector(t(indicA))
+  #  freeA <- ifelse(is.na(obsvar)==TRUE, F, T)
+  #  freeA_vec <- as.vector(t(freeA))
 
-    obscov <- psem.matS[var_names,var_names]
-    labelsS <- as.vector(t(obscov))
-    indicS <- ifelse(is.na(obscov)==TRUE,0,1)
-    valuesS <- as.vector(t(indicS))
-    freeS <- ifelse(is.na(obscov)==TRUE, F, T)
-    freeS_vec <- as.vector(t(freeS))
+  #  obscov <- psem.matS[var_names,var_names]
+  #  labelsS <- as.vector(t(obscov))
+  #  indicS <- ifelse(is.na(obscov)==TRUE,0,1)
+  #  valuesS <- as.vector(t(indicS))
+  #  freeS <- ifelse(is.na(obscov)==TRUE, F, T)
+  #  freeS_vec <- as.vector(t(freeS))
 
-    raw_data <- mxData(observed = data, type = 'raw')
+  #  raw_data <- mxData(observed = data, type = 'raw')
 
-    matrA <- mxMatrix( type="Full",
-                       nrow=nvar,
-                       ncol=nvar,
-                       free=freeA_vec,
-                       values=valuesA,
-                       labels=labelsA,
-                       byrow=TRUE,
-                       name="A",
-                       dimnames = list(var_names,var_names))
+  #  matrA <- mxMatrix( type="Full",
+  #                     nrow=nvar,
+  #                     ncol=nvar,
+  #                     free=freeA_vec,
+  #                     values=valuesA,
+  #                     labels=labelsA,
+  #                     byrow=TRUE,
+  #                     name="A",
+  #                     dimnames = list(var_names,var_names))
 
-    matrS <- mxMatrix( type="Symm",
-                       nrow=nvar,
-                       ncol=nvar,
-                       free=freeS_vec,
-                       values=valuesS,
-                       labels=labelsS,
-                       byrow=TRUE,
-                       name="S",
-                       dimnames = list(var_names,var_names) )
+  #  matrS <- mxMatrix( type="Symm",
+  #                     nrow=nvar,
+  #                     ncol=nvar,
+  #                     free=freeS_vec,
+  #                     values=valuesS,
+  #                     labels=labelsS,
+  #                     byrow=TRUE,
+  #                     name="S",
+  #                     dimnames = list(var_names,var_names) )
 
-    matrF <- mxMatrix( type="Iden",
-                       nrow=nvar,
-                       ncol=nvar,
-                       name="F",
-                       dimnames = list(var_names,var_names) )
+  #  matrF <- mxMatrix( type="Iden",
+  #                     nrow=nvar,
+  #                     ncol=nvar,
+  #                     name="F",
+  #                     dimnames = list(var_names,var_names) )
 
-    matrM <- mxMatrix( type="Full",
-                       nrow=1,
-                       ncol=nvar,
-                       free=rep(T,nvar),
-                       values=rep(0,nvar),
-                       name="M",
-                       labels = paste0('mean_', var_names),
-                       dimnames = list(NULL, var_names))
+  #  matrM <- mxMatrix( type="Full",
+  #                     nrow=1,
+  #                     ncol=nvar,
+  #                     free=rep(T,nvar),
+  #                     values=rep(0,nvar),
+  #                     name="M",
+  #                     labels = paste0('mean_', var_names),
+  #                     dimnames = list(NULL, var_names))
     ### free mean
-    expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
-    funML <- mxFitFunctionML()
-    sv_mod <- mxModel("starting values observed variables",
-                      raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
-    status <- FALSE
-    while(!status){
-      sv_fit <- mxTryHard(sv_mod)
-      if(sv_fit$output$status$code %in% c(0:1)) status <- TRUE
-    }
+  #  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
+  #  funML <- mxFitFunctionML()
+  #  sv_mod <- mxModel("starting values observed variables",
+  #                    raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
+  #  status <- FALSE
+  #  while(!status){
+  #    sv_fit <- mxTryHard(sv_mod)
+  #    if(sv_fit$output$status$code %in% c(0:1)) status <- TRUE
+  #  }
 
-    summary(sv_fit)
-    internal_list$info_parameters$C_table
+  #  summary(sv_fit)
+  #  internal_list$info_parameters$C_table
 
-  } else {
+  #  } else {
 
 internal_list_aux <-
   auxiliary_model(time_varying_variables = time_varying_variables,
@@ -593,7 +594,8 @@ for (i in names(coef_lav_hom)){
   }
 }
 
-  }
+
+#}
 }
 
 # prepare output
