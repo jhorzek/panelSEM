@@ -1,11 +1,11 @@
 ## Changelog:
-# CG 0.0.3 2023-05-24: changed preamble to be consistent with other functions 
+# CG 0.0.3 2023-05-24: changed preamble to be consistent with other functions
 # 					   replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.2 2023-04-18: insert console output for debugging
 # JO 0.0.1 2023-04-18: initial programming
 
 ## Documentation
-#' @title Specify the Model Syntax 
+#' @title Specify the Model Syntax
 #' @description Creates a \code{lavaan} or \code{OpenMx} model based in the user specified arguments in the \code{fit_panel_sem} function.
 #' @param internal_list A list with various information extracted from the
 #'    model.
@@ -24,7 +24,7 @@ fill_in_model_specification <- function(internal_list){
   fun.name <- "fill_in_model_specification"
 
   # function version
-  fun.version <- "0.0.2 2023-04-18"
+  fun.version <- "0.0.3 2023-05-24"
 
   # function name+version
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
@@ -36,8 +36,9 @@ fill_in_model_specification <- function(internal_list){
   if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
                                   Sys.time(), "\n" ) )
 
-  if(internal_list$info_model$use_open_mx)
-    return(fill_in_model_specification_open_mx(internal_list))
+  # CG: commented out this line since it was causing problems
+  #if(internal_list$info_model$use_open_mx)
+  #  return(fill_in_model_specification_open_mx(internal_list))
 
   return(fill_in_model_specification_lavaan(internal_list))
 }
