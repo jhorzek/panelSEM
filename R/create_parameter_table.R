@@ -56,7 +56,7 @@ create_parameter_table <- function(internal_list = NULL,
                                   " ", Sys.time(), "\n" ) )
 
   #TODO: check data argument
-  
+
   linear <- internal_list$info_model$linear
   heterogeneity <- internal_list$info_model$heterogeneity
 
@@ -337,7 +337,7 @@ create_parameter_table <- function(internal_list = NULL,
 
     #### name outgoing variable
     param_list_C[start_fill:end_fill,"outgoing"] <-
-      rep(internal_list$info_variables$names_time_invariant_unobserved[
+      rep(internal_list$info_variables$names_time_invariant_unobserved_additive[
         "user_names",], internal_list$info_model$n_processes)
 
     #### constrained
@@ -404,7 +404,7 @@ create_parameter_table <- function(internal_list = NULL,
 
     #### name outgoing variable
     param_list_C[start_fill:end_fill,"outgoing"] <-
-      rep(internal_list$info_variables$names_time_invariant_unobserved[
+      rep(internal_list$info_variables$names_time_invariant_unobserved_additive[
         "user_names",], each = (internal_list$info_model$n_occasions - 1))
 
     #### constrained
@@ -573,11 +573,12 @@ create_parameter_table <- function(internal_list = NULL,
 
 
   #------------------------------------------
-  # linear model with additive heterogeneity
+  # nonlinear model with nonadditive heterogeneitiy (cross-lagged)
   #------------------------------------------
 
   if(linear == FALSE &&
-     identical("additive", sort(heterogeneity))  &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity  &&
      parameter_type == "C"){
 
     ## compute total number of structural coefficients in the model
@@ -652,7 +653,7 @@ create_parameter_table <- function(internal_list = NULL,
 
     #### name outgoing variable
     param_list_C[start_fill:end_fill,"outgoing"] <-
-      rep(internal_list$info_variables$names_time_invariant_unobserved[
+      rep(internal_list$info_variables$names_time_invariant_unobserved_additive[
         "user_names",], internal_list$info_model$n_processes)
 
     #### constrained
@@ -781,7 +782,7 @@ create_parameter_table <- function(internal_list = NULL,
 
     #### name outgoing variable
     param_list_C[start_fill:end_fill,"outgoing"] <-
-      rep(internal_list$info_variables$names_time_invariant_unobserved[
+      rep(internal_list$info_variables$names_time_invariant_unobserved_additive[
         "user_names",], each = (internal_list$info_model$n_occasions - 1))
 
     #### constrained
@@ -984,10 +985,11 @@ create_parameter_table <- function(internal_list = NULL,
     product_terms_names <- character(0)
 
     for (i in internal_list$info_model$n_processes:1){
+      i <- 1
       names_product <-
         as.vector(outer(
           internal_list$info_variables$info_time_invariant_variables[[
-            (internal_list$info_model$n_processes + 1 - i)]],
+            i]],
           internal_list$info_variables$user_names_time_varying[
             i,
             -internal_list$info_model$n_occasions],
@@ -1162,10 +1164,10 @@ create_parameter_table <- function(internal_list = NULL,
 
     ## put together the vector
 
-    Psi_vector <-
+    Psi_vech <-
       c(Psi_z_vector, Psi_init_vector, Psi_cont_vector, Psi_serial_vector)
 
-    n_param_Psi = length(Psi_vector)
+    n_param_Psi = length(Psi_vech)
 
     param_list_Psi <- matrix(nrow = n_param_Psi,
                              ncol = 5)
@@ -1192,7 +1194,7 @@ create_parameter_table <- function(internal_list = NULL,
     start_cont <- end_cont - n_cont + 1
 
     ## fill in column value
-    param_list_Psi$value <- Psi_vector
+    param_list_Psi$value <- Psi_vech
 
     ## fill in column constrain
     param_list_Psi$constrain <- FALSE
@@ -1231,8 +1233,8 @@ create_parameter_table <- function(internal_list = NULL,
     }
 
     ### replace restricted lables with generic labels and fill in
-    Psi_vector[start_cont:end_cont] <- Psi_cont_labels
-    param_list_Psi$label <- Psi_vector
+    Psi_vech[start_cont:end_cont] <- Psi_cont_labels
+    param_list_Psi$label <- Psi_vech
 
     ## fill in column incoming and outgoing
     ### (co-)variances among z-variables
@@ -1369,13 +1371,16 @@ create_parameter_table <- function(internal_list = NULL,
 
     Psi <- internal_list$model_matrices$Psi_labels
 
-    Psi_vector <- Psi[t(upper.tri(Psi, diag = TRUE))]
+    Psi_vech <- character(0)
 
-    Psi_vector <- Psi_vector[!is.na(Psi_vector)]
+    for (i in 1:ncol(Psi)){
+      add_vech <- unname(Psi[i , (i:ncol(Psi))])
+      add_vech <- add_vech[!is.na(add_vech)]
+      add_vech <- add_vech[add_vech != 0]
+      Psi_vech <- c(Psi_vech, add_vech)
+    }
 
-    Psi_vector <- Psi_vector[Psi_vector != 0]
-
-    n_param_Psi = length(Psi_vector)
+    n_param_Psi = length(Psi_vech)
 
     param_list_Psi <- matrix(nrow = n_param_Psi,
                              ncol = 5)
@@ -1394,14 +1399,14 @@ create_parameter_table <- function(internal_list = NULL,
     end_time_varying <- nrow(param_list_Psi)
 
     ## fill in column value
-    param_list_Psi$value <- Psi_vector
+    param_list_Psi$value <- Psi_vech
 
     ## fill in column constrain
     param_list_Psi$constrain <- FALSE
     param_list_Psi$constrain[start_time_varying:end_time_varying] <- TRUE
 
     ## fill in column label
-    Psi_vector[start_time_varying:end_time_varying] <-
+    Psi_vech[start_time_varying:end_time_varying] <-
       paste0("psi_",
              as.vector(
                internal_list$info_variables$user_names_time_varying[
@@ -1414,7 +1419,7 @@ create_parameter_table <- function(internal_list = NULL,
                  2:internal_list$info_model$n_occasions]))
 
 
-    param_list_Psi$label <- Psi_vector
+    param_list_Psi$label <- Psi_vech
 
     ## fill in column incoming and outgoing
     ### (co-)variances among eta-variables
@@ -1422,7 +1427,7 @@ create_parameter_table <- function(internal_list = NULL,
     end_fill <- internal_list$info_model$n_processes *
       (internal_list$info_model$n_processes + 1) / 2
     variable_names <-
-    internal_list$info_variables$names_time_invariant_unobserved["user_names",]
+    internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",]
 
     Psi_incoming <- numeric(0)
     Psi_outgoing <- numeric(0)
@@ -1504,6 +1509,209 @@ create_parameter_table <- function(internal_list = NULL,
         internal_list$info_variables$user_names_time_varying[
           ,
           2:internal_list$info_model$n_occasions])
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+
+    #return output
+    return(param_list_Psi)
+
+  }
+
+  #------------------------------------------
+  # nonlinear model with nonadditive heterogeneitiy (cross-lagged)
+  #------------------------------------------
+
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity  &&
+     parameter_type == "Psi"){
+
+    Psi <- internal_list$model_matrices$Psi_labels
+
+    Psi_vech <- character(0)
+
+    for (i in 1:ncol(Psi)){
+      add_vech <- unname(Psi[i , (i:ncol(Psi))])
+      add_vech <- add_vech[!is.na(add_vech)]
+      add_vech <- add_vech[add_vech != 0]
+      Psi_vech <- c(Psi_vech, add_vech)
+    }
+
+
+    n_param_Psi = length(Psi_vech)
+
+    param_list_Psi <- matrix(nrow = n_param_Psi,
+                             ncol = 6)
+
+    colnames(param_list_Psi) <- c("incoming",
+                                  "outgoing",
+                                  "label",
+                                  "product",
+                                  "constrain",
+                                  "value")
+
+    param_list_Psi <- as.data.frame(param_list_Psi)
+
+    start_time_varying <- nrow(param_list_Psi) -
+      ((internal_list$info_model$n_occasions - 1) *
+         internal_list$info_model$n_processes) + 1
+    end_time_varying <- nrow(param_list_Psi)
+
+    ## fill in column value
+    param_list_Psi$value <- Psi_vech
+
+    ## fill in column constrain
+    param_list_Psi$constrain <- FALSE
+    param_list_Psi$constrain[start_time_varying:end_time_varying] <- TRUE
+
+    ## fill in column label
+    Psi_vech[start_time_varying:end_time_varying] <-
+      paste0("psi_",
+             as.vector(
+               internal_list$info_variables$user_names_time_varying[
+                 ,
+                 2:internal_list$info_model$n_occasions]),
+             "_",
+             as.vector(
+               internal_list$info_variables$user_names_time_varying[
+                 ,
+                 2:internal_list$info_model$n_occasions]))
+
+
+    param_list_Psi$label <- Psi_vech
+
+    ## fill in column incoming and outgoing
+    ### (co-)variances among eta-variables
+    n_eta <- internal_list$info_model$n_processes +
+      internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes - 1)
+    n_eta <- n_eta * (n_eta + 1) / 2
+    start_fill_eta <- 1
+    end_fill_eta <- start_fill_eta + n_eta - 1
+
+    variable_names <-
+    c(internal_list$info_variables$names_time_invariant_unobserved_additive[
+       "user_names",],
+      internal_list$info_variables$names_time_invariant_unobserved_cross_lagged[
+       "user_names",])
+
+    Psi_incoming <- numeric(0)
+    Psi_outgoing <- numeric(0)
+
+    for (i in 1:length(variable_names)){
+      Psi_incoming <- c(Psi_incoming,
+                        rep(variable_names[i],
+                            (length(variable_names)+1-i)))
+    }
+
+    for (i in 1:length(variable_names)){
+      for (j in i:length(variable_names)){
+        Psi_outgoing <- c(Psi_outgoing,variable_names[j])
+      }
+    }
+
+    param_list_Psi$incoming[start_fill_eta : end_fill_eta] <- Psi_incoming
+    param_list_Psi$outgoing[start_fill_eta : end_fill_eta] <- Psi_outgoing
+    param_list_Psi$product[start_fill_eta : end_fill_eta] <- FALSE
+
+    ### (co-)variances among product variables
+    n_prod <- ncol(internal_list$info_data$data_product_terms)
+    n_prod <- n_prod * (n_prod + 1) / 2
+    start_fill_prod <- min(which(is.na(param_list_Psi[,"incoming"])))
+    end_fill_prod <- start_fill_prod + n_prod - 1
+
+    variable_names <-
+      c(names(internal_list$info_data$data_product_terms))
+
+    Psi_incoming <- numeric(0)
+    Psi_outgoing <- numeric(0)
+
+    for (i in 1:length(variable_names)){
+      Psi_incoming <- c(Psi_incoming,
+                        rep(variable_names[i],
+                            (length(variable_names)+1-i)))
+    }
+
+    for (i in 1:length(variable_names)){
+      for (j in i:length(variable_names)){
+        Psi_outgoing <- c(Psi_outgoing,variable_names[j])
+      }
+    }
+
+    param_list_Psi$incoming[start_fill_prod : end_fill_prod] <- Psi_incoming
+    param_list_Psi$outgoing[start_fill_prod : end_fill_prod] <- Psi_outgoing
+    param_list_Psi$product[start_fill_prod : end_fill_prod] <- TRUE
+
+    ### (co-)variances among z-variables
+    start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
+    number_entries <- internal_list$info_model$n_time_invariant *
+      (internal_list$info_model$n_time_invariant + 1) / 2
+    end_fill <- start_fill + number_entries -1
+    variable_names <-
+      internal_list$info_variables$names_time_invariant_unique["user_names",]
+
+    Psi_incoming <- numeric(0)
+    Psi_outgoing <- numeric(0)
+
+    for (i in 1:internal_list$info_model$n_time_invariant){
+      Psi_incoming <- c(Psi_incoming,
+                        (rep(variable_names[i],
+                             (internal_list$info_model$n_time_invariant+1-i))))
+    }
+
+    for (i in 1:internal_list$info_model$n_time_invariant){
+      for (j in i:internal_list$info_model$n_time_invariant){
+        Psi_outgoing <- c(Psi_outgoing, variable_names[j])
+      }
+    }
+
+    param_list_Psi$incoming[start_fill:end_fill] <- Psi_incoming
+    param_list_Psi$outgoing[start_fill:end_fill] <- Psi_outgoing
+    param_list_Psi$product[start_fill : end_fill] <- FALSE
+
+    ### (co-)variances among initial variables
+    start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes + 1) / 2
+    end_fill <- start_fill + number_entries -1
+    variable_names <-
+      as.character(internal_list$info_variables$user_names_time_varying[,1])
+
+    Psi_incoming <- numeric(0)
+    Psi_outgoing <- numeric(0)
+
+    for (i in 1:internal_list$info_model$n_processes){
+      Psi_incoming <- c(Psi_incoming,
+                        rep(variable_names[i],
+                            (internal_list$info_model$n_processes+1-i)))
+    }
+
+    for (i in 1:internal_list$info_model$n_processes){
+      for (j in i:internal_list$info_model$n_processes){
+        Psi_outgoing <- c(Psi_outgoing,variable_names[j])
+      }
+    }
+
+    param_list_Psi$incoming[start_fill:end_fill] <- Psi_incoming
+    param_list_Psi$outgoing[start_fill:end_fill] <- Psi_outgoing
+    param_list_Psi$product[start_fill : end_fill] <- FALSE
+
+    ### (co-)variances among NON-initial time-varying variables
+    start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))
+    number_entries <- internal_list$info_model$n_processes *
+      (internal_list$info_model$n_occasions - 1)
+    end_fill <- start_fill + number_entries -1
+
+    param_list_Psi$incoming[start_fill:end_fill] <-
+      param_list_Psi$outgoing[start_fill:end_fill] <-
+      as.vector(
+        internal_list$info_variables$user_names_time_varying[
+          ,
+          2:internal_list$info_model$n_occasions])
+
+    param_list_Psi$product[start_fill : end_fill] <- FALSE
 
     # console output
     if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

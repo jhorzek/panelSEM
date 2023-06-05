@@ -15,7 +15,8 @@
 #'  \tabular{lll}{
 #'     List of XX\cr
 #'    \code{$info_data}: List of XX       \tab \tab  \cr
-#'      \code{..$data}: \code{data.frame}    \tab \tab Data set as \code{data.frame}.\cr
+#'      \code{..$data}: \code{data.frame}    \tab \tab User-specified data set.\cr
+#'      \code{..$data}: \code{data.frame}    \tab \tab Data set with product terms of observed variables. \cr
 #'      \code{..$n_obs}: \code{int(0)}   \tab \tab Number of observations.\cr
 #'      \code{..$n_var}: \code{int(0)}   \tab \tab Total number of variables in the data set.\cr
 #'      \code{..$var_names}: \code{chr(0)}  \tab \tab Names of variables.\cr
@@ -32,7 +33,9 @@
 #'      \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
 #'      \code{..$info_time_invariant}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
-#'      \code{..$names_time_invariant_unobserved}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+#'      \code{..$names_time_invariant_unobserved_additive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+#'      \code{..$names_time_invariant_unobserved_autoregressive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+#'      \code{..$names_time_invariant_unobserved_cross_lagged}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
 #'    \code{$info_parameters}: List of XX \tab \tab \cr
 #'      \code{..$parameter_list}: \code{data.frame} \tab \tab Table with labelled model parameters.\cr
 #'    \code{model_matrices}: List of XX \tab \tab \cr
@@ -87,6 +90,10 @@ create_empty_list <- function( verbose = NULL ){
 	    # data set
 	    # data.frame object
 	    "data" = data.frame(0),
+
+	    # data set
+	    # data.frame object
+	    "data_product_terms" = data.frame(0),
 
 	    # number of observations
 	    # Integer number
@@ -157,7 +164,15 @@ create_empty_list <- function( verbose = NULL ){
 
 		  # names of unobserved time-invariant variables
 		  # character matrix
-		  "names_time_invariant_unobserved" = character(0)
+		  "names_time_invariant_unobserved_additive" = character(0),
+
+		  # names of unobserved time-invariant variables
+		  # character matrix
+		  "names_time_invariant_unobserved_autoregressive" = character(0),
+
+		  # names of unobserved time-invariant variables
+		  # character matrix
+		  "names_time_invariant_unobserved_cross_lagged" = character(0)
 
 		), # end info_variables list
 

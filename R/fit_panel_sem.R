@@ -169,7 +169,7 @@ fit_panel_sem <- function(data = NULL,
 
   # fill in user-specified information about the model into the list
   internal_list <-
-    fill_in_info_model(internal_list = internal_list,
+    fill_in_info_variables(internal_list = internal_list,
                        time_varying_variables = time_varying_variables,
                        time_invariant_variables = time_invariant_variables,
                        linear = linear,
@@ -178,15 +178,26 @@ fit_panel_sem <- function(data = NULL,
 
   # add product terms of observed variables if model is nonlinear
   if (linear == FALSE){
-  internal_list <- fill_in_data( internal_list = internal_list,
-                                 add_product_variables = TRUE )}
+    internal_list <- fill_in_data(data = internal_list$info_data$data,
+                                  internal_list = internal_list,
+                                  add_product_variables = TRUE )}
+
+  # fill in user-specified information about the model into the list
+  internal_list <-
+    fill_in_info_model(internal_list = internal_list,
+                       time_varying_variables = time_varying_variables,
+                       time_invariant_variables = time_invariant_variables,
+                       linear = linear,
+                       heterogeneity  = heterogeneity,
+                       use_open_mx = use_open_mx)
+
 
   # fill in model syntax to the list
-  internal_list <-
-   fill_in_model_specification(internal_list = internal_list)
+   internal_list <-
+    fill_in_model_specification(internal_list = internal_list)
 
-  # fill in starting values to the list
-  internal_list <- starting_values(internal_list = internal_list)
+  #fill in starting values to the list
+   internal_list <- starting_values(internal_list = internal_list)
 
   # TODO: decide on default settings for (i) when to include resampling and
   # (ii) the default settings of the resampling procedure

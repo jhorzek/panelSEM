@@ -239,7 +239,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
       internal_list$info_model$n_processes
 
     names_variables <-
-      c(internal_list$info_variables$names_time_invariant_unobserved["user_names",],
+      c(internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",],
         internal_list$info_variables$names_time_invariant_unique["user_names",],
         c(internal_list$info_variables$user_names_time_varying))
 
@@ -253,7 +253,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                     nrow = internal_list$info_model$n_processes)
 
   rownames(Psi_eta) <- colnames(Psi_eta) <-
-    internal_list$info_variables$names_time_invariant_unobserved["user_names",]
+    internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",]
 
   Psi_eta[,] <-
     paste0("psi",
@@ -358,6 +358,204 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   return(Psi)
   }
 
+  #------------------------------------------
+  # nonlinear model with nonadditive heterogeneitiy (cross-lagged)
+  #------------------------------------------
+
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity  &&
+     matrix_type == "Psi"){
+
+    ### BEGIN WORK IN PROGRESS
+
+    # get dimension of matrix
+    n_total <- internal_list$info_model$n_occasions *
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_time_invariant +
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes - 1) +
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+
+    # get product term names
+    product_terms_names <- character(0)
+
+    for (i in 1:internal_list$info_model$n_processes){
+      names_product <-
+        as.vector(outer(
+          internal_list$info_variables$info_time_invariant_variables[[i]],
+          internal_list$info_variables$user_names_time_varying[
+            i,
+            -internal_list$info_model$n_occasions],
+          paste,
+          sep="*"))
+
+      product_terms_names <- c(product_terms_names, names_product)
+    }
+
+    # get matrix names
+    names_variables <-
+      c(internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",],
+        internal_list$info_variables$names_time_invariant_unobserved_cross_lagged["user_names",],
+        product_terms_names,
+        internal_list$info_variables$names_time_invariant_unique["user_names",],
+        internal_list$info_variables$user_names_time_varying)
+
+    # create empty covariance matrix
+    Psi <- matrix(ncol = n_total,
+                  nrow = n_total)
+
+    rownames(Psi) <- colnames(Psi) <- names_variables
+
+    ### (co-)variances among eta-variables
+    n_Psi_eta <- internal_list$info_model$n_processes +
+      internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes - 1)
+    start_fill_Psi_eta <- 1
+    end_fill_Psi_eta <- start_fill_Psi_eta + n_Psi_eta - 1
+
+    Psi_eta <- matrix(ncol = n_Psi_eta,
+                      nrow = n_Psi_eta)
+
+    rownames(Psi_eta) <- colnames(Psi_eta) <- colnames(Psi)[start_fill_Psi_eta :
+                                                              end_fill_Psi_eta]
+
+    Psi_eta[,] <-
+      paste0("psi",
+             "_",
+             apply(expand.grid(rownames(Psi_eta), colnames(Psi_eta)),
+                   1,
+                   paste,
+                   collapse = "_"))
+
+    Psi_eta[lower.tri(Psi_eta)] <- Psi_eta[upper.tri(Psi_eta)]
+
+    Psi[start_fill_Psi_eta : end_fill_Psi_eta,
+        start_fill_Psi_eta : end_fill_Psi_eta] <- Psi_eta
+
+
+    ### (co-)variances among observed product variables
+    n_Psi_product <- (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+    start_fill_Psi_product <- end_fill_Psi_eta + 1
+    end_fill_Psi_product <- start_fill_Psi_product + n_Psi_product - 1
+
+    Psi_product <- matrix(ncol = n_Psi_product,
+                          nrow = n_Psi_product)
+
+    rownames(Psi_product) <- colnames(Psi_product) <-
+      colnames(Psi)[start_fill_Psi_product : end_fill_Psi_product]
+
+    Psi_product[,] <-
+      paste0("psi",
+             "_",
+             apply(expand.grid(rownames(Psi_product), colnames(Psi_product)),
+                   1,
+                   paste,
+                   collapse = "_"))
+
+    Psi_product[lower.tri(Psi_product)] <- Psi_product[upper.tri(Psi_product)]
+
+    Psi[start_fill_Psi_product : end_fill_Psi_product,
+        start_fill_Psi_product : end_fill_Psi_product] <- Psi_product
+
+    ### (co-)variances among linear z-variables
+    n_Psi_z <- internal_list$info_model$n_time_invariant
+    start_fill_Psi_z <- end_fill_Psi_product + 1
+    end_fill_Psi_z <- start_fill_Psi_z + n_Psi_z - 1
+
+    Psi_z <-
+      matrix(ncol = n_Psi_z ,
+             nrow = n_Psi_z)
+
+    rownames(Psi_z) <- colnames(Psi_z) <-
+      colnames(Psi)[start_fill_Psi_z : end_fill_Psi_z]
+
+    Psi_z[,] <-
+      paste0("psi",
+             "_",
+             apply(expand.grid(rownames(Psi_z), colnames(Psi_z)),
+                   1,
+                   paste,
+                   collapse = "_"))
+
+    Psi_z[lower.tri(Psi_z)] <- Psi_z[upper.tri(Psi_z)]
+
+    Psi[start_fill_Psi_z : end_fill_Psi_z,
+        start_fill_Psi_z : end_fill_Psi_z] <- Psi_z
+
+    ### (co-)variances among initial variables
+    n_Psi_init <- internal_list$info_model$n_processes
+    start_fill_Psi_init <- end_fill_Psi_z + 1
+    end_fill_Psi_init <- start_fill_Psi_init + n_Psi_init - 1
+
+    Psi_init <- matrix(ncol = n_Psi_init,
+                       nrow = n_Psi_init)
+
+    rownames(Psi_init) <- colnames(Psi_init) <-
+      colnames(Psi)[start_fill_Psi_init : end_fill_Psi_init]
+
+    Psi_init[,] <-
+      paste0("psi",
+             "_",
+             apply(expand.grid(rownames(Psi_init), colnames(Psi_init)),
+                   1,
+                   paste,
+                   collapse = "_"))
+
+    Psi_init[lower.tri(Psi_init)] <- Psi_init[upper.tri(Psi_init)]
+
+    Psi[start_fill_Psi_init : end_fill_Psi_init,
+        start_fill_Psi_init : end_fill_Psi_init] <- Psi_init
+
+    ### (co-)variances among NON-initial time-varying variables
+    n_Psi_time_varying <- (internal_list$info_model$n_processes *
+                             (internal_list$info_model$n_occasions - 1))
+    start_fill_Psi_time_varying <- end_fill_Psi_init + 1
+    end_fill_Psi_time_varying <- start_fill_Psi_time_varying + n_Psi_time_varying - 1
+
+    Psi_time_varying <-
+      matrix(ncol = n_Psi_time_varying,
+             nrow = n_Psi_time_varying)
+
+    rownames(Psi_time_varying) <- colnames(Psi_time_varying) <-
+      colnames(Psi)[start_fill_Psi_time_varying : end_fill_Psi_time_varying]
+
+    labels_psi_time_varying <-
+      vector(mode = "list",
+             length = (internal_list$info_model$n_processes))
+
+    for (i in 1:internal_list$info_model$n_processes){
+      labels_psi_time_varying[[i]] <-
+        paste0("psi",
+               "_",
+               internal_list$info_variables$names_processes["user_names",i],
+               "_",
+               internal_list$info_variables$names_processes["user_names",i])
+    }
+
+    diag(Psi_time_varying) <-
+      unlist(
+        rep(
+          labels_psi_time_varying,
+          (internal_list$info_model$n_occasions - 1)))
+
+    Psi[start_fill_Psi_time_varying : end_fill_Psi_time_varying,
+        start_fill_Psi_time_varying : end_fill_Psi_time_varying] <-
+      Psi_time_varying
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+
+    #return output
+    return(Psi)
+  }
+
   #############################################
   # MATRIX OF STRUCTURAL COEFFICIENTS
   #############################################
@@ -414,7 +612,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
       internal_list$info_model$n_processes
 
     names_variables <-
-      c(internal_list$info_variables$names_time_invariant_unobserved["user_names",],
+      c(internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",],
         internal_list$info_variables$names_time_invariant_unique["user_names",],
         c(internal_list$info_variables$user_names_time_varying))
 
@@ -441,6 +639,118 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
 
   }
 
+  #------------------------------------------
+  # nonlinear model with nonadditive heterogeneity (cross-lagged)
+  #------------------------------------------
+
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity &&
+     "cross-lagged" %in% heterogeneity &&
+     matrix_type == "C" ){
+
+    # get dimension of matrix
+    n_total <- internal_list$info_model$n_occasions *
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_time_invariant +
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes - 1) +
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+
+    # get product term names
+    product_terms_names <- character(0)
+
+    for (i in 1:internal_list$info_model$n_processes){
+      names_product <-
+        as.vector(outer(
+          internal_list$info_variables$info_time_invariant_variables[[i]],
+          internal_list$info_variables$user_names_time_varying[
+            i,
+            -internal_list$info_model$n_occasions],
+          paste,
+          sep="*"))
+
+      product_terms_names <- c(product_terms_names, names_product)
+    }
+
+    # get matrix names
+    names_variables <-
+      c(internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",],
+        internal_list$info_variables$names_time_invariant_unobserved_cross_lagged["user_names",],
+        product_terms_names,
+        internal_list$info_variables$names_time_invariant_unique["user_names",],
+        internal_list$info_variables$user_names_time_varying)
+
+    C <- matrix(ncol = n_total,
+                nrow = n_total)
+
+    rownames(C) <- colnames(C) <- names_variables
+
+    # adjust parameter table to fit the definition variable syntax in OpenMx
+    end_fill <- nrow(internal_list$info_parameters$C_table)
+    number_entries <-
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      internal_list$info_model$n_processes
+    start_fill <- end_fill - number_entries + 1
+
+    C_table_OpenMx <- internal_list$info_parameters$C_table
+
+    C_table_OpenMx$outgoing[start_fill : end_fill] <-
+     gsub("\\*.*",
+              "",
+          C_table_OpenMx$outgoing[start_fill : end_fill])
+
+    C_table_OpenMx$value[start_fill : end_fill] <-
+    paste0("data.",
+           gsub(".*\\*",
+                "",
+         internal_list$info_parameters$C_table$outgoing[start_fill : end_fill]))
+
+    C_table_OpenMx$value <-
+      gsub("\\*",
+           "",
+           C_table_OpenMx$value)
+
+    # create matrix
+    for (i in 1:nrow(C_table_OpenMx)){
+
+      row_name <- C_table_OpenMx$incoming[i]
+      col_name <- C_table_OpenMx$outgoing[i]
+
+      C[row_name,col_name] <- C_table_OpenMx$value[i]
+
+    }
+
+    C[is.na(C)] <- "0"
+
+    # replace asteriks in row- and columnames of C matrix (OpenMX convention)
+    get_indeces <- function(x) {
+      return ( grepl("*", x, fixed = TRUE) )
+    }
+
+    indexes_product <- unlist(lapply(rownames(C), FUN=get_indeces))
+
+    factor_1 <- gsub("\\*.*", "", rownames(C)[indexes_product])
+    factor_2 <- gsub(".*\\*", "", rownames(C)[indexes_product])
+
+    rownames(C)[indexes_product] <- colnames(C)[indexes_product] <-
+      paste0("prod_",
+           factor_1,
+           "_",
+           factor_2)
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+
+    #return output
+    return(C)
+
+  }
+
   #############################################
   # SELECTION MATRIX
   #############################################
@@ -449,7 +759,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
   # linear homogeneous model
   #------------------------------------------
 
-
+  # no selection matrix required since all variables are observed
 
   #------------------------------------------
   # linear model with additive heterogeneity
@@ -465,7 +775,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
         internal_list$info_model$n_processes
 
       names_variables <-
-        c(internal_list$info_variables$names_time_invariant_unobserved["user_names",],
+        c(internal_list$info_variables$names_time_invariant_unobserved_additive["user_names",],
           internal_list$info_variables$names_time_invariant_unique["user_names",],
           c(internal_list$info_variables$user_names_time_varying))
 
@@ -477,6 +787,51 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
 
     selection_matrix_1[, ] <- 0
     selection_matrix_2 <- diag(n_total - internal_list$info_model$n_processes)
+
+    selection_matrix <- cbind(selection_matrix_1, selection_matrix_2)
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+
+    #return output
+    return(selection_matrix)
+
+  }
+
+  #------------------------------------------
+  # nonlinear model with nonadditive heterogeneitiy (cross-lagged)
+  #------------------------------------------
+
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity  &&
+     matrix_type == "selection"){
+
+    # get dimension of matrix
+    n_total <- internal_list$info_model$n_occasions *
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_time_invariant +
+      internal_list$info_model$n_processes +
+      internal_list$info_model$n_processes *
+      (internal_list$info_model$n_processes - 1) +
+      (internal_list$info_model$n_occasions - 1) *
+      (internal_list$info_model$n_processes -1 ) *
+      sum(lengths(internal_list$info_variables$info_time_invariant_variables))
+
+    n_obs <- ncol(internal_list$info_variables$names_time_invariant_unique) +
+    internal_list$info_model$n_occasions * internal_list$info_model$n_processes
+
+    n_latent <- n_total - n_obs
+
+    seletion_matrix <- matrix(ncol = n_total,
+                              nrow = n_obs)
+
+    selection_matrix_1 <- matrix(ncol = n_latent,
+                                 nrow = n_obs)
+
+    selection_matrix_1[, ] <- 0
+    selection_matrix_2 <- diag(n_obs)
 
     selection_matrix <- cbind(selection_matrix_1, selection_matrix_2)
 
