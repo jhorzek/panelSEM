@@ -1,4 +1,5 @@
 ## Changelog:
+# CG  0.0.3 2023-06-06:  changed labels of product terms to "prod_x_y"
 # CG  0.0.2 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 #						added argument add_product_variables and corresponding section
 # CG  0.0.1 2023-02-06 initial programming
@@ -78,12 +79,13 @@ if(add_product_variables == TRUE){
      i,
      -internal_list$info_model$n_occasions],
    paste,
-   sep="*"))
+   sep="_"))
 
    product_terms_names <- c(product_terms_names, names_product)
  }
 
-   product_final <- numeric(0)
+ product_terms_names <- paste0("prod_",product_terms_names)
+ product_final <- numeric(0)
 
    for (i in 1:internal_list$info_model$n_processes){
        mat <- internal_list$info_variables$info_time_invariant_variables[[i]]

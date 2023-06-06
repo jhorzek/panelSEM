@@ -978,26 +978,31 @@ create_parameter_table <- function(internal_list = NULL,
 
     #### name outgoing variable
 
-    name_outgoing_variables <-
-      vector(mode = "list",
-             length = internal_list$info_model$n_processes)
 
-    product_terms_names <- character(0)
+    # CG: get product term names from product data set
+    # product_terms_names <- character(0)
+    # TODO: delete if everything works
 
-    for (i in internal_list$info_model$n_processes:1){
-      i <- 1
-      names_product <-
-        as.vector(outer(
-          internal_list$info_variables$info_time_invariant_variables[[
-            i]],
-          internal_list$info_variables$user_names_time_varying[
-            i,
-            -internal_list$info_model$n_occasions],
-          paste,
-          sep="*"))
+    #name_outgoing_variables <-
+    #  vector(mode = "list",
+    #         length = internal_list$info_model$n_processes)
 
-      product_terms_names <- c(product_terms_names, names_product)
-    }
+    # for (i in internal_list$info_model$n_processes:1){
+    #  i <- 1
+    #  names_product <-
+    #    as.vector(outer(
+    #      internal_list$info_variables$info_time_invariant_variables[[
+    #        i]],
+    #      internal_list$info_variables$user_names_time_varying[
+    #        i,
+    #        -internal_list$info_model$n_occasions],
+    #      paste,
+    #      sep="*"))
+
+    #  product_terms_names <- c(product_terms_names, names_product)
+    #}
+
+    product_terms_names <- colnames(internal_list$info_data$data_product_terms)
 
     param_list_C[start_fill:end_fill,"outgoing"] <-
       product_terms_names
@@ -1079,10 +1084,12 @@ create_parameter_table <- function(internal_list = NULL,
             i,
             -internal_list$info_model$n_occasions],
           paste,
-          sep="*"))
+          sep="_"))
 
       product_terms_names <- c(product_terms_names, names_product)
     }
+
+    product_terms_names <- paste0("prod_", product_terms_names)
 
     param_list_C[start_fill:end_fill,"outgoing"] <-
       product_terms_names
@@ -1618,31 +1625,49 @@ create_parameter_table <- function(internal_list = NULL,
 
     ### (co-)variances among product variables
     n_prod <- ncol(internal_list$info_data$data_product_terms)
-    n_prod <- n_prod * (n_prod + 1) / 2
     start_fill_prod <- min(which(is.na(param_list_Psi[,"incoming"])))
     end_fill_prod <- start_fill_prod + n_prod - 1
+
+    # CG: the code chunks below specify a saturated covariance matrix which
+    # in the current version is not needed
+    # n_prod <- n_prod * (n_prod + 1) / 2
+    # start_fill_prod <- min(which(is.na(param_list_Psi[,"incoming"])))
+    # end_fill_prod <- start_fill_prod + n_prod - 1
 
     variable_names <-
       c(names(internal_list$info_data$data_product_terms))
 
-    Psi_incoming <- numeric(0)
-    Psi_outgoing <- numeric(0)
+    Psi_incoming <- variable_names
+    Psi_outgoing <- variable_names
 
-    for (i in 1:length(variable_names)){
-      Psi_incoming <- c(Psi_incoming,
-                        rep(variable_names[i],
-                            (length(variable_names)+1-i)))
-    }
+    #variable_names <-
+    #  c(names(internal_list$info_data$data_product_terms))
 
-    for (i in 1:length(variable_names)){
-      for (j in i:length(variable_names)){
-        Psi_outgoing <- c(Psi_outgoing,variable_names[j])
-      }
-    }
+    # Psi_incoming <- numeric(0)
+    # Psi_outgoing <- numeric(0)
+
+    #for (i in 1:length(variable_names)){
+    #  Psi_incoming <- c(Psi_incoming,
+    #                    rep(variable_names[i],
+    #                        (length(variable_names)+1-i)))
+    #}
+
+    #for (i in 1:length(variable_names)){
+    #  for (j in i:length(variable_names)){
+    #    Psi_outgoing <- c(Psi_outgoing,variable_names[j])
+    #  }
+    #}
 
     param_list_Psi$incoming[start_fill_prod : end_fill_prod] <- Psi_incoming
     param_list_Psi$outgoing[start_fill_prod : end_fill_prod] <- Psi_outgoing
     param_list_Psi$product[start_fill_prod : end_fill_prod] <- TRUE
+    param_list_Psi$constrain[start_fill_prod : end_fill_prod] <- TRUE
+    param_list_Psi$label[start_fill_prod : end_fill_prod] <-
+      paste0("psi",
+             "_",
+             Psi_incoming,
+             "_",
+             Psi_outgoing)
 
     ### (co-)variances among z-variables
     start_fill <- min(which(is.na(param_list_Psi[,"incoming"])))

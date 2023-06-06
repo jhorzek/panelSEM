@@ -83,6 +83,11 @@ fill_in_info_model <- function(internal_list = NULL,
     create_parameter_table(internal_list = internal_list,
                            parameter_type = "Psi")
 
+  # fill in mean vector
+  internal_list$model_matrices$mean_vector <-
+    create_model_matrix(internal_list = internal_list,
+                           matrix_type = "mean")
+
   #############################################################
   # FILTER / SELECTION MATRIX TO SELECT OBSERVED VARIABLES ONLY
   #############################################################
