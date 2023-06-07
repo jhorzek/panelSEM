@@ -96,7 +96,8 @@ test_that("multiplication works", {
                                                        paste0("y", 1:time_points)),
                          time_invariant_variables = list(c("z1", "z2"),
                                                          c("z2", "z3")),
-                         use_open_mx = FALSE)
+                         use_open_mx = FALSE,
+                         heterogeneity = "additive")
 
   library(lavaan)
   fit_lavaan <- sem(model$model_syntax$lavaan,

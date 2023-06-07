@@ -21,8 +21,8 @@
 
 
 ## Function definition
-create_model_matrix <- function(internal_list = NULL,
-                                matrix_type = NULL){
+create_model_matrix <- function(internal_list,
+                                matrix_type){
 
   # function name
   fun.name <- "create_model_matrix"

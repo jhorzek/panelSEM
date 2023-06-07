@@ -23,9 +23,9 @@
 #'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
 #'  DOI: 10.1080/10705511.2020.1780598
 
-fill_in_data <- function(data = NULL,
-                         internal_list = NULL,
-                         add_product_variables = FALSE){
+fill_in_data <- function(data,
+                         internal_list,
+                         add_product_variables){
 
 # function name
 fun.name <- "fill_in_data"

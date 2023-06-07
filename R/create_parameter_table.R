@@ -19,8 +19,8 @@
 
 
 ## Function definition
-create_parameter_table <- function(internal_list = NULL,
-                                   parameter_type = NULL){
+create_parameter_table <- function(internal_list,
+                                   parameter_type){
 
 
   # function name

@@ -23,7 +23,7 @@
 #'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
 #'  DOI: 10.1080/10705511.2020.1780598
 
-starting_values <- function(internal_list = NULL){
+starting_values <- function(internal_list){
 
   # function name
   fun.name <- "starting_values"

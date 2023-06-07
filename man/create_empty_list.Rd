@@ -15,7 +15,8 @@ An empty internal list with the following structure:\cr
  \tabular{lll}{
     List of XX\cr
    \code{$info_data}: List of XX       \tab \tab  \cr
-     \code{..$data}: \code{data.frame}    \tab \tab Data set as \code{data.frame}.\cr
+     \code{..$data}: \code{data.frame}    \tab \tab User-specified data set.\cr
+     \code{..$data}: \code{data.frame}    \tab \tab Data set with product terms of observed variables. \cr
      \code{..$n_obs}: \code{int(0)}   \tab \tab Number of observations.\cr
      \code{..$n_var}: \code{int(0)}   \tab \tab Total number of variables in the data set.\cr
      \code{..$var_names}: \code{chr(0)}  \tab \tab Names of variables.\cr
@@ -23,9 +24,8 @@ An empty internal list with the following structure:\cr
      \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
      \code{..$n_processes}: \code{int(0)}  \tab \tab Number of dynamic processes. \cr
      \code{..$n_time_invariant} \code{int(0)}  \tab \tab  Number of observed time-invariant variables \cr
-     \code{..$homogeneous} \code{logical(0)}  \tab \tab \code{TRUE} if the model does NOT contain unobserved heterogeneity. \cr
      \code{..$linear} \code{logical(0)}  \tab \tab \code{TRUE} if the model is linear in observed variables.\cr
-     \code{..$additive} \code{logical(0)}  \tab \tab \code{TRUE} if the model is additive in observed heterogeneity.\cr
+     \code{..$heterogeneity} \code{logical(0)}  \tab \tab Specify type of observed heterogeneity.\cr
      \code{..$use_open_mx} \code{logical(0)}  \tab \tab If \code{TRUE}, \code{OpenMx} is used, otherwise \code{lavaan}.\cr
    \code{$info_variables}: List of XX        \tab \tab \cr
      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
@@ -33,7 +33,9 @@ An empty internal list with the following structure:\cr
      \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
      \code{..$info_time_invariant}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
-     \code{..$names_time_invariant_unobserved}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+     \code{..$names_time_invariant_unobserved_additive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+     \code{..$names_time_invariant_unobserved_autoregressive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
+     \code{..$names_time_invariant_unobserved_cross_lagged}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
    \code{$info_parameters}: List of XX \tab \tab \cr
      \code{..$parameter_list}: \code{data.frame} \tab \tab Table with labelled model parameters.\cr
    \code{model_matrices}: List of XX \tab \tab \cr

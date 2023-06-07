@@ -62,7 +62,7 @@
 
 
 ## Function definition
-create_empty_list <- function( verbose = NULL ){
+create_empty_list <- function( verbose ){
 
 	# function name
 	fun.name <- "create_empty_list"

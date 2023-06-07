@@ -34,12 +34,12 @@
 
 
 # function definition
-fill_in_info_model <- function(internal_list = NULL,
-                               time_varying_variables = NULL,
-                               time_invariant_variables = NULL,
-                               linear = TRUE,
-                               heterogeneity  = NULL,
-                               use_open_mx = FALSE){
+fill_in_info_model <- function(internal_list,
+                               time_varying_variables,
+                               time_invariant_variables,
+                               linear,
+                               heterogeneity,
+                               use_open_mx){
 
   # function name
   fun.name <- "fill_in_info_model"

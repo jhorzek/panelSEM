@@ -3,10 +3,10 @@
 
 ## Documentation
 #' @title Set Verbosity
-#' @description Reads the value of the argument \code{verbose} from the user 
-#' input to the \code{\link{fit_panel_sem}} function and checks if it is 
+#' @description Reads the value of the argument \code{verbose} from the user
+#' input to the \code{\link{fit_panel_sem}} function and checks if it is
 #' valid.
-#' @param verbose An integer number from the following range: 
+#' @param verbose An integer number from the following range:
 #' \tabular{ll}{
 #' 0 \tab No output (default).\cr
 #' 1 \tab User messages.\cr
@@ -15,7 +15,7 @@
 
 
 # Function definition
-handle_verbose_argument <- function( verbose = NULL ){
+handle_verbose_argument <- function( verbose ){
 
 	# function name
 	fun.name <- "handle_verbose_argument"
@@ -27,16 +27,16 @@ handle_verbose_argument <- function( verbose = NULL ){
 	fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
 	# default
-	verbose.default <- c(0,1,2) 
+	verbose.default <- c(0,1,2)
 	# 0...no output, 1...user messages, 2...debugging-relevant messages
 
 	# if not numeric, try to convert to numeric
-	if( !class( verbose ) %in% class( verbose.default ) ) verbose <- 
+	if( !class( verbose ) %in% class( verbose.default ) ) verbose <-
 	  suppressWarnings( try( as.numeric( verbose ) ) )
 	if( inherits( verbose, "try-error" ) ) verbose <- verbose.default
 
 	# if not yet numeric, set default
-	if( !class( verbose ) %in% class( verbose.default ) ) verbose <- 
+	if( !class( verbose ) %in% class( verbose.default ) ) verbose <-
 	  verbose.default
 
 	# if numeric(0), set default
@@ -49,11 +49,11 @@ handle_verbose_argument <- function( verbose = NULL ){
 	if( length( verbose ) > 1 ) verbose <- verbose.default[1]
 
 	# console output
-	if( verbose >= 2 ) cat( paste0( "  end of function ", 
+	if( verbose >= 2 ) cat( paste0( "  end of function ",
 	                                fun.name.version, " ", Sys.time(), "\n" ) )
 
 	# return verbose object
-	return( verbose )	
+	return( verbose )
 }
 
 ## test/development
