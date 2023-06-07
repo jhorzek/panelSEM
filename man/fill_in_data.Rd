@@ -4,13 +4,17 @@
 \alias{fill_in_data}
 \title{fill_in_data}
 \usage{
-fill_in_data(data = NULL, internal_list = NULL)
+fill_in_data(data = NULL, internal_list = NULL, add_product_variables = FALSE)
 }
 \arguments{
 \item{data}{A data.frame containing the data in the wide format.}
 
 \item{internal_list}{A list with various information extracted from the
 model.}
+
+\item{add_product_variables}{Logical value indicating if (\code{TRUE})
+product terms of observed variables should be added to the
+\code{..$info_data} slot.}
 }
 \value{
 The inputted list with several slots in \code{..$info_data} filled

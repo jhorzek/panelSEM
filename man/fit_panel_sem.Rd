@@ -5,15 +5,14 @@
 \title{Fit Dynamic Panel Data Models}
 \usage{
 fit_panel_sem(
-  data = NULL,
-  time_varying_variables = NULL,
-  time_invariant_variables = NULL,
-  homogeneous = FALSE,
+  data,
+  time_varying_variables,
+  time_invariant_variables,
   linear = TRUE,
-  additive = TRUE,
+  heterogeneity,
   use_resamples = FALSE,
   use_open_mx = FALSE,
-  verbose = NULL,
+  verbose = 0,
   ...
 )
 }
@@ -28,11 +27,9 @@ starting with the first measurement occasion.}
 \item{time_invariant_variables}{List of character vectors containing names of the time-invariant
 variables. List must have the same length as list in argument \code{time_varying_variables}.}
 
-\item{homogeneous}{Logical (TRUE / FALSE = default) indicating if the model contains unobserved heterogeneity (TRUE).}
-
 \item{linear}{Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).}
 
-\item{additive}{Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).}
+\item{heterogeneity}{Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).}
 
 \item{use_resamples}{Logical (TRUE / FALSE = default) indicating if a resampling procedure is used for the computation of starting values and model diagnostics.}
 

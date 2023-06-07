@@ -8,9 +8,8 @@ fill_in_info_model(
   internal_list = NULL,
   time_varying_variables = NULL,
   time_invariant_variables = NULL,
-  homogeneous = FALSE,
   linear = TRUE,
-  additive = TRUE,
+  heterogeneity = NULL,
   use_open_mx = FALSE
 )
 }
@@ -25,11 +24,9 @@ measurement ocassion.}
 \item{time_invariant_variables}{List of character vectors containing names of the time-invariant
 variables. List must have the same length as list in argument \code{time_varying_variables}.}
 
-\item{homogeneous}{Logical (TRUE / FALSE = default) indicating if the model contains unobserved heterogeneity (TRUE).}
-
 \item{linear}{Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).}
 
-\item{additive}{Logical (TRUE = default / FALSE) indicating if the unobserved heterogeneity is additive (TRUE).}
+\item{heterogeneity}{Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).}
 
 \item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 should be used.}
@@ -37,17 +34,10 @@ should be used.}
 \item{n_occasions}{Integer number indicating the number of measurement occasions.}
 }
 \value{
-The inputted internal_list with several slots filled in:
-\tabular{lll}{
- \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
- \code{..$n_processes}: \code{int(0)}  \tab \tab Number of dynamic processes. \cr
- \code{..$generic_names_time_varying}: \code{data.frame} \tab \tab Table with generic variable names of time-varying variables.\cr
- \code{..$user_names_time_varying}: \code{data.frame} \tab \tab Table with user-specified variable names of time-varying variables.\cr
- \code{..$generic_names_time_invariant}: \code{data.frame} \tab \tab Table with generic variable names of time-invariant variables.\cr
- \code{..$user_names_time_invariant}: \code{data.frame} \tab \tab Table with user-specified variable names of time-invariant variables.}
+
 }
 \description{
-Provide information about the dynamic panel data model.
+Provide information about the model parameters and model matrices of the dynamic panel data model.
 }
 \references{
 Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible

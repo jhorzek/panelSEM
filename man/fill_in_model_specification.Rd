@@ -2,16 +2,27 @@
 % Please edit documentation in R/fill_in_model_specification.R
 \name{fill_in_model_specification}
 \alias{fill_in_model_specification}
-\title{fill_in_model_specification}
+\title{Specify the Model Syntax}
 \usage{
 fill_in_model_specification(internal_list)
 }
 \arguments{
-\item{internal_list}{internal list object}
+\item{internal_list}{A list with various information extracted from the
+model.}
 }
 \value{
-internal_list, where lavaan or OpenMx model is added to internal_list$model_syntax
+The inputted internal_list with slot \code{internal_list$model_syntax} filled in.
 }
 \description{
-Creates a lavaan or OpenMx model based in the user specification in internal_list
+Creates a \code{lavaan} or \code{OpenMx} model based in the user specified arguments in the \code{fit_panel_sem} function.
+}
+\references{
+Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
+Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
+868–901. https://doi.org/10.1007/s11336-021-09811-z
+
+Gische, C., West, S.G., & Voelkle, M.C. (2021) Forecasting Causal
+ Effects of Interventions versus Predicting Future Outcomes, Structural
+ Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
+ DOI: 10.1080/10705511.2020.1780598
 }

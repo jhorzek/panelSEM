@@ -129,14 +129,14 @@
 #'                                                                    paste0("y", 1:time_points)),
 #'                               labels_time_invariant_variables = list(c("z1", "z2"),
 #'                                                                      c("z2", "z3")))
-fit_panel_sem <- function(data = NULL,
-                          time_varying_variables = NULL,
-                          time_invariant_variables = NULL,
+fit_panel_sem <- function(data,
+                          time_varying_variables,
+                          time_invariant_variables,
                           linear = TRUE,
-                          heterogeneity  = NULL,
+                          heterogeneity,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
-                          verbose = NULL,
+                          verbose = 0,
                           ...){
 
 
@@ -165,7 +165,8 @@ fit_panel_sem <- function(data = NULL,
 
   # fill in user-specified data to the list
   internal_list <- fill_in_data( internal_list = internal_list,
-                                 data = data )
+                                 data = data ,
+                                 add_product_variables = FALSE)
 
   # fill in user-specified information about the model into the list
   internal_list <-

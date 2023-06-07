@@ -43,6 +43,79 @@ simulate_data(
   psi_y_y
 )
 }
+\arguments{
+\item{N}{Integer number reflecting number of units (e.g. persons).}
+
+\item{time_points}{Integer number reflecting number of measurement occasions.}
+
+\item{c_x1_etax}{Numeric parameter value.}
+
+\item{c_y1_etax}{Numeric parameter value.}
+
+\item{c_x1_etay}{Numeric parameter value.}
+
+\item{c_y1_etay}{Numeric parameter value.}
+
+\item{c_x_etax}{Numeric parameter value.}
+
+\item{c_y_etay}{Numeric parameter value.}
+
+\item{c_x1_z1}{Numeric parameter value.}
+
+\item{c_x1_z2}{Numeric parameter value.}
+
+\item{c_x1_z3}{Numeric parameter value.}
+
+\item{c_y1_z1}{Numeric parameter value.}
+
+\item{c_y1_z2}{Numeric parameter value.}
+
+\item{c_y1_z3}{Numeric parameter value.}
+
+\item{c_x_z1}{Numeric parameter value.}
+
+\item{c_x_z2}{Numeric parameter value.}
+
+\item{c_y_z2}{Numeric parameter value.}
+
+\item{c_y_z3}{Numeric parameter value.}
+
+\item{c_x_x}{Numeric parameter value.}
+
+\item{c_x_y}{Numeric parameter value.}
+
+\item{c_y_x}{Numeric parameter value.}
+
+\item{c_y_y}{Numeric parameter value.}
+
+\item{psi_etax_etax}{Numeric parameter value.}
+
+\item{psi_etax_etay}{Numeric parameter value.}
+
+\item{psi_etay_etay}{Numeric parameter value.}
+
+\item{psi_z1_z1}{Numeric parameter value.}
+
+\item{psi_z1_z2}{Numeric parameter value.}
+
+\item{psi_z1_z3}{Numeric parameter value.}
+
+\item{psi_z2_z2}{Numeric parameter value.}
+
+\item{psi_z2_z3}{Numeric parameter value.}
+
+\item{psi_z3_z3}{Numeric parameter value.}
+
+\item{psi_x1_x1}{Numeric parameter value.}
+
+\item{psi_x1_y1}{Numeric parameter value.}
+
+\item{psi_y1_y1}{Numeric parameter value.}
+
+\item{psi_x_x}{Numeric parameter value.}
+
+\item{psi_y_y}{Numeric parameter value.}
+}
 \value{
 a data.frame of data of observed variables
 }

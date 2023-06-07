@@ -10,7 +10,8 @@ create_model_matrix(internal_list = NULL, matrix_type = NULL)
 \item{internal_list}{A list with various information extracted from the
 model.}
 
-\item{matrix_type}{Character string describing the type of model matrix. Admissible values are: \code{"C"}, \code{"Psi"}, and \code{"selection"}.}
+\item{matrix_type}{Character string describing the type of model matrix.
+Admissible values are: \code{"C"}, \code{"Psi"}, \code{"mean"}, and \code{"selection"}.}
 }
 \value{
 A matrix of model parameters or a selection matrix.

@@ -29,12 +29,12 @@
 #' @keywords external
 #' @export
 
-auxiliary_model <- function(time_varying_variables = NULL,
-                            time_invariant_variables = NULL,
-                            linear = TRUE,
-                            heterogeneity  = NULL,
-                            use_open_mx = FALSE,
-                            verbose = NULL,
+auxiliary_model <- function(time_varying_variables,
+                            time_invariant_variables,
+                            linear,
+                            heterogeneity,
+                            use_open_mx,
+                            verbose,
                             ...){
 
 

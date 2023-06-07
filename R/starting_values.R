@@ -23,7 +23,7 @@
 #'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
 #'  DOI: 10.1080/10705511.2020.1780598
 
-starting_values <- function(internal_list = NULL){
+starting_values <- function(internal_list){
 
   # function name
   fun.name <- "starting_values"
@@ -557,6 +557,9 @@ starting_values <- function(internal_list = NULL){
   #  internal_list$info_parameters$C_table
 
   #  } else {
+
+  ## TODO: auxiliary_model is called here, but the variables time_varying_variables
+  # and time_invariant_variables do not exist.
 
 internal_list_aux <-
   auxiliary_model(time_varying_variables = time_varying_variables,
