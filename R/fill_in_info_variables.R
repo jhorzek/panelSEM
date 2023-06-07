@@ -41,7 +41,8 @@ fill_in_info_variables <- function(internal_list,
                                    time_invariant_variables,
                                    linear,
                                    heterogeneity,
-                                   use_open_mx){
+                                   use_open_mx,
+                                   ...){
 
 	# function name
 	fun.name <- "fill_in_info_variables"

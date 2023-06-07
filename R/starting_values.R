@@ -1,4 +1,6 @@
 ## Changelog:
+# CG  0.0.6 2023-06-07: defined objects variables_tv and variables_ti for
+#                       the function call of auxiliary models
 # CG  0.0.5 2023-05-24: removed OpenMx == TRUE part for linear additive model
 # CG  0.0.4 2023-05-24: replaced arguments homogeneity and additive by heterogeneity
 # CG  0.0.3 2023-04-24 change argument to internal_list
@@ -474,96 +476,21 @@ starting_values <- function(internal_list){
   #  - the (co)-variances of the the noninitial time-varying observed variables
   #############################################################################
 
-  # TODO: use starting values for psi_x1_x1, psi_x1_y1, and psi_y1_y1 from above?
-  # Maybe not, since these values should now account for the (co-)variances
-  # among the eta-variables which are omitted from the model
-  # HOWEVER: we might think about using the model specification of the
-  # homogeneous model (with the serial correlations) to compute the starting
-  # values. MAYBE: include this change once the homogeneous model is implemented.
-  # We might use lavaan since the repeated use of MxTry hard is time-consuming.
+  variables_tv <- vector("list", length = internal_list$info_model$n_processes)
 
-  #if(use_open_mx == TRUE){
+  for (i in 1:internal_list$info_model$n_processes){
+    variables_tv[[i]] <- internal_list$info_variables$user_names_time_varying[i,]
+  }
 
-  #  require(OpenMx)
+  variables_ti <- vector("list", length = internal_list$info_model$n_processes)
 
-  #  psem.matA <- internal_list$model_matrices$C_labels
-  #  psem.matS <- internal_list$model_matrices$Psi_labels
-    #psem.matF <- internal_list$model_matrices$select_observed_only
-  #  var_names <- internal_list$info_data$var_names
-  #  nvar <- internal_list$info_data$n_var
-
-  #  obsvar <- psem.matA[var_names,var_names]
-  #  labelsA <- as.vector(t(obsvar))
-  #  indicA <- ifelse(is.na(obsvar)==TRUE,0,1)
-  #  valuesA <- as.vector(t(indicA))
-  #  freeA <- ifelse(is.na(obsvar)==TRUE, F, T)
-  #  freeA_vec <- as.vector(t(freeA))
-
-  #  obscov <- psem.matS[var_names,var_names]
-  #  labelsS <- as.vector(t(obscov))
-  #  indicS <- ifelse(is.na(obscov)==TRUE,0,1)
-  #  valuesS <- as.vector(t(indicS))
-  #  freeS <- ifelse(is.na(obscov)==TRUE, F, T)
-  #  freeS_vec <- as.vector(t(freeS))
-
-  #  raw_data <- mxData(observed = data, type = 'raw')
-
-  #  matrA <- mxMatrix( type="Full",
-  #                     nrow=nvar,
-  #                     ncol=nvar,
-  #                     free=freeA_vec,
-  #                     values=valuesA,
-  #                     labels=labelsA,
-  #                     byrow=TRUE,
-  #                     name="A",
-  #                     dimnames = list(var_names,var_names))
-
-  #  matrS <- mxMatrix( type="Symm",
-  #                     nrow=nvar,
-  #                     ncol=nvar,
-  #                     free=freeS_vec,
-  #                     values=valuesS,
-  #                     labels=labelsS,
-  #                     byrow=TRUE,
-  #                     name="S",
-  #                     dimnames = list(var_names,var_names) )
-
-  #  matrF <- mxMatrix( type="Iden",
-  #                     nrow=nvar,
-  #                     ncol=nvar,
-  #                     name="F",
-  #                     dimnames = list(var_names,var_names) )
-
-  #  matrM <- mxMatrix( type="Full",
-  #                     nrow=1,
-  #                     ncol=nvar,
-  #                     free=rep(T,nvar),
-  #                     values=rep(0,nvar),
-  #                     name="M",
-  #                     labels = paste0('mean_', var_names),
-  #                     dimnames = list(NULL, var_names))
-    ### free mean
-  #  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
-  #  funML <- mxFitFunctionML()
-  #  sv_mod <- mxModel("starting values observed variables",
-  #                    raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
-  #  status <- FALSE
-  #  while(!status){
-  #    sv_fit <- mxTryHard(sv_mod)
-  #    if(sv_fit$output$status$code %in% c(0:1)) status <- TRUE
-  #  }
-
-  #  summary(sv_fit)
-  #  internal_list$info_parameters$C_table
-
-  #  } else {
-
-  ## TODO: auxiliary_model is called here, but the variables time_varying_variables
-  # and time_invariant_variables do not exist.
+  for (i in 1:internal_list$info_model$n_processes){
+    variables_ti[[i]] <- internal_list$info_variables$info_time_invariant_variables[[i]]
+  }
 
 internal_list_aux <-
-  auxiliary_model(time_varying_variables = time_varying_variables,
-                  time_invariant_variables = time_invariant_variables,
+  auxiliary_model(time_varying_variables = variables_tv,
+                  time_invariant_variables = variables_ti,
                   linear = linear,
                   heterogeneity  = "homogeneous",
                   use_open_mx = use_open_mx,
@@ -597,8 +524,6 @@ for (i in names(coef_lav_hom)){
   }
 }
 
-
-#}
 }
 
 # prepare output
