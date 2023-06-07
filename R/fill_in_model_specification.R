@@ -55,7 +55,7 @@ fill_in_model_specification_open_mx <- function(internal_list){
   fun.version <- "0_0_2 2023_04_18"
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-  #note: OpenMx does not allow for the format used
+  # Note: OpenMx does not allow for the format used
   # in the other functions
 
   # extract directed and undirected effects:

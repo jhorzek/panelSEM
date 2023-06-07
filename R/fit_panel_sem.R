@@ -129,14 +129,14 @@
 #'                                                                    paste0("y", 1:time_points)),
 #'                               labels_time_invariant_variables = list(c("z1", "z2"),
 #'                                                                      c("z2", "z3")))
-fit_panel_sem <- function(data = NULL,
-                          time_varying_variables = NULL,
-                          time_invariant_variables = NULL,
+fit_panel_sem <- function(data,
+                          time_varying_variables,
+                          time_invariant_variables,
                           linear = TRUE,
-                          heterogeneity  = NULL,
+                          heterogeneity,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
-                          verbose = NULL,
+                          verbose = 0,
                           ...){
 
 
