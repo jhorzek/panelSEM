@@ -558,6 +558,9 @@ starting_values <- function(internal_list){
 
   #  } else {
 
+  ## TODO: auxiliary_model is called here, but the variables time_varying_variables
+  # and time_invariant_variables do not exist.
+
 internal_list_aux <-
   auxiliary_model(time_varying_variables = time_varying_variables,
                   time_invariant_variables = time_invariant_variables,

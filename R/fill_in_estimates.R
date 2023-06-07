@@ -23,7 +23,7 @@
 #' @keywords external
 
 fill_in_estimates <- function(internal_list,
-                              rand=FALSE){
+                              rand){
 
   psem.matA <- internal_list$model_matrices$C_labels  ##coef labels
   psem.matS <- internal_list$model_matrices$Psi_labels ## var-cov labels

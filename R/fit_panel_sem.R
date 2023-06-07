@@ -165,7 +165,8 @@ fit_panel_sem <- function(data,
 
   # fill in user-specified data to the list
   internal_list <- fill_in_data( internal_list = internal_list,
-                                 data = data )
+                                 data = data ,
+                                 add_product_variables = FALSE)
 
   # fill in user-specified information about the model into the list
   internal_list <-
