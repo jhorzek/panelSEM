@@ -102,7 +102,7 @@ create_model_matrix <- function(internal_list,
                    paste,
                    collapse = "_"))
 
-    Psi_z[lower.tri(Psi_z)] <- Psi_z[upper.tri(Psi_z)]
+    Psi_z[lower.tri(Psi_z)] <- t(Psi_z)[lower.tri(t(Psi_z))]
 
     start_fill <- min(which(is.na(diag(Psi))))
     end_fill <- start_fill + internal_list$info_model$n_time_invariant -1
@@ -124,7 +124,7 @@ create_model_matrix <- function(internal_list,
                    paste,
                    collapse = "_"))
 
-    Psi_init[lower.tri(Psi_init)] <- Psi_init[upper.tri(Psi_init)]
+    Psi_init[lower.tri(Psi_init)] <- t(Psi_init)[lower.tri(t(Psi_init))]
 
     start_fill <- min(which(is.na(diag(Psi))))
     end_fill <- start_fill + internal_list$info_model$n_processes -1
@@ -163,7 +163,7 @@ create_model_matrix <- function(internal_list,
                    collapse = "_"))
 
     Psi_time_varying_contemporaneous[lower.tri(Psi_time_varying_contemporaneous)] <-
-      Psi_time_varying_contemporaneous[upper.tri(Psi_time_varying_contemporaneous)]
+      t(Psi_time_varying_contemporaneous)[lower.tri(t(Psi_time_varying_contemporaneous))]
 
     for (i in 1:(internal_list$info_model$n_occasions - 1)){
     start_fill <- min(which(is.na(diag(Psi_time_varying))))
@@ -264,7 +264,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                  paste,
                  collapse = "_"))
 
-  Psi_eta[lower.tri(Psi_eta)] <- Psi_eta[upper.tri(Psi_eta)]
+  Psi_eta[lower.tri(Psi_eta)] <- t(Psi_eta)[lower.tri(t(Psi_eta))]
 
   Psi[1:internal_list$info_model$n_processes,
       1:internal_list$info_model$n_processes] <- Psi_eta
@@ -285,7 +285,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                  paste,
                  collapse = "_"))
 
-  Psi_z[lower.tri(Psi_z)] <- Psi_z[upper.tri(Psi_z)]
+  Psi_z[lower.tri(Psi_z)] <- t(Psi_z)[lower.tri(t(Psi_z))]
 
   start_fill <- min(which(is.na(diag(Psi))))
   end_fill <- start_fill + internal_list$info_model$n_time_invariant -1
@@ -307,7 +307,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                  paste,
                  collapse = "_"))
 
-  Psi_init[lower.tri(Psi_init)] <- Psi_init[upper.tri(Psi_init)]
+  Psi_init[lower.tri(Psi_init)] <- t(Psi_init)[lower.tri(t(Psi_init))]
 
   start_fill <- min(which(is.na(diag(Psi))))
   end_fill <- start_fill + internal_list$info_model$n_processes -1
@@ -438,7 +438,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                    paste,
                    collapse = "_"))
 
-    Psi_eta[lower.tri(Psi_eta)] <- Psi_eta[upper.tri(Psi_eta)]
+    Psi_eta[lower.tri(Psi_eta)] <- t(Psi_eta)[lower.tri(t(Psi_eta))]
 
     Psi[start_fill_Psi_eta : end_fill_Psi_eta,
         start_fill_Psi_eta : end_fill_Psi_eta] <- Psi_eta
@@ -495,7 +495,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                    paste,
                    collapse = "_"))
 
-    Psi_z[lower.tri(Psi_z)] <- Psi_z[upper.tri(Psi_z)]
+    Psi_z[lower.tri(Psi_z)] <- t(Psi_z)[lower.tri(t(Psi_z))]
 
     Psi[start_fill_Psi_z : end_fill_Psi_z,
         start_fill_Psi_z : end_fill_Psi_z] <- Psi_z
@@ -519,7 +519,7 @@ as.character(internal_list$info_variables$user_names_time_varying[,2])[i])
                    paste,
                    collapse = "_"))
 
-    Psi_init[lower.tri(Psi_init)] <- Psi_init[upper.tri(Psi_init)]
+    Psi_init[lower.tri(Psi_init)] <- t(Psi_init)[lower.tri(t(Psi_init))]
 
     Psi[start_fill_Psi_init : end_fill_Psi_init,
         start_fill_Psi_init : end_fill_Psi_init] <- Psi_init
