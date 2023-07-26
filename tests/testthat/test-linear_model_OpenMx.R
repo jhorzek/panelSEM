@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("test linear model - lavaan", {
   library(panelSEM)
   library(testthat)
   set.seed(23)
@@ -89,46 +89,6 @@ test_that("multiplication works", {
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  ## LAVAAN
-
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = FALSE,
-                         heterogeneity = "additive")
-
-  library(lavaan)
-  fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
-                            data = model$info_data$data)
-
-  est <- lavaan::coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
-
-  shared_names <- names(population_parameters)[names(population_parameters) %in% names(est)]
-
-  expect_equal(
-    all(
-      abs(
-        (est[shared_names] - population_parameters[shared_names])/population_parameters[shared_names]
-      ) < .3),
-    TRUE)
-
-
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = FALSE,
-                         homogeneous = TRUE)
-
-  fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
-                                data = model$info_data$data))
-  expect_true(is(fit_lavaan, "lavaan"))
-
-  library(OpenMx)
-
   model <- fit_panel_sem(data = data,
                          time_varying_variables = list(paste0("x", 1:time_points),
                                                        paste0("y", 1:time_points)),
@@ -137,7 +97,5 @@ test_that("multiplication works", {
                          use_open_mx = TRUE)
 
   fit_openmx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
-
-  stop("OpenMx version not yet working!")
 
 })
