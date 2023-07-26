@@ -1,4 +1,4 @@
-test_that("test linear model - lavaan", {
+test_that("test linear model - OpenMx", {
   library(panelSEM)
   library(testthat)
   set.seed(23)
@@ -89,13 +89,24 @@ test_that("test linear model - lavaan", {
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = TRUE)
+  for(heterogeneity in c("homogeneous", "additive", "autoregressive", "cross-lagged")){
 
-  fit_openmx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
+    message("Testing heterogeneity = ", heterogeneity)
+
+    model <- fit_panel_sem(data = data,
+                           time_varying_variables = list(paste0("x", 1:time_points),
+                                                         paste0("y", 1:time_points)),
+                           time_invariant_variables = list(c("z1", "z2"),
+                                                           c("z2", "z3")),
+                           heterogeneity = heterogeneity,
+                           use_open_mx = TRUE)
+
+    testthat::expect_true(is(model, "panelSEM"))
+    testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel"))
+    fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
+    # check if the fit was succesful:
+    print(fit_mx$fitfunction$result[[1]])
+
+  }
 
 })

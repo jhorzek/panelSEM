@@ -113,17 +113,23 @@ test_that("test linear model - lavaan", {
       ) < .3),
     TRUE)
 
+  for(heterogeneity in c("homogeneous", "additive", "autoregressive", "cross-lagged")){
 
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = FALSE,
-                         homogeneous = TRUE)
+    message("Testing heterogeneity = ", heterogeneity)
 
-  fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
-                                data = model$info_data$data))
-  expect_true(is(fit_lavaan, "lavaan"))
+    model <- fit_panel_sem(data = data,
+                           time_varying_variables = list(paste0("x", 1:time_points),
+                                                         paste0("y", 1:time_points)),
+                           time_invariant_variables = list(c("z1", "z2"),
+                                                           c("z2", "z3")),
+                           use_open_mx = FALSE,
+                           heterogeneity = heterogeneity)
+
+    fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
+                                  data = model$info_data$data))
+
+    expect_true(is(fit_lavaan, "lavaan"))
+
+  }
 
 })

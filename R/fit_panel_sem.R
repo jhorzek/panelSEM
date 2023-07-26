@@ -154,6 +154,21 @@ fit_panel_sem <- function(data,
   # set verbosity of console output
   verbose <- handle_verbose_argument(verbose = verbose)
 
+  # check if all arguments are valid
+  check_panel_sem_specification(
+    list(
+      data = data,
+      time_varying_variables = time_varying_variables,
+      time_invariant_variables = time_invariant_variables,
+      linear = linear,
+      heterogeneity = heterogeneity,
+      use_resamples = use_resamples,
+      use_open_mx = use_open_mx,
+      verbose = verbose,
+      dotdotdot = list(...)
+    )
+  )
+
   # create empty list
   internal_list <- create_empty_list(verbose = verbose)
 
@@ -172,11 +187,11 @@ fit_panel_sem <- function(data,
   # fill in user-specified information about the model into the list
   internal_list <-
     fill_in_info_variables(internal_list = internal_list,
-                       time_varying_variables = time_varying_variables,
-                       time_invariant_variables = time_invariant_variables,
-                       linear = linear,
-                       heterogeneity  = heterogeneity,
-                       use_open_mx = use_open_mx)
+                           time_varying_variables = time_varying_variables,
+                           time_invariant_variables = time_invariant_variables,
+                           linear = linear,
+                           heterogeneity  = heterogeneity,
+                           use_open_mx = use_open_mx)
 
   # add product terms of observed variables if model is nonlinear
   if (linear == FALSE){
@@ -232,8 +247,53 @@ fit_panel_sem <- function(data,
   # return output
   return(panelSEM_object)
 
-  }
+}
 
+
+#' check_panel_sem_specification
+#'
+#' checks if the user specified all arguments of fit_panel_sem correctly
+#' @param specification list with user specified arguments
+#' @return throws error in case of misspecification
+#' @keywords internal
+check_panel_sem_specification <- function(specification){
+
+  with(data = specification,
+       expr = {
+
+         if((!is(data, "matrix")) && (!is(data, "data.frame")))
+           stop("data must be a matrix or data.frame")
+
+         if(!is(time_varying_variables, "list"))
+           stop("time_varying_variables must be a list and not a ", class(time_varying_variables))
+
+         if(!is(time_invariant_variables, "list"))
+           stop("time_invariant_variables must be a list and not a ", class(time_invariant_variables))
+
+         if(!is(linear, "logical"))
+           stop("linear must be a logical and not a ", class(logical))
+
+         for(h in heterogeneity){
+           if(!h %in% c("homogeneous", "additive", "autoregressive", "cross-lagged"))
+             stop("heterogeneity must be one of (or a combination of): ",
+                  paste0(c("homogeneous", "additive", "autoregressive", "cross-lagged"), collapse = ", "),
+                  ".")
+         }
+
+         if(!is(use_resamples, "logical"))
+           stop("use_resamples must be a logical and not a ", class(use_resamples))
+
+         if(!is(linear, "logical"))
+           stop("linear must be a logical and not a ", class(linear))
+
+         if(!is(verbose, "numeric"))
+           stop("verbose must be an integer and not a ", class(verbose))
+
+         if(!all(sapply(dotdotdot, function(x) is(x,"NULL"))))
+           stop("... is currently not supported and only implemented for future use cases.")
+
+       })
+}
 
 ### development
 
