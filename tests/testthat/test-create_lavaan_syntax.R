@@ -127,13 +127,13 @@ test_that("create lavaan syntax", {
 
   # add product terms of observed variables if model is nonlinear
   if (linear == FALSE){
-    internal_list <- fill_in_data(data = internal_list$info_data$data,
+    internal_list <- panelSEM:::fill_in_data(data = internal_list$info_data$data,
                                   internal_list = internal_list,
                                   add_product_variables = TRUE )}
 
   # fill in user-specified information about the model into the list
   internal_list <-
-    fill_in_info_model(internal_list = internal_list,
+    panelSEM:::fill_in_info_model(internal_list = internal_list,
                        time_varying_variables = time_varying_variables,
                        time_invariant_variables = time_invariant_variables,
                        linear = linear,
