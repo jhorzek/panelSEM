@@ -5,12 +5,12 @@
 \title{Get Model Information}
 \usage{
 fill_in_info_model(
-  internal_list = NULL,
-  time_varying_variables = NULL,
-  time_invariant_variables = NULL,
-  linear = TRUE,
-  heterogeneity = NULL,
-  use_open_mx = FALSE
+  internal_list,
+  time_varying_variables,
+  time_invariant_variables,
+  linear,
+  heterogeneity,
+  use_open_mx
 )
 }
 \arguments{
@@ -34,7 +34,14 @@ should be used.}
 \item{n_occasions}{Integer number indicating the number of measurement occasions.}
 }
 \value{
-
+The inputted internal_list with several slots filled in:
+\tabular{lll}{
+ \code{..$info_parameters$C_table}: \code{data.frame}  \tab \tab Number of measurement occasions. \cr
+ \code{..$info_parameters$Psi_table}: \code{data.frame}  \tab \tab Number of dynamic processes. \cr
+ \code{..$model_matrices$C_labels}: \code{char([0,0])} \tab \tab Table with generic variable names of time-varying variables.\cr
+ \code{..$model_matrices$Psi_labels}: \code{char([0,0])} \tab \tab Table with user-specified variable names of time-varying variables.\cr
+ \code{..$model_matrices$select_observed_only}: \code{num([0,0])} \tab \tab Table with generic variable names of time-invariant variables.\cr
+ }
 }
 \description{
 Provide information about the model parameters and model matrices of the dynamic panel data model.

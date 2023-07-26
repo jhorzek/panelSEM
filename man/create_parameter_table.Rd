@@ -4,7 +4,7 @@
 \alias{create_parameter_table}
 \title{Create Parameter Table}
 \usage{
-create_parameter_table(internal_list = NULL, parameter_type = NULL)
+create_parameter_table(internal_list, parameter_type)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the

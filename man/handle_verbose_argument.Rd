@@ -4,10 +4,10 @@
 \alias{handle_verbose_argument}
 \title{Set Verbosity}
 \usage{
-handle_verbose_argument(verbose = NULL)
+handle_verbose_argument(verbose)
 }
 \arguments{
-\item{verbose}{An integer number from the following range: 
+\item{verbose}{An integer number from the following range:
 \tabular{ll}{
 0 \tab No output (default).\cr
 1 \tab User messages.\cr
@@ -17,7 +17,7 @@ handle_verbose_argument(verbose = NULL)
 An integer number describing the verbose setting of console output.
 }
 \description{
-Reads the value of the argument \code{verbose} from the user 
-input to the \code{\link{fit_panel_sem}} function and checks if it is 
+Reads the value of the argument \code{verbose} from the user
+input to the \code{\link{fit_panel_sem}} function and checks if it is
 valid.
 }

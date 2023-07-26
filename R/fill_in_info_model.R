@@ -24,6 +24,7 @@
 #'  \code{..$model_matrices$C_labels}: \code{char([0,0])} \tab \tab Table with generic variable names of time-varying variables.\cr
 #'  \code{..$model_matrices$Psi_labels}: \code{char([0,0])} \tab \tab Table with user-specified variable names of time-varying variables.\cr
 #'  \code{..$model_matrices$select_observed_only}: \code{num([0,0])} \tab \tab Table with generic variable names of time-invariant variables.\cr
+#'  }
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
 #' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 #' 868–901. https://doi.org/10.1007/s11336-021-09811-z
