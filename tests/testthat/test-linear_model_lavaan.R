@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("test linear model - lavaan", {
   library(panelSEM)
   library(testthat)
   set.seed(23)
@@ -99,11 +99,10 @@ test_that("multiplication works", {
                          use_open_mx = FALSE,
                          heterogeneity = "additive")
 
-  library(lavaan)
-  fit_lavaan <- sem(model$model_syntax$lavaan,
-                    data = model$info_data$data)
+  fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
+                            data = model$info_data$data)
 
-  est <- coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
+  est <- lavaan::coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
 
   shared_names <- names(population_parameters)[names(population_parameters) %in% names(est)]
 
@@ -114,30 +113,23 @@ test_that("multiplication works", {
       ) < .3),
     TRUE)
 
+  for(heterogeneity in c("homogeneous", "additive", "autoregressive", "cross-lagged")){
 
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = FALSE,
-                         homogeneous = TRUE)
+    message("Testing heterogeneity = ", heterogeneity)
 
-  fit_lavaan <- try(sem(model$model_syntax$lavaan,
-                    data = model$info_data$data))
-  expect_true(is(fit_lavaan, "lavaan"))
+    model <- fit_panel_sem(data = data,
+                           time_varying_variables = list(paste0("x", 1:time_points),
+                                                         paste0("y", 1:time_points)),
+                           time_invariant_variables = list(c("z1", "z2"),
+                                                           c("z2", "z3")),
+                           use_open_mx = FALSE,
+                           heterogeneity = heterogeneity)
 
-  library(OpenMx)
+    fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
+                                  data = model$info_data$data))
 
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = TRUE)
+    expect_true(is(fit_lavaan, "lavaan"))
 
-  fit_openmx <- mxTryHard(model$model_syntax$OpenMx)
-
-  stop("OpenMx version not yet working!")
+  }
 
 })

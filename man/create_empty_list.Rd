@@ -4,7 +4,7 @@
 \alias{create_empty_list}
 \title{Create Empty Internal List}
 \usage{
-create_empty_list(verbose = NULL)
+create_empty_list(verbose)
 }
 \arguments{
 \item{verbose}{Integer number describing verbosity of console output.

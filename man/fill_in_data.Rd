@@ -4,7 +4,7 @@
 \alias{fill_in_data}
 \title{fill_in_data}
 \usage{
-fill_in_data(data = NULL, internal_list = NULL, add_product_variables = FALSE)
+fill_in_data(data, internal_list, add_product_variables)
 }
 \arguments{
 \item{data}{A data.frame containing the data in the wide format.}

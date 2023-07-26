@@ -4,7 +4,7 @@
 \alias{starting_values}
 \title{Compute Starting Values}
 \usage{
-starting_values(internal_list = NULL)
+starting_values(internal_list)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the

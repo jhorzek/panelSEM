@@ -4,7 +4,7 @@
 \alias{create_model_matrix}
 \title{Create Model Matrices}
 \usage{
-create_model_matrix(internal_list = NULL, matrix_type = NULL)
+create_model_matrix(internal_list, matrix_type)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the
