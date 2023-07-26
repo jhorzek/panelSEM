@@ -148,8 +148,8 @@ starting_values <- function(internal_list){
       }
 
       fit_lm <- function(x){
-        lm_fit <- lm(x , data = data)
-        return(residuals(lm_fit))
+        lm_fit <- stats::lm(x , data = data)
+        return(stats::residuals(lm_fit))
       }
 
       fit_lm_list <- lapply(reg_models, FUN =fit_lm)
@@ -180,7 +180,7 @@ starting_values <- function(internal_list){
       colnames(mean_no_init) <-
         paste0(unlist(labels_processes),"_mean_no_init")
 
-      cov_mean_no_init_values <- cov(mean_no_init)
+      cov_mean_no_init_values <- stats::cov(mean_no_init)
       cov_mean_no_init_labels <- matrix (nrow = n_processes,
                                          ncol = n_processes)
 
@@ -254,7 +254,7 @@ starting_values <- function(internal_list){
 
       ## add starting values to parameter table
       par_joint_reg_initial <-
-        parTable(fit_joint_reg_initial)
+        lavaan::parTable(fit_joint_reg_initial)
 
       for (i in 1:(n_processes)){
         # inner loop
@@ -398,11 +398,11 @@ starting_values <- function(internal_list){
                collapse = "\n")
 
       ## fit starting value model
-      fit_model_init_eta <- sem(model_init_eta, data = d)
+      fit_model_init_eta <- lavaan::sem(model_init_eta, data = d)
 
       ## add starting values to parameter table
       par_fit_model_init_eta <-
-        parTable(fit_model_init_eta)
+        lavaan::parTable(fit_model_init_eta)
 
       for (i in 1:(n_processes)){
         par_fit_model_init_eta$label[
@@ -447,8 +447,8 @@ starting_values <- function(internal_list){
               mean_no_init)
 
       fit_lm_init_z <- function(x){
-        lm_fit <- lm(x , data = data_init_z)
-        return(coef(lm_fit))
+        lm_fit <- stats::lm(x , data = data_init_z)
+        return(stats::coef(lm_fit))
       }
 
       fit_lm_init_z_list <- lapply(reg_models_init_z, FUN =fit_lm_init_z)
@@ -493,7 +493,7 @@ starting_values <- function(internal_list){
                         verbose = verbose)
 
       model_hom <- internal_list_aux$model_syntax$lavaan
-      fit_hom <- sem(model_hom, data = d_standard)
+      fit_hom <- lavaan::sem(model_hom, data = d_standard)
 
       coef_lav_hom <- lavaan::coef(fit_hom)
       coef_lav_hom_labels <- unique(names(coef_lav_hom))

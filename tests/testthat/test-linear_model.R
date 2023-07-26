@@ -100,10 +100,10 @@ test_that("multiplication works", {
                          heterogeneity = "additive")
 
   library(lavaan)
-  fit_lavaan <- sem(model$model_syntax$lavaan,
-                    data = model$info_data$data)
+  fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
+                            data = model$info_data$data)
 
-  est <- coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
+  est <- lavaan::coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
 
   shared_names <- names(population_parameters)[names(population_parameters) %in% names(est)]
 
@@ -123,8 +123,8 @@ test_that("multiplication works", {
                          use_open_mx = FALSE,
                          homogeneous = TRUE)
 
-  fit_lavaan <- try(sem(model$model_syntax$lavaan,
-                    data = model$info_data$data))
+  fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
+                                data = model$info_data$data))
   expect_true(is(fit_lavaan, "lavaan"))
 
   library(OpenMx)
@@ -136,7 +136,7 @@ test_that("multiplication works", {
                                                          c("z2", "z3")),
                          use_open_mx = TRUE)
 
-  fit_openmx <- mxTryHard(model$model_syntax$OpenMx)
+  fit_openmx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
 
   stop("OpenMx version not yet working!")
 

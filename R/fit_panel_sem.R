@@ -22,6 +22,7 @@
 #' @param verbose Integer number describing the verbosity of console output.
 #' Admissible values: 0: no output (default), 1: user messages,
 #' 2: debugging-relevant messages.
+#' @param ... not used
 #' @return An object of class \code{panelSEM} for which several methods
 #' are available including \code{\link{summary.panelSEM}} and
 #' \code{\link{print.panelSEM}}.

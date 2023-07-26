@@ -12,7 +12,6 @@
 #'  measurement ocassion.
 #' @param time_invariant_variables List of character vectors containing names of the time-invariant
 #'  variables. List must have the same length as list in argument \code{time_varying_variables}.
-#' @param n_occasions Integer number indicating the number of measurement occasions.
 #' @param linear Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).
 #' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)

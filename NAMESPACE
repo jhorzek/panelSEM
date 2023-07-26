@@ -3,3 +3,6 @@
 export(auxiliary_model)
 export(fit_panel_sem)
 export(simulate_data)
+import(OpenMx)
+import(lavaan)
+import(mvtnorm)

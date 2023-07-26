@@ -88,26 +88,26 @@ fill_in_estimates <- function(internal_list,
 
   ##openMx model set-up
 
-  raw_data <- mxData(observed = data, type = 'raw')
-  matrA <- mxMatrix( type="Full", nrow=nvar, ncol=nvar,
-                     free=freeA_vec, values=valuesA,
-                     labels=labelsA, byrow=TRUE, name="A", dimnames = list(var_names,var_names) )
-  matrS <- mxMatrix( type="Symm", nrow=nvar, ncol=nvar,
-                     free=freeS_vec, values=valuesS,
-                     labels=labelsS, byrow=TRUE, name="S", dimnames = list(var_names,var_names) )
-  matrF <- mxMatrix( type="Full", nrow=nobs, ncol=nvar, name="F", values = valuesF, free = FALSE,
-                     dimnames = list(NULL,var_names), byrow = T)
-  matrM <- mxMatrix( type="Full", nrow=1, ncol=nvar,
-                     free=c(rep(F,nvar-nobs),rep(T,nobs)), values=rep(0,nvar),
-                     name="M", labels = paste0('mean_', var_names),
-                     dimnames = list(NULL, var_names)) ### free mean
-  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
-  funML <- mxFitFunctionML()
-  lin_add_mod <- mxModel("linear additive OpenMx model",
+  raw_data <- OpenMx::mxData(observed = data, type = 'raw')
+  matrA <- OpenMx::mxMatrix( type="Full", nrow=nvar, ncol=nvar,
+                             free=freeA_vec, values=valuesA,
+                             labels=labelsA, byrow=TRUE, name="A", dimnames = list(var_names,var_names) )
+  matrS <- OpenMx::mxMatrix( type="Symm", nrow=nvar, ncol=nvar,
+                             free=freeS_vec, values=valuesS,
+                             labels=labelsS, byrow=TRUE, name="S", dimnames = list(var_names,var_names) )
+  matrF <- OpenMx::mxMatrix( type="Full", nrow=nobs, ncol=nvar, name="F", values = valuesF, free = FALSE,
+                             dimnames = list(NULL,var_names), byrow = T)
+  matrM <- OpenMx::mxMatrix( type="Full", nrow=1, ncol=nvar,
+                             free=c(rep(F,nvar-nobs),rep(T,nobs)), values=rep(0,nvar),
+                             name="M", labels = paste0('mean_', var_names),
+                             dimnames = list(NULL, var_names)) ### free mean
+  expRAM <- OpenMx::mxExpectationRAM("A","S","F","M", dimnames=var_names)
+  funML <- OpenMx::mxFitFunctionML()
+  lin_add_mod <- OpenMx::mxModel("linear additive OpenMx model",
                          raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
   status <- FALSE
   while(!status){
-    lin_add_fit <- mxTryHard(lin_add_mod)
+    lin_add_fit <- OpenMx::mxTryHard(lin_add_mod)
     if( lin_add_fit$output$status$code %in% c(0:1)) status <- TRUE
   }
 
