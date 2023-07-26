@@ -5,12 +5,12 @@
 \title{Set up auxiliary models}
 \usage{
 auxiliary_model(
-  time_varying_variables = NULL,
-  time_invariant_variables = NULL,
-  linear = TRUE,
-  heterogeneity = NULL,
-  use_open_mx = FALSE,
-  verbose = NULL,
+  time_varying_variables,
+  time_invariant_variables,
+  linear,
+  heterogeneity,
+  use_open_mx,
+  verbose,
   ...
 )
 }
@@ -33,6 +33,8 @@ should be used.}
 \item{verbose}{Integer number describing the verbosity of console output.
 Admissible values: 0: no output (default), 1: user messages,
 2: debugging-relevant messages.}
+
+\item{...}{not used}
 }
 \value{
 An object of class \code{panelSEM}.
