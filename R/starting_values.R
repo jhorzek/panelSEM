@@ -465,12 +465,13 @@ starting_values <- function(internal_list){
         }
       }
 
-      #############################################################################
+      ##################################################################
       # MODEL FOR
       #  - (cross-) lagged coefficients
       #  - coefficients of z-variables onto non-initial variables
-      #  - the (co)-variances of the the noninitial time-varying observed variables
-      #############################################################################
+      #  - the (co)-variances of the the noninitial time-varying observed
+      #  - variables
+      ###################################################################
 
       variables_tv <- vector("list", length = internal_list$info_model$n_processes)
 
@@ -493,7 +494,8 @@ starting_values <- function(internal_list){
                         verbose = verbose)
 
       model_hom <- internal_list_aux$model_syntax$lavaan
-      fit_hom <- lavaan::sem(model_hom, data = d_standard)
+      fit_hom <- lavaan::sem(model_hom,
+                             data = data)
 
       coef_lav_hom <- lavaan::coef(fit_hom)
       coef_lav_hom_labels <- unique(names(coef_lav_hom))
