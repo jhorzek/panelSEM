@@ -59,10 +59,6 @@ starting_values <- function(internal_list){
   if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version,
                                   " ", Sys.time(), "\n" ) )
 
-  # packages
-  # TODO: remove and automatically load dependencies via namespace
-  require(lavaan)
-
   # extract model information from the arguments
   # TODO: check if we need to define all these objects or if we can directly
   # refer to the internal list
