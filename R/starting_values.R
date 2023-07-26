@@ -539,18 +539,12 @@ return(internal_list)
   }
 
   #------------------------------------------
-  # nonlinear model with additive heterogeneity (cross-lagged)
+  # nonlinear model with nonadditive heterogeneity (cross-lagged)
   #------------------------------------------
 
   if(linear == FALSE &&
      "additive" %in% heterogeneity  &&
      "cross-lagged" %in% heterogeneity){
-
-    # console output
-    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                    Sys.time(), "\n" ) )
-    # return output
-    return(internal_list)
 
   }
 
