@@ -544,6 +544,12 @@ starting_values <- function(internal_list){
      "additive" %in% heterogeneity  &&
      "cross-lagged" %in% heterogeneity){
 
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+    # return output
+    return(internal_list)
+
   }
 
 }
