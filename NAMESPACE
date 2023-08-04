@@ -2,6 +2,8 @@
 
 export(auxiliary_model)
 export(fit_panel_sem)
+export(set_starting_values_lavaan)
+export(set_starting_values_openmx)
 export(simulate_data)
 import(OpenMx)
 import(lavaan)
