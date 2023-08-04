@@ -522,12 +522,37 @@ starting_values <- function(internal_list){
         }
       }
 
+      ###############################
+      # add starting value matrices
+      ###############################
+      C_start <- internal_list$model_matrices$C_labels
+      for (i in internal_list$info_parameters$C_table$value){
+        C_start[internal_list$model_matrices$C_labels == i] <-
+          round(parameter_list_C$start_1[
+            which(internal_list$info_parameters$C_table$value == i)[1]], 4)
+      }
+
+      C_start[internal_list$model_matrices$C_labels == "1"] <- 1
+      storage.mode(C_start) <- "numeric"
+
+      Psi_start <- internal_list$model_matrices$Psi_labels
+      for (i in internal_list$info_parameters$Psi_table$value){
+        Psi_start[internal_list$model_matrices$Psi_labels == i] <-
+          round(parameter_list_Psi$start_1[
+            which(internal_list$info_parameters$Psi_table$value == i)[1]], 4)
+      }
+
+      Psi_start[internal_list$model_matrices$Psi_labels == "1"] <- 1
+      storage.mode(Psi_start) <- "numeric"
+
     }
 
     # prepare output
 
     internal_list$info_parameters$C_table <- parameter_list_C
     internal_list$info_parameters$Psi_table <- parameter_list_Psi
+    internal_list$model_matrices$C_start <- C_start
+    internal_list$model_matrices$Psi_start <- Psi_start
 
     # console output
     if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

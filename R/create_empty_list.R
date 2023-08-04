@@ -16,7 +16,7 @@
 #'     List of XX\cr
 #'    \code{$info_data}: List of XX       \tab \tab  \cr
 #'      \code{..$data}: \code{data.frame}    \tab \tab User-specified data set.\cr
-#'      \code{..$data}: \code{data.frame}    \tab \tab Data set with product terms of observed variables. \cr
+#'      \code{..$data_product_terms}: \code{data.frame}    \tab \tab Data set with product terms of observed variables. \cr
 #'      \code{..$n_obs}: \code{int(0)}   \tab \tab Number of observations.\cr
 #'      \code{..$n_var}: \code{int(0)}   \tab \tab Total number of variables in the data set.\cr
 #'      \code{..$var_names}: \code{chr(0)}  \tab \tab Names of variables.\cr
@@ -25,23 +25,28 @@
 #'      \code{..$n_processes}: \code{int(0)}  \tab \tab Number of dynamic processes. \cr
 #'      \code{..$n_time_invariant} \code{int(0)}  \tab \tab  Number of observed time-invariant variables \cr
 #'      \code{..$linear} \code{logical(0)}  \tab \tab \code{TRUE} if the model is linear in observed variables.\cr
-#'      \code{..$heterogeneity} \code{logical(0)}  \tab \tab Specify type of observed heterogeneity.\cr
-#'      \code{..$use_open_mx} \code{logical(0)}  \tab \tab If \code{TRUE}, \code{OpenMx} is used, otherwise \code{lavaan}.\cr
+#'      \code{..$heterogeneity} \code{chr(0)}  \tab \tab Specify type of unobserved heterogeneity.\cr
+#'      \code{..$use_resamples} \code{logical(0)}  \tab \tab . If \code{TRUE}, a resampling procedure for starting values and model diagnostics is performed.\cr
+#'      \code{..$use_open_mx} \code{logical(0)}  \tab \tab If \code{TRUE}, \code{OpenMx} is used, otherwise \code{lavaan} is used.\cr
 #'    \code{$info_variables}: List of XX        \tab \tab \cr
 #'      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
 #'      \code{..$generic_names_time_varying}: \code{char[0,0]}   \tab \tab Generic names of observed time-varying variables. \cr
 #'      \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
-#'      \code{..$info_time_invariant}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
+#'      \code{..$info_time_invariant_varianbles}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unobserved_additive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unobserved_autoregressive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
 #'      \code{..$names_time_invariant_unobserved_cross_lagged}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
 #'    \code{$info_parameters}: List of XX \tab \tab \cr
-#'      \code{..$parameter_list}: \code{data.frame} \tab \tab Table with labelled model parameters.\cr
+#'      \code{..$C_table}: \code{data.frame} \tab \tab Table with labeled model parameters (structural coefficients).\cr
+#'      \code{..$Psi_table}: \code{data.frame} \tab \tab Table with labeled model parameters (covariance matrix).\cr
 #'    \code{model_matrices}: List of XX \tab \tab \cr
 #'     \code{..$C_labels}: \code{char[0,0]}  \tab \tab Character matrix of labels of structural coefficients. \cr
 #'     \code{..$Psi_labels}: \code{char[0,0]}  \tab \tab Character matrix of labels of covariance matrix. \cr
-#'    \code{$model_syntax}: List of XX \tab \tab \cr
+#'     \code{..$select_observed_only}: \code{num[0,0]}  \tab \tab Numeric matrix to select observed variables. \cr
+#'     \code{..$C_start}: \code{num[0,0]}  \tab \tab Numeric matrix of starting values of structural coefficients. \cr
+#'     \code{..$Psi_start}: \code{num[0,0]}  \tab \tab Numeric matrix of starting values of covariance matrix. \cr
+#'   \code{$model_syntax}: List of XX \tab \tab \cr
 #'      \code{..$lavaan}: \code{list} \tab \tab Model specified in \code{lavaan}. \cr
 #'      \code{..$OpenMx}: \code{list} \tab \tab Model specified in \code{OpenMx}. \cr
 #'    \code{$control}: List of XX     \tab \tab \cr
@@ -133,6 +138,10 @@ create_empty_list <- function( verbose ){
 			# a character vector
 			"heterogeneity" = character(0),
 
+			# Use a resampling procedure?.
+			# a character vector
+			"use_resamples" = logical(0),
+
 			# Is OpenMx used?
 			# If yes, use_open_mx == TRUE. If FALSE, lavaan is used.
 			# a single logical value
@@ -199,7 +208,13 @@ create_empty_list <- function( verbose ){
 		  "Psi_labels" = character(0),
 
 		  # filter matrix / selection matrix for selecting observed variables only
-		  "select_observed_only" = numeric(0)
+		  "select_observed_only" = numeric(0),
+
+		  # starting values for matrix of structural coefficients
+		  "C_start" = character(0),
+
+		  # starting values for covariance matrix
+		  "Psi_start" = character(0)
 
 		), # end model_matrices list
 
