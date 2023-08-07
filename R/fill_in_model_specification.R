@@ -1,4 +1,6 @@
 ## Changelog:
+# CG 0.0.4 2023-08-07: changed part on the linear additive model in the
+#                      fill_in_model_specification_open_mx function
 # CG 0.0.3 2023-05-24: changed preamble to be consistent with other functions
 # 					   replaced arguments homogeneity and additive by heterogeneity
 # CG 0.0.2 2023-04-18: insert console output for debugging
@@ -55,73 +57,76 @@ fill_in_model_specification_open_mx <- function(internal_list){
   fun.version <- "0_0_2 2023_04_18"
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-  # Note: OpenMx does not allow for the format used
-  # in the other functions
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity))){
 
-  # extract directed and undirected effects:
+  psem.matA <- internal_list$model_matrices$C_labels
+  psem.matS <- internal_list$model_matrices$Psi_labels
+  psem.matF <- internal_list$model_matrices$select_observed_only
+  var_names <- colnames(psem.matA)
+  obs_var <- internal_list$info_data$var_names
+  latent_var <- setdiff(var_names,obs_var)
+  nvar <- length(var_names)
+  nobs <- length(obs_var)
 
-  directed <- internal_list$info_parameters$C_table
-  undirected <- internal_list$info_parameters$Psi_table
+  # TODO: find a way to replace ALL numeric values in the labels
+  # matrices by non-numeric characters
+  labelsA <- as.vector(t(psem.matA))
+  labelsA[which(labelsA=="1")] <- "fixed_number"
+  freeA <- ifelse(is.na(psem.matA)==TRUE | psem.matA=="1", F, T)
+  freeA_vec <- as.vector(t(freeA))
 
-  # separate latent and manifest
+  labelsS <- as.vector(t(psem.matS))
+  labelsS[which(labelsS=="1")] <- "fixed_number"
+  freeS <- ifelse(is.na(psem.matS)==TRUE, F, T)
+  freeS_vec <- as.vector(t(freeS))
 
-  latents <- unique(c(directed$outgoing[!directed$outgoing %in% internal_list$info_data$var_names],
-                      directed$incoming[!directed$incoming %in% internal_list$info_data$var_names]))
-  manifests <- unique(c(directed$outgoing[directed$outgoing %in% internal_list$info_data$var_names],
-                        directed$incoming[directed$incoming %in% internal_list$info_data$var_names]))
+  valuesF <- as.vector(t(psem.matF))
 
-  # initialize model. We will fill in the elements below
-  model <- OpenMx::mxModel(model = paste0("panelSEM specified with function version ", fun.version),
-                           type = "RAM",
-                           manifestVars = manifests,
-                           latentVars = latents,
-                           OpenMx::mxPath(from = 'one', to = manifests),
-                           OpenMx::mxData(observed = internal_list$info_data$data,
-                                          type = "raw"))
+  raw_data <- mxData(observed = internal_list$info_data$data ,
+                     type = 'raw')
 
-  # DIRECTED EFFECTS
-  # The value field of directed mixes actual values and the
-  # parameter labels. This is very useful for lavaan, but not for
-  # OpenMx. We must therefore separate the two cases first:
-  ## check if a numeric value is given:
-  has_value <- grepl(pattern = "^[0-9.]+$", directed$value)
-  values <- rep(NA, length(has_value))
-  values[has_value] <- as.numeric(directed$value[has_value])
+  matrA <- mxMatrix( type="Full",
+                     nrow=nvar,
+                     ncol=nvar,
+                     free=freeA_vec,
+                     labels=labelsA,
+                     byrow=TRUE,
+                     name="A",
+                     dimnames = list(var_names,var_names))
 
-  has_label <- !grepl(pattern = "^[0-9.]+$", directed$value)
-  label <- rep(NA, length(has_label))
-  label[has_label] <- directed$value[has_label]
+  matrS <- mxMatrix( type="Symm",
+                     nrow=nvar,
+                     ncol=nvar,
+                     free=freeS_vec,
+                     labels=labelsS,
+                     byrow=TRUE,
+                     name="S",
+                     dimnames = list(var_names,var_names))
 
-  model <- OpenMx::mxModel(model,
-                           OpenMx::mxPath(from = directed$outgoing,
-                                          to = directed$incoming,
-                                          connect = "single",
-                                          values = values,
-                                          labels = label,
-                                          arrows = 1)
-  )
+  matrF <- mxMatrix( type="Full",
+                     nrow=nobs,
+                     ncol=nvar,
+                     name="F",
+                     byrow = T,
+                     values = valuesF,
+                     free = FALSE,
+                     dimnames = list(NULL,var_names))
 
-  # UNDIRECTED EFFECTS
-  # The value field of undirected mixes actual values and the
-  # parameter labels. This is very useful for lavaan, but not for
-  # OpenMx. We must therefore separate the two cases first:
-  ## check if a numeric value is given:
-  has_value <- grepl(pattern = "^[0-9.]+$", undirected$value)
-  values <- rep(NA, length(has_value))
-  values[has_value] <- as.numeric(undirected$value[has_value])
+  matrM <- mxMatrix( type="Full",
+                     nrow=1,
+                     ncol=nvar,
+                     free=c(rep(F,nvar-nobs),
+                            rep(T,nobs)),
+                     values=rep(0,nvar),
+                     name="M",
+                     labels = paste0('mean_', var_names),
+                     dimnames = list(NULL, var_names))
 
-  has_label <- !grepl(pattern = "^[0-9.]+$", undirected$value)
-  label <- rep(NA, length(has_label))
-  label[has_label] <- undirected$value[has_label]
-
-  model <- OpenMx::mxModel(model,
-                           OpenMx::mxPath(from = undirected$outgoing,
-                                          to = undirected$incoming,
-                                          connect = "single",
-                                          values = values,
-                                          labels = label,
-                                          arrows = 2)
-  )
+  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
+  funML <- mxFitFunctionML()
+  model <- mxModel("linear additive model",
+                         raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
 
   internal_list$model_syntax$OpenMx <- model
 
@@ -133,6 +138,8 @@ fill_in_model_specification_open_mx <- function(internal_list){
                                   Sys.time(), "\n" ) )
   # return internal list
   return(internal_list)
+
+  }
 
 }
 

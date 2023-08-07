@@ -490,7 +490,7 @@ starting_values <- function(internal_list){
                         time_invariant_variables = variables_ti,
                         linear = linear,
                         heterogeneity  = "homogeneous",
-                        use_open_mx = use_open_mx,
+                        use_open_mx = FALSE,
                         verbose = verbose)
 
       model_hom <- internal_list_aux$model_syntax$lavaan
