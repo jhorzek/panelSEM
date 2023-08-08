@@ -57,8 +57,8 @@ fill_in_model_specification_open_mx <- function(internal_list){
   fun.version <- "0_0_2 2023_04_18"
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-  if(linear == TRUE &&
-     identical("additive", sort(heterogeneity))){
+  if(internal_list$info_model$linear == TRUE &&
+     identical("additive", sort(internal_list$info_model$heterogeneity))){
 
   psem.matA <- internal_list$model_matrices$C_labels
   psem.matS <- internal_list$model_matrices$Psi_labels
