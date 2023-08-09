@@ -50,11 +50,7 @@
 #'      \code{..$lavaan}: \code{list} \tab \tab Model specified in \code{lavaan}. \cr
 #'      \code{..$OpenMx}: \code{list} \tab \tab Model specified in \code{OpenMx}. \cr
 #'    \code{$control}: List of XX     \tab \tab \cr
-#'      \code{..$verbose}: \code{int(0)}     \tab \tab Verbosity of console output.\cr
-#'    \code{$tables}: List of XX      \tab \tab \cr
-#'      \code{..$summary}: \code{data.frame}  \tab \tab Information for \code{\link{summary.panelSEM}} function.\cr
-#'      \code{..$print}: \code{data.frame}  \tab \tab Information for \code{\link{print.panelSEM}}  function.\cr
-#'      \code{..$coef}: \code{data.frame}  \tab \tab Information for \code{\link{coef.panelSEM}}  function.
+#'      \code{..$verbose}: \code{int(0)}     \tab \tab Verbosity of console output.
 #'  }
 #'
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible

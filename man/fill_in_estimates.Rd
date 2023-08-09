@@ -4,19 +4,17 @@
 \alias{fill_in_estimates}
 \title{Fit Panel Data Model}
 \usage{
-fill_in_estimates(internal_list, rand)
+fill_in_estimates(internal_list, starting_values)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the
 model.}
 
-\item{rand}{Logical value indicating if (\code{TRUE}) random starting values
-should be chosen.}
+\item{starting_values}{Character string indicating which type of starting values should be used. Admissible values are \code{"default"}, \code{"model-based"}, or \code{"random"}.}
 }
 \value{
-An object of class \code{panelSEM} for which several methods
-are available including \code{\link{summary.panelSEM}} and
-\code{\link{print.panelSEM}}.
+The inputted list with several slots in \code{..$info_data} filled
+in.
 }
 \description{
 Fit a model from the class of dynamic panel data models to longitudinal data.

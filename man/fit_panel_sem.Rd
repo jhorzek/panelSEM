@@ -29,7 +29,7 @@ variables. List must have the same length as list in argument \code{time_varying
 
 \item{linear}{Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).}
 
-\item{heterogeneity}{Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).}
+\item{heterogeneity}{Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"cross-lagged"}, and \code{c("additive","cross-lagged")}.}
 
 \item{use_resamples}{Logical (TRUE / FALSE = default) indicating if a resampling procedure is used for the computation of starting values and model diagnostics.}
 
@@ -43,9 +43,7 @@ Admissible values: 0: no output (default), 1: user messages,
 \item{...}{not used}
 }
 \value{
-An object of class \code{panelSEM} for which several methods
-are available including \code{\link{summary.panelSEM}} and
-\code{\link{print.panelSEM}}.
+An object of class \code{panelSEM}.
 }
 \description{
 Fit a model from the class of dynamic panel data models to longitudinal data.
