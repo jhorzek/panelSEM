@@ -12,6 +12,7 @@ fit_panel_sem(
   heterogeneity,
   use_resamples = FALSE,
   use_open_mx = FALSE,
+  lbound_variances = TRUE,
   verbose = 0,
   ...
 )
@@ -35,6 +36,8 @@ variables. List must have the same length as list in argument \code{time_varying
 
 \item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 should be used.}
+
+\item{lbound_variances}{should variances be assigned a lower bound of 1e-4?}
 
 \item{verbose}{Integer number describing the verbosity of console output.
 Admissible values: 0: no output (default), 1: user messages,

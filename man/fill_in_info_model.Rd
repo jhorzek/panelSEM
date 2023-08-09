@@ -4,41 +4,18 @@
 \alias{fill_in_info_model}
 \title{Get Model Information}
 \usage{
-fill_in_info_model(
-  internal_list,
-  time_varying_variables,
-  time_invariant_variables,
-  linear,
-  heterogeneity,
-  use_open_mx
-)
+fill_in_info_model(internal_list)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the
 model.}
-
-\item{time_varying_variables}{List of character vectors containing names of the time-varying
-variables. Within each vector, the variable names must be time-ordered starting with the first
-measurement ocassion.}
-
-\item{time_invariant_variables}{List of character vectors containing names of the time-invariant
-variables. List must have the same length as list in argument \code{time_varying_variables}.}
-
-\item{linear}{Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).}
-
-\item{heterogeneity}{Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).}
-
-\item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
-should be used.}
 }
 \value{
 The inputted internal_list with several slots filled in:
 \tabular{lll}{
- \code{..$info_parameters$C_table}: \code{data.frame}  \tab \tab Number of measurement occasions. \cr
- \code{..$info_parameters$Psi_table}: \code{data.frame}  \tab \tab Number of dynamic processes. \cr
- \code{..$model_matrices$C_labels}: \code{char([0,0])} \tab \tab Table with generic variable names of time-varying variables.\cr
- \code{..$model_matrices$Psi_labels}: \code{char([0,0])} \tab \tab Table with user-specified variable names of time-varying variables.\cr
- \code{..$model_matrices$select_observed_only}: \code{num([0,0])} \tab \tab Table with generic variable names of time-invariant variables.\cr
+ \code{..$info_parameters$RAM}: \code{list}  \tab \tab List with RAM matrices. \cr
+ \code{..$info_parameters$parameter_table}: \code{data.frame}  \tab \tab Parameter table. \cr
+ \code{..$info_parameters$algebras}: \code{data.frame}  \tab \tab Any algebra added to the model. \cr
  }
 }
 \description{

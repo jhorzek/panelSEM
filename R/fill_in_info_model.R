@@ -55,9 +55,7 @@ fill_in_info_model <- function(internal_list){
 
   internal_list$info_parameters$RAM <- RAM
 
-  internal_list$info_parameters$has_algebras <- !(parameter_table$algebra[parameter_table$algebra != ""] |>
-    unique() |>
-    is.null())
+  internal_list$info_parameters$has_algebras <- any(parameter_table$algebra != "")
 
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

@@ -4,10 +4,12 @@
 \alias{fill_in_model_specification_lavaan}
 \title{fill_in_model_specification_lavaan}
 \usage{
-fill_in_model_specification_lavaan(internal_list)
+fill_in_model_specification_lavaan(internal_list, lbound_variances)
 }
 \arguments{
 \item{internal_list}{internal list object}
+
+\item{lbound_variances}{should variances be assigned a lower bound of 1e-4?}
 }
 \value{
 internal_list, where lavaan is added to internal_list$model_syntax

@@ -11,6 +11,7 @@
 #' @description Creates a \code{lavaan} or \code{OpenMx} model based in the user specified arguments in the \code{fit_panel_sem} function.
 #' @param internal_list A list with various information extracted from the
 #'    model.
+#' @param lbound_variances should variances be assigned a lower bound of 1e-4?
 #' @return The inputted internal_list with slot \code{internal_list$model_syntax} filled in.
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
 #' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
@@ -20,7 +21,8 @@
 #'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
 #'  DOI: 10.1080/10705511.2020.1780598
 
-fill_in_model_specification <- function(internal_list){
+fill_in_model_specification <- function(internal_list,
+                                        lbound_variances){
 
   # function name
   fun.name <- "fill_in_model_specification"
@@ -40,17 +42,21 @@ fill_in_model_specification <- function(internal_list){
 
 
   if(internal_list$info_model$use_open_mx)
-    return(fill_in_model_specification_open_mx(internal_list))
+    return(fill_in_model_specification_open_mx(internal_list,
+                                               lbound_variances))
 
-  return(fill_in_model_specification_lavaan(internal_list))
+  return(fill_in_model_specification_lavaan(internal_list,
+                                            lbound_variances))
 }
 
 #' fill_in_model_specification_open_mx
 #'
 #' Creates an OpenMx model based in the user specification in internal_list
 #' @param internal_list internal list object
+#' @param lbound_variances should variances be assigned a lower bound of 1e-4?
 #' @return internal_list, where OpenMx model is added to internal_list$model_syntax
-fill_in_model_specification_open_mx <- function(internal_list){
+fill_in_model_specification_open_mx <- function(internal_list,
+                                                lbound_variances){
 
   # function details for debugging
   fun.name <- "fill_in_model_specification"
@@ -75,6 +81,17 @@ fill_in_model_specification_open_mx <- function(internal_list){
   for(i in 1:nrow(parameter_table)){
 
     is_algebra <- parameter_table$algebra[i] != ""
+
+    if(lbound_variances &&
+       parameter_table$free[i] &&
+       !is_algebra &&
+       (parameter_table$outgoing[i] == parameter_table$incoming[i]) &&
+       (parameter_table$op[i] == "~~")){
+      lbound <- 1e-4
+    }else{
+      lbound <- NA
+    }
+
     mx_model <- OpenMx::mxModel(mx_model,
                                 OpenMx::mxPath(
                                   from = parameter_table$outgoing[i],
@@ -85,7 +102,8 @@ fill_in_model_specification_open_mx <- function(internal_list){
                                                           paste0(parameter_table$label[i], "[1,1]"),
                                                           parameter_table$label[i])),
                                   free =  parameter_table$free[i],
-                                  arrows =  ifelse(parameter_table$op[i] %in% c("=~", "~"), 1, 2)
+                                  arrows =  ifelse(parameter_table$op[i] %in% c("=~", "~"), 1, 2),
+                                  lbound = lbound
                                 ))
   }
 
@@ -145,8 +163,10 @@ fill_in_model_specification_open_mx <- function(internal_list){
 #'
 #' Creates a lavaan model based in the user specification in internal_list
 #' @param internal_list internal list object
+#' @param lbound_variances should variances be assigned a lower bound of 1e-4?
 #' @return internal_list, where lavaan is added to internal_list$model_syntax
-fill_in_model_specification_lavaan <- function(internal_list){
+fill_in_model_specification_lavaan <- function(internal_list,
+                                               lbound_variances){
 
   # function details for debugging
   fun.name <- "fill_in_model_specification"
@@ -155,6 +175,10 @@ fill_in_model_specification_lavaan <- function(internal_list){
 
   if(internal_list$info_parameters$has_algebras)
     stop("lavaan does not allow for algebras. Try use_open_mx = TRUE")
+
+  if(lbound_variances)
+    warning("Using lbound_variances = TRUE with lavaan can result in long run times. ",
+            "Consider setting lbound_variances = FALSE or use OpenMx with use_open_mx = TRUE.")
 
   parameter_table <- internal_list$info_parameters$parameter_table
 
@@ -167,6 +191,7 @@ fill_in_model_specification_lavaan <- function(internal_list){
   for(i in 1:nrow(parameter_table)){
 
     if(parameter_table$op[i] %in% c("~", "~~")){
+
       model_syntax <- c(model_syntax,
                         paste0(parameter_table$incoming[i], " ",
                                parameter_table$op[i], " ",
@@ -175,6 +200,16 @@ fill_in_model_specification_lavaan <- function(internal_list){
                                       paste0(parameter_table$label[i], "*")),
                                parameter_table$outgoing[i])
       )
+
+      if(lbound_variances &&
+         parameter_table$free[i] &&
+         (parameter_table$outgoing[i] == parameter_table$incoming[i]) &&
+         (parameter_table$op[i] == "~~")){
+        model_syntax <- c(model_syntax,
+                          paste0(parameter_table$label[i], " > 1e-4")
+                          )
+      }
+
     }else if(parameter_table$op[i] == "=~"){
       model_syntax <- c(model_syntax,
                         paste0(parameter_table$outgoing[i], " ",

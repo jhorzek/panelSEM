@@ -4,10 +4,12 @@
 \alias{fill_in_model_specification_open_mx}
 \title{fill_in_model_specification_open_mx}
 \usage{
-fill_in_model_specification_open_mx(internal_list)
+fill_in_model_specification_open_mx(internal_list, lbound_variances)
 }
 \arguments{
 \item{internal_list}{internal list object}
+
+\item{lbound_variances}{should variances be assigned a lower bound of 1e-4?}
 }
 \value{
 internal_list, where OpenMx model is added to internal_list$model_syntax

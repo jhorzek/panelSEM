@@ -1,7 +1,7 @@
-test_that("test linear model - lavaan", {
+test_that("test linear model - OpenMx", {
   library(panelSEM)
   library(testthat)
-  set.seed(23756)
+  set.seed(23)
 
   time_points <- 10
 
@@ -82,7 +82,7 @@ test_that("test linear model - lavaan", {
     psi_y_y = 1
   )
 
-  population_parameters$N <- 1000
+  population_parameters$N <- 30
 
   population_parameters$time_points <- time_points
 
@@ -98,13 +98,17 @@ test_that("test linear model - lavaan", {
                                                          paste0("y", 1:time_points)),
                            time_invariant_variables = list(c("z1", "z2"),
                                                            c("z2", "z3")),
-                           use_open_mx = FALSE,
-                           heterogeneity = heterogeneity)
+                           heterogeneity = heterogeneity,
+                           use_open_mx = TRUE,
+                           linear = FALSE)
 
-    fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
-                              data = model$info_data$data)
-
-    expect_true(is(fit_lavaan, "lavaan"))
+    testthat::expect_true(is(model, "panelSEM"))
+    testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel") |
+                            is(model$model_syntax$OpenMx, "MxModel"))
+    fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
+    # check if the fit was succesful:
+    testthat::expect_true(is(fit_mx, "MxRAMModel") |
+                            is(fit_mx, "MxModel"))
 
   }
 

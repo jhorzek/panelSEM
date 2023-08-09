@@ -4,11 +4,13 @@
 \alias{fill_in_model_specification}
 \title{Specify the Model Syntax}
 \usage{
-fill_in_model_specification(internal_list)
+fill_in_model_specification(internal_list, lbound_variances)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the
 model.}
+
+\item{lbound_variances}{should variances be assigned a lower bound of 1e-4?}
 }
 \value{
 The inputted internal_list with slot \code{internal_list$model_syntax} filled in.
