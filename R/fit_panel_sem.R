@@ -15,7 +15,7 @@
 #' @param time_invariant_variables List of character vectors containing names of the time-invariant
 #'  variables. List must have the same length as list in argument \code{time_varying_variables}.
 #' @param linear Logical (TRUE = default / FALSE) indicating if the model is linear in observed variables (TRUE).
-#' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
+#' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"cross-lagged"}, and \code{c("additive","cross-lagged")}.
 #' @param use_resamples Logical (TRUE / FALSE = default) indicating if a resampling procedure is used for the computation of starting values and model diagnostics.
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
@@ -23,9 +23,7 @@
 #' Admissible values: 0: no output (default), 1: user messages,
 #' 2: debugging-relevant messages.
 #' @param ... not used
-#' @return An object of class \code{panelSEM} for which several methods
-#' are available including \code{\link{summary.panelSEM}} and
-#' \code{\link{print.panelSEM}}.
+#' @return An object of class \code{panelSEM}.
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
 #' Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 #' 868–901. https://doi.org/10.1007/s11336-021-09811-z
@@ -215,7 +213,10 @@ fit_panel_sem <- function(data,
     fill_in_model_specification(internal_list = internal_list)
 
   # fill in starting values to the list
-  internal_list <- starting_values(internal_list = internal_list)
+  internal_list <- fill_in_starting_values(internal_list = internal_list)
+
+  # add starting values to model object
+  # internal_list <- add_starting_values(internal_list = internal_list)
 
   # TODO: decide on default settings for (i) when to include resampling and
   # (ii) the default settings of the resampling procedure

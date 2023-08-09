@@ -25,10 +25,10 @@
 #'  Equation Modeling: A Multidisciplinary Journal, 28:3, 475-492,
 #'  DOI: 10.1080/10705511.2020.1780598
 
-starting_values <- function(internal_list){
+fill_in_starting_values <- function(internal_list){
 
   # function name
-  fun.name <- "starting_values"
+  fun.name <- "fill_in_starting_values"
 
   # function version
   fun.version <- "0.0.3 2023-04-24"
