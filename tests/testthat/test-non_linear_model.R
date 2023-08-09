@@ -106,7 +106,7 @@ test_that("test linear model - OpenMx", {
     testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel") |
                             is(model$model_syntax$OpenMx, "MxModel"))
     fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
-    # check if the fit was succesful:
+    # check if the fit was successful:
     testthat::expect_true(is(fit_mx, "MxRAMModel") |
                             is(fit_mx, "MxModel"))
 
