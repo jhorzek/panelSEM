@@ -27,94 +27,83 @@ fill_in_data <- function(data,
                          internal_list,
                          add_product_variables){
 
-# function name
-fun.name <- "fill_in_data"
+  # function name
+  fun.name <- "fill_in_data"
 
-# function version
-fun.version <- "0.0.1 2023-02-06"
+  # function version
+  fun.version <- "0.0.1 2023-02-06"
 
-# function name+version
-fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  # get verbose argument
+  verbose <- internal_list$control$verbose
 
-# check function arguments
-## get class of model object
-model_class <- class(internal_list)
+  # console output
+  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version,
+                                  " ", Sys.time(), "\n" ) )
 
-## set supported classes of model objects
-supported_model_classes <- c( "panelSEM" )
+  # function name+version
+  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-## check if argument model is supported
-if(!any(model_class %in% supported_model_classes)) stop(
-  paste0(
-    fun.name.version, ": model of class ", model_class,
-    " not supported. Supported fit objects are: ",
-    paste(supported_model_classes, collapse = ", ")
-  )
-)
+  ## check if argument model is supported
+  if(!is(object = internal_list, class2 = "panelSEM"))
+    stop(fun.name.version, ": Model of class ", class(internal_list),
+         " is not supported. Fit objects must be of class panelSEM")
 
-# get verbose argument
-verbose <- internal_list$control$verbose
+  #TODO: check data argument
 
-# console output
-if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version,
-                                " ", Sys.time(), "\n" ) )
+  internal_list$info_data$data <- data
+  internal_list$info_data$n_obs <- nrow(data)
+  internal_list$info_data$n_var <- ncol(data)
+  internal_list$info_data$var_names <- colnames(data)
 
-#TODO: check data argument
+  # add product terms of observed variables models are nonlinear
+  if(add_product_variables == TRUE){
 
-internal_list$info_data$data <- data
-internal_list$info_data$n_obs <- nrow(data)
-internal_list$info_data$n_var <- ncol(data)
-internal_list$info_data$var_names <- colnames(data)
+    product_terms_names <- character(0)
 
-# add product terms of observed variables models are nonlinear
-if(add_product_variables == TRUE){
+    for (i in 1:internal_list$info_model$n_processes){
+      names_product <-
+        as.vector(outer(
+          internal_list$info_variables$info_time_invariant_variables[[i]],
+          internal_list$info_variables$user_names_time_varying[
+            i,
+            -internal_list$info_model$n_occasions],
+          paste,
+          sep="_"))
 
- product_terms_names <- character(0)
+      product_terms_names <- c(product_terms_names, names_product)
+    }
 
- for (i in 1:internal_list$info_model$n_processes){
-   names_product <-
-   as.vector(outer(
-   internal_list$info_variables$info_time_invariant_variables[[i]],
-   internal_list$info_variables$user_names_time_varying[
-     i,
-     -internal_list$info_model$n_occasions],
-   paste,
-   sep="_"))
+    product_terms_names <- paste0("prod_",product_terms_names)
+    product_final <- numeric(0)
 
-   product_terms_names <- c(product_terms_names, names_product)
- }
+    for (i in 1:internal_list$info_model$n_processes){
+      mat <- internal_list$info_variables$info_time_invariant_variables[[i]]
+      vec <- internal_list$info_variables$user_names_time_varying[
+        i,
+        -internal_list$info_model$n_occasions]
 
- product_terms_names <- paste0("prod_",product_terms_names)
- product_final <- numeric(0)
+      for (j in 1:(internal_list$info_model$n_occasions - 1)){
+        product <- sweep(as.matrix(data[, mat]),
+                         MARGIN=1,
+                         as.numeric(data[, vec[j]]),
+                         `*`)
 
-   for (i in 1:internal_list$info_model$n_processes){
-       mat <- internal_list$info_variables$info_time_invariant_variables[[i]]
-       vec <- internal_list$info_variables$user_names_time_varying[
-         i,
-         -internal_list$info_model$n_occasions]
+        product_final <- cbind(product_final, product)
+      }
+    }
 
-       for (j in 1:(internal_list$info_model$n_occasions - 1)){
-         product <- sweep(as.matrix(data[, mat]),
-                          MARGIN=1,
-                          as.numeric(data[, vec[j]]),
-                          `*`)
+    data_product_terms <- as.data.frame(product_final)
+    colnames(data_product_terms) <- product_terms_names
 
-         product_final <- cbind(product_final, product)
-       }
-       }
+    internal_list$info_data$data_product_terms <- data_product_terms
 
-   data_product_terms <- as.data.frame(product_final)
-   colnames(data_product_terms) <- product_terms_names
+  }
 
-   internal_list$info_data$data_product_terms <- data_product_terms
+  # console output
+  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                  Sys.time(), "\n" ) )
 
-}
-
-# console output
-if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                Sys.time(), "\n" ) )
-
-# return internal list
-return( internal_list )
+  # return internal list
+  return( internal_list )
 
 }

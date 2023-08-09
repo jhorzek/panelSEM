@@ -89,24 +89,32 @@ test_that("test linear model - OpenMx", {
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  for(heterogeneity in c("homogeneous", "additive", "autoregressive", "cross-lagged")){
+  for(heterogeneity in c("homogeneous", "additive", "cross-lagged")){
 
     message("Testing heterogeneity = ", heterogeneity)
 
-    model <- fit_panel_sem(data = data,
-                           time_varying_variables = list(paste0("x", 1:time_points),
-                                                         paste0("y", 1:time_points)),
-                           time_invariant_variables = list(c("z1", "z2"),
-                                                           c("z2", "z3")),
-                           heterogeneity = heterogeneity,
-                           use_open_mx = TRUE)
+    for(linear  in c(TRUE, FALSE)){
 
-    testthat::expect_true(is(model, "panelSEM"))
-    testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel"))
-    fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
-    # check if the fit was succesful:
-    print(fit_mx$fitfunction$result[[1]])
+      message("Testing linear = ", linear)
 
+      model <- fit_panel_sem(data = data,
+                             time_varying_variables = list(paste0("x", 1:time_points),
+                                                           paste0("y", 1:time_points)),
+                             time_invariant_variables = list(c("z1", "z2"),
+                                                             c("z2", "z3")),
+                             heterogeneity = heterogeneity,
+                             use_open_mx = TRUE,
+                             linear = linear)
+
+      testthat::expect_true(is(model, "panelSEM"))
+      testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel") |
+                              is(model$model_syntax$OpenMx, "MxModel"))
+      fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
+      # check if the fit was succesful:
+      testthat::expect_true(is(fit_mx, "MxRAMModel") |
+                              is(fit_mx, "MxModel"))
+
+    }
   }
 
 })

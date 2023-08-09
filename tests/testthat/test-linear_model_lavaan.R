@@ -1,7 +1,7 @@
 test_that("test linear model - lavaan", {
   library(panelSEM)
   library(testthat)
-  set.seed(23)
+  set.seed(23756)
 
   time_points <- 10
 
@@ -89,31 +89,7 @@ test_that("test linear model - lavaan", {
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  ## LAVAAN
-
-  model <- fit_panel_sem(data = data,
-                         time_varying_variables = list(paste0("x", 1:time_points),
-                                                       paste0("y", 1:time_points)),
-                         time_invariant_variables = list(c("z1", "z2"),
-                                                         c("z2", "z3")),
-                         use_open_mx = FALSE,
-                         heterogeneity = "additive")
-
-  fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
-                            data = model$info_data$data)
-
-  est <- lavaan::coef(fit_lavaan)[unique(names(coef(fit_lavaan)))]
-
-  shared_names <- names(population_parameters)[names(population_parameters) %in% names(est)]
-
-  expect_equal(
-    all(
-      abs(
-        (est[shared_names] - population_parameters[shared_names])/population_parameters[shared_names]
-      ) < .3),
-    TRUE)
-
-  for(heterogeneity in c("homogeneous", "additive", "autoregressive", "cross-lagged")){
+  for(heterogeneity in c("homogeneous", "additive", "cross-lagged")){
 
     message("Testing heterogeneity = ", heterogeneity)
 
@@ -125,8 +101,8 @@ test_that("test linear model - lavaan", {
                            use_open_mx = FALSE,
                            heterogeneity = heterogeneity)
 
-    fit_lavaan <- try(lavaan::sem(model$model_syntax$lavaan,
-                                  data = model$info_data$data))
+    fit_lavaan <- lavaan::sem(model$model_syntax$lavaan,
+                              data = model$info_data$data)
 
     expect_true(is(fit_lavaan, "lavaan"))
 

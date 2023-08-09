@@ -4,7 +4,7 @@
 \alias{fill_in_estimates}
 \title{Fit Panel Data Model}
 \usage{
-fill_in_estimates(internal_list, rand)
+fill_in_estimates(internal_list)
 }
 \arguments{
 \item{internal_list}{A list with various information extracted from the

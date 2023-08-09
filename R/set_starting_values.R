@@ -84,7 +84,7 @@ set_starting_values_lavaan <- function(model, starting_values){
   if(is.null(names(starting_values)) | !is.numeric(starting_values))
     stop("starting_values must be a numeric vector with names")
 
-  parameter_table <- lavaan::parameterEstimates(object = model)
+  parameter_table <- lavaan::parameterTable(object = model)
 
   # change labels if none are given
   parameter_table$label[parameter_table$label == ""] <- paste0(parameter_table$lhs,
@@ -99,10 +99,10 @@ set_starting_values_lavaan <- function(model, starting_values){
       stop("Could not find the following parameter in the model: ", current_label)
 
     parameter_table$est[parameter_table$label == current_label] <- current_value
+    parameter_table$start[parameter_table$label == current_label] <- current_value
   }
 
-
-  return(lavaan::update(model,
+  return(lavaan::update(object = model,
                         start = parameter_table))
 }
 

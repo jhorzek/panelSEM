@@ -57,78 +57,78 @@ fill_in_model_specification_open_mx <- function(internal_list){
   fun.version <- "0_0_2 2023_04_18"
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-  if(internal_list$info_model$linear == TRUE &&
-     identical("additive", sort(internal_list$info_model$heterogeneity))){
+  parameter_table <- internal_list$info_parameters$parameter_table
 
-  psem.matA <- internal_list$model_matrices$C_labels
-  psem.matS <- internal_list$model_matrices$Psi_labels
-  psem.matF <- internal_list$model_matrices$select_observed_only
-  var_names <- colnames(psem.matA)
-  obs_var <- internal_list$info_data$var_names
-  latent_var <- setdiff(var_names,obs_var)
-  nvar <- length(var_names)
-  nobs <- length(obs_var)
+  variables <- get_variables(parameter_table)
 
-  # TODO: find a way to replace ALL numeric values in the labels
-  # matrices by non-numeric characters
-  labelsA <- as.vector(t(psem.matA))
-  labelsA[which(labelsA=="1")] <- "fixed_number"
-  freeA <- ifelse(is.na(psem.matA)==TRUE | psem.matA=="1", F, T)
-  freeA_vec <- as.vector(t(freeA))
+  # add parameters from parameter table
+  mx_model <- OpenMx::mxModel(type = "RAM",
+                              manifestVars = variables$manifests,
+                              latentVars = variables$latents,
+                              OpenMx::mxData(observed = internal_list$info_data$data,
+                                             type = "raw"),
+                              OpenMx::mxPath(from = "one",
+                                             to = variables$manifests,
+                                             free = TRUE))
+  warning("Freely estimating all intercepts of observed variables. Is this correct?")
 
-  labelsS <- as.vector(t(psem.matS))
-  labelsS[which(labelsS=="1")] <- "fixed_number"
-  freeS <- ifelse(is.na(psem.matS)==TRUE, F, T)
-  freeS_vec <- as.vector(t(freeS))
+  for(i in 1:nrow(parameter_table)){
 
-  valuesF <- as.vector(t(psem.matF))
+    is_algebra <- parameter_table$algebra[i] != ""
+    mx_model <- OpenMx::mxModel(mx_model,
+                                OpenMx::mxPath(
+                                  from = parameter_table$outgoing[i],
+                                  to = parameter_table$incoming[i],
+                                  values = parameter_table$value[i],
+                                  labels =  ifelse(parameter_table$label[i] == "", NA,
+                                                   ifelse(is_algebra,
+                                                          paste0(parameter_table$label[i], "[1,1]"),
+                                                          parameter_table$label[i])),
+                                  free =  parameter_table$free[i],
+                                  arrows =  ifelse(parameter_table$op[i] %in% c("=~", "~"), 1, 2)
+                                ))
+  }
 
-  raw_data <- mxData(observed = internal_list$info_data$data ,
-                     type = 'raw')
+  # check for algebras
+  if(internal_list$info_parameters$has_algebras){
+    # we have to check if all of the parameters used in the algebras
+    # are already in the model:
+    algebra_parameters <- c()
+    for(i in which(parameter_table$algebra != "")){
 
-  matrA <- mxMatrix( type="Full",
-                     nrow=nvar,
-                     ncol=nvar,
-                     free=freeA_vec,
-                     labels=labelsA,
-                     byrow=TRUE,
-                     name="A",
-                     dimnames = list(var_names,var_names))
+      target <- parameter_table$label[i]
+      algebra <- parameter_table$algebra[i]
+      mx_algebra <- OpenMx::mxAlgebraFromString(algebra, name = target)
 
-  matrS <- mxMatrix( type="Symm",
-                     nrow=nvar,
-                     ncol=nvar,
-                     free=freeS_vec,
-                     labels=labelsS,
-                     byrow=TRUE,
-                     name="S",
-                     dimnames = list(var_names,var_names))
+      # add algebra to model
+      mx_model <- OpenMx::mxModel(mx_model,
+                                  mx_algebra
+      )
 
-  matrF <- mxMatrix( type="Full",
-                     nrow=nobs,
-                     ncol=nvar,
-                     name="F",
-                     byrow = T,
-                     values = valuesF,
-                     free = FALSE,
-                     dimnames = list(NULL,var_names))
+      # check the names of the parameters used in the algebra
+      algebra_elements <- extract_algebra_elements(mxAlgebra_formula = mx_algebra$formula)
+      # remove definition variables
+      algebra_parameters <- c(algebra_parameters,
+                              algebra_elements[!grepl(pattern = "^data.", x = algebra_elements)])
+    }
 
-  matrM <- mxMatrix( type="Full",
-                     nrow=1,
-                     ncol=nvar,
-                     free=c(rep(F,nvar-nobs),
-                            rep(T,nobs)),
-                     values=rep(0,nvar),
-                     name="M",
-                     labels = paste0('mean_', var_names),
-                     dimnames = list(NULL, var_names))
+    algebra_parameters <- unique(algebra_parameters)
 
-  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
-  funML <- mxFitFunctionML()
-  model <- mxModel("linear additive model",
-                         raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
+    model_parameters <- OpenMx::omxGetParameters(mx_model)
 
-  internal_list$model_syntax$OpenMx <- model
+    add_parameters <- algebra_parameters[!algebra_parameters %in% names(model_parameters)]
+
+
+    mx_model <- OpenMx::mxModel(mx_model,
+                                mxMatrix(name = "algebra_parameters",
+                                         values = 0,
+                                         free = TRUE,
+                                         nrow = 1,
+                                         ncol = length(add_parameters),
+                                         labels = add_parameters))
+  }
+
+  internal_list$model_syntax$OpenMx <- mx_model
 
   # get verbose argument
   verbose <- internal_list$control$verbose
@@ -138,8 +138,6 @@ fill_in_model_specification_open_mx <- function(internal_list){
                                   Sys.time(), "\n" ) )
   # return internal list
   return(internal_list)
-
-  }
 
 }
 
@@ -155,40 +153,41 @@ fill_in_model_specification_lavaan <- function(internal_list){
   fun.version <- "0_0_2 2023_04_18"
   fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
 
-  # extract directed and undirected effects:
+  if(internal_list$info_parameters$has_algebras)
+    stop("lavaan does not allow for algebras. Try use_open_mx = TRUE")
 
-  directed <- internal_list$info_parameters$C_table
-  latent_to_manifest <- (!directed$outgoing %in% internal_list$info_data$var_names) &
-    (directed$incoming %in% internal_list$info_data$var_names)
+  parameter_table <- internal_list$info_parameters$parameter_table
 
+  if(any(grepl(pattern = "^data.", x = parameter_table$label)))
+    stop("lavaan does not allow for definition variables")
+
+  # add parameters from parameter table
   model_syntax <- c()
 
-  if(length(directed$incoming[!latent_to_manifest]) > 0)
-    model_syntax <- c(model_syntax,
-                      paste0(directed$incoming[!latent_to_manifest],
-                             " ~ ",
-                             ifelse(is.na(directed$value[!latent_to_manifest]), "NA", directed$value[!latent_to_manifest]),
-                             " * ",
-                             directed$outgoing[!latent_to_manifest])
-    )
+  for(i in 1:nrow(parameter_table)){
 
-  if(length(directed$outgoing[latent_to_manifest]) > 0)
-    model_syntax <- c(model_syntax,
-                      paste0(directed$outgoing[latent_to_manifest],
-                             " =~ ",
-                             ifelse(is.na(directed$value[latent_to_manifest]), "NA", directed$value[latent_to_manifest]),
-                             " * ",
-                             directed$incoming[latent_to_manifest])
-    )
-
-  undirected <- internal_list$info_parameters$Psi_table
-
-  if(length(undirected$incoming) > 0)
-    model_syntax <- c(model_syntax,
-                      paste0(undirected$incoming, " ~~ ",
-                             ifelse(is.na(undirected$value), "", paste0(undirected$value, " * ")),
-                             undirected$outgoing)
-    )
+    if(parameter_table$op[i] %in% c("~", "~~")){
+      model_syntax <- c(model_syntax,
+                        paste0(parameter_table$incoming[i], " ",
+                               parameter_table$op[i], " ",
+                               ifelse(!parameter_table$free[i],
+                                      paste0(parameter_table$value[i], "*"),
+                                      paste0(parameter_table$label[i], "*")),
+                               parameter_table$outgoing[i])
+      )
+    }else if(parameter_table$op[i] == "=~"){
+      model_syntax <- c(model_syntax,
+                        paste0(parameter_table$outgoing[i], " ",
+                               parameter_table$op[i], " ",
+                               ifelse(!parameter_table$free[i],
+                                      paste0(parameter_table$value[i], "*"),
+                                      paste0(parameter_table$label[i], "*")),
+                               parameter_table$incoming[i])
+      )
+    }else{
+      stop("Unknown operator ", parameter_table$op[i], ".")
+    }
+  }
 
   model_syntax <- paste0(
     c(paste0("# panelSEM\n#-- Syntax generated with function version ", fun.version, " --"),
