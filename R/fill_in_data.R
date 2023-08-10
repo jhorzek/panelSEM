@@ -23,25 +23,12 @@
 fill_in_data <- function(data,
                          internal_list){
 
-  # function name
-  fun.name <- "fill_in_data"
-
-  # function version
-  fun.version <- "0.0.1 2023-02-06"
-
-  # get verbose argument
-  verbose <- internal_list$control$verbose
-
-  # console output
-  if( verbose >= 2 ) cat(paste0("start of function ", fun.name.version,
-                                " ", Sys.time(), "\n" ))
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   ## check if argument model is supported
   if(!is(object = internal_list, class2 = "panelSEM"))
-    stop(fun.name.version, ": Model of class ", class(internal_list),
+    stop("Model of class ", class(internal_list),
          " is not supported. Fit objects must be of class panelSEM")
 
   #TODO: check data argument
@@ -51,9 +38,8 @@ fill_in_data <- function(data,
   internal_list$info_data$n_var <- ncol(data)
   internal_list$info_data$var_names <- colnames(data)
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
   # return internal list
   return( internal_list )

@@ -22,21 +22,8 @@
 #'  DOI: 10.1080/10705511.2020.1780598
 fill_in_info_model <- function(internal_list){
 
-  # function name
-  fun.name <- "fill_in_info_model"
-
-  # function version
-  fun.version <- "0.0.1 2023-02-20"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-  # get verbose argument
-  verbose <- internal_list$control$verbose
-
-  # console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   # TODO: Argument checks
 
@@ -52,9 +39,8 @@ fill_in_info_model <- function(internal_list){
 
   internal_list$info_parameters$has_algebras <- any(parameter_table$algebra != "")
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
   # return internal list
   return( internal_list )

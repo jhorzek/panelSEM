@@ -24,26 +24,16 @@
 fill_in_model_specification <- function(internal_list,
                                         lbound_variances){
 
-  # function name
-  fun.name <- "fill_in_model_specification"
-
-  # function version
-  fun.version <- "0.0.3 2023-05-24"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-  # get verbose argument
-  verbose <- internal_list$control$verbose
-
-  # console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
 
   if(internal_list$info_model$use_open_mx)
     return(fill_in_model_specification_open_mx(internal_list,
                                                lbound_variances))
+
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
   return(fill_in_model_specification_lavaan(internal_list,
                                             lbound_variances))
@@ -58,10 +48,8 @@ fill_in_model_specification <- function(internal_list,
 fill_in_model_specification_open_mx <- function(internal_list,
                                                 lbound_variances){
 
-  # function details for debugging
-  fun.name <- "fill_in_model_specification"
-  fun.version <- "0_0_2 2023_04_18"
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   parameter_table <- internal_list$info_parameters$parameter_table
 
@@ -148,12 +136,9 @@ fill_in_model_specification_open_mx <- function(internal_list,
 
   internal_list$model_syntax$OpenMx <- mx_model
 
-  # get verbose argument
-  verbose <- internal_list$control$verbose
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
   # return internal list
   return(internal_list)
 
@@ -168,10 +153,8 @@ fill_in_model_specification_open_mx <- function(internal_list,
 fill_in_model_specification_lavaan <- function(internal_list,
                                                lbound_variances){
 
-  # function details for debugging
-  fun.name <- "fill_in_model_specification"
-  fun.version <- "0_0_2 2023_04_18"
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   if(internal_list$info_parameters$has_algebras)
     stop("lavaan does not allow for algebras. Try use_open_mx = TRUE")
@@ -225,19 +208,18 @@ fill_in_model_specification_lavaan <- function(internal_list,
   }
 
   model_syntax <- paste0(
-    c(paste0("# panelSEM\n#-- Syntax generated with function version ", fun.version, " --"),
+    c(paste0("# panelSEM\n#-- Syntax generated with package version ",
+             utils::packageVersion("panelSEM"),
+             " --"),
       model_syntax),
     collapse = "\n"
   )
 
   internal_list$model_syntax$lavaan <- model_syntax
 
-  # get verbose argument
-  verbose <- internal_list$control$verbose
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
   # return internal list
   return(internal_list)
 }

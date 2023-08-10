@@ -44,6 +44,7 @@
 #' @param psi_y1_y1 Numeric parameter value.
 #' @param psi_x_x Numeric parameter value.
 #' @param psi_y_y Numeric parameter value.
+#' @param verbose print additional information?
 #' @return a data.frame of data of observed variables
 #' @export
 simulate_data <- function(
@@ -103,28 +104,13 @@ simulate_data <- function(
   psi_y1_y1,
   ### subsequent time points
   psi_x_x,
-  psi_y_y
+  psi_y_y,
+  verbose = 0
 ){
 
-  ###################################
-  ## organize function for debugging
-  ###################################
+  # print console output
+  if(verbose >= 2) logger::log_info('Start.')
 
-  # function name
-  fun.name <- "simulate_data"
-
-  # function version
-  fun.version <- "0.0.2 2022-12-31"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-  # get verbose argument
-  verbose <- 2
-
-  # console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
   ########################
   ## initialize data set
   ########################
@@ -220,8 +206,8 @@ simulate_data <- function(
 
   }
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  # print console output
+  if(verbose >= 2) logger::log_info('End.')
+
   return(data)
 }

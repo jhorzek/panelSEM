@@ -39,28 +39,14 @@ auxiliary_model <- function(time_varying_variables,
                             ...){
 
 
-  # function name
-  fun.name <- "auxiliary_model"
-
-  # function version
-  fun.version <- "0.0.1 2023-04-26"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-
-  # set verbosity of console output
-  verbose <- handle_verbose_argument(verbose = verbose)
+  # print console output
+  if(verbose >= 2) logger::log_info('Start.')
 
   # create empty list
   internal_list <- create_empty_list(verbose = verbose)
 
   # assign class causalSEM to internal list
   internal_list <- create_panelSEM_s3_object(internal_list = internal_list)
-
-  # print console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, "
-                                  ", Sys.time(), "\n" ) )
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_variables(internal_list = internal_list,
@@ -78,9 +64,8 @@ auxiliary_model <- function(time_varying_variables,
 
   auxiliary_model <- internal_list
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ",
-                                  fun.name.version, " ", Sys.time(), "\n" ) )
+  # print console output
+  if(verbose >= 2) logger::log_info('End.')
 
   # return output
   return(auxiliary_model)

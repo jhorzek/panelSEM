@@ -42,21 +42,8 @@ fill_in_info_variables <- function(internal_list,
                                    heterogeneity,
                                    use_open_mx){
 
-  # function name
-  fun.name <- "fill_in_info_variables"
-
-  # function version
-  fun.version <- "0.0.1 2023-02-20"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-  # get verbose argument
-  verbose <- internal_list$control$verbose
-
   # console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   # TODO: Argument checks
   # - give warning if homogeneous and additive are both set to conflicting values
@@ -127,8 +114,7 @@ fill_in_info_variables <- function(internal_list,
     user_names_time_invariant_variables
 
   # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                  Sys.time(), "\n" ) )
+  if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
   # return internal list
   return( internal_list )

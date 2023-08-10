@@ -40,7 +40,8 @@ simulate_data(
   psi_x1_y1,
   psi_y1_y1,
   psi_x_x,
-  psi_y_y
+  psi_y_y,
+  verbose = 0
 )
 }
 \arguments{
@@ -115,6 +116,8 @@ simulate_data(
 \item{psi_x_x}{Numeric parameter value.}
 
 \item{psi_y_y}{Numeric parameter value.}
+
+\item{verbose}{print additional information?}
 }
 \value{
 a data.frame of data of observed variables

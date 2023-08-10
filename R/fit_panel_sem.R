@@ -142,23 +142,10 @@ fit_panel_sem <- function(data,
                           verbose = 0
                           ){
 
-
-  # function name
-  fun.name <- "fit_panel_sem"
-
-  # function version
-  fun.version <- "0.0.1 2023-02-20"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  initialize_logger()
 
   # print console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, "
-                                  ", Sys.time(), "\n" ) )
-
-
-  # set verbosity of console output
-  verbose <- handle_verbose_argument(verbose = verbose)
+  if(verbose >= 2) logger::log_info('Start.')
 
   # check if all arguments are valid
   check_panel_sem_specification(
@@ -227,8 +214,7 @@ fit_panel_sem <- function(data,
   panelSEM_object <- internal_list
 
   # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ",
-                                  fun.name.version, " ", Sys.time(), "\n" ) )
+  if(verbose >= 2) logger::log_info('End.')
 
   # return output
   return(panelSEM_object)

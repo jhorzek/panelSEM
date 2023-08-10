@@ -54,21 +54,8 @@
 ## Function definition
 create_empty_list <- function( verbose ){
 
-	# function name
-	fun.name <- "create_empty_list"
-
-	# function version
-	fun.version <- "0.0.12 2023-02-21"
-
-	# function name+version
-	fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
-
-	# check verbose argument
-	verbose <- handle_verbose_argument( verbose )
-
-	# console output
-	if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, " ",
-	                                Sys.time(), "\n" ) )
+  # print console output
+  if(verbose >= 2) logger::log_info('Start.')
 
 	# internal list
 
@@ -180,9 +167,8 @@ create_empty_list <- function( verbose ){
 
 	) # end of internal list
 
-	# console output
-	if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-	                                Sys.time(), "\n" ) )
+	# print console output
+	if(verbose >= 2) logger::log_info('End.')
 
 	# return internal list
 	return( internal_list )

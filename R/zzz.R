@@ -7,6 +7,7 @@
 #' @import OpenMx
 #' @import lavaan
 #' @import mvtnorm
+#' @importFrom utils packageVersion
 #' @name panelSEM
 #' @keywords internal
 "_PACKAGE"

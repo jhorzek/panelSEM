@@ -27,14 +27,8 @@
 
 starting_values <- function(internal_list){
 
-  # function name
-  fun.name <- "starting_values"
-
-  # function version
-  fun.version <- "0.0.3 2023-04-24"
-
-  # function name+version
-  fun.name.version <- paste0( fun.name, " (", fun.version, ")" )
+  # print console output
+  if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   # check function arguments
   ## get class of model object
@@ -46,18 +40,11 @@ starting_values <- function(internal_list){
   ## check if argument model is supported
   if(!any(model_class %in% supported_model_classes)) stop(
     paste0(
-      fun.name.version, ": model of class ", model_class,
+      "Model of class ", model_class,
       " not supported. Supported fit objects are: ",
       paste(supported_model_classes, collapse = ", ")
     )
   )
-
-  # get verbose argument
-  verbose <- internal_list$control$verbose
-
-  # console output
-  if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version,
-                                  " ", Sys.time(), "\n" ) )
 
   # extract model information from the arguments
   # TODO: check if we need to define all these objects or if we can directly
@@ -89,9 +76,9 @@ starting_values <- function(internal_list){
   if(linear == TRUE &&
      identical("homogeneous", sort(heterogeneity)) ){
 
-    # console output
-    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                    Sys.time(), "\n" ) )
+    # print console output
+    if(internal_list$control$verbose >= 2) logger::log_info('End.')
+
     # return output
     return(internal_list)
   }
@@ -554,9 +541,9 @@ starting_values <- function(internal_list){
     internal_list$model_matrices$C_start <- C_start
     internal_list$model_matrices$Psi_start <- Psi_start
 
-    # console output
-    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                    Sys.time(), "\n" ) )
+    # print console output
+    if(verbose >= 2) logger::log_info('End.')
+
     # return output
     return(internal_list)
   }
@@ -569,9 +556,9 @@ starting_values <- function(internal_list){
      "additive" %in% heterogeneity  &&
      "cross-lagged" %in% heterogeneity){
 
-    # console output
-    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
-                                    Sys.time(), "\n" ) )
+    # print console output
+    if(internal_list$control$verbose >= 2) logger::log_info('End.')
+
     # return output
     return(internal_list)
 
