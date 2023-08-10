@@ -1,14 +1,14 @@
-test_that("test linear model - OpenMx", {
+test_that("test linear model", {
   library(panelSEM)
+  library(mxsem)
   library(testthat)
   set.seed(23)
 
-  time_points <- 10
+  time_points <- 5
 
   ############################################
   # set values of population parameters SET 1
   ############################################
-
 
   # covariance-matrix of the latent traits
   A_sigma_eta <- matrix(nrow = 2, ncol = 2, c(1, 0.5, 0.5, 1))
@@ -82,34 +82,185 @@ test_that("test linear model - OpenMx", {
     psi_y_y = 1
   )
 
-  population_parameters$N <- 30
+  population_parameters$N <- 50
 
   population_parameters$time_points <- time_points
 
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  for(heterogeneity in c("homogeneous", "additive", "cross-lagged")){
+  for(linear in c(TRUE, FALSE)){
+    for(heterogeneity in list("homogeneous",
+                              "additive",
+                              "cross-lagged",
+                              c("additive", "cross-lagged"))){
+      for(use_open_mx in c(TRUE)){
 
-    message("Testing heterogeneity = ", heterogeneity)
+        message("Testing:\n linear = ", linear, "\n heterogeneity = ", heterogeneity, "\n use_open_mx = ", use_open_mx)
 
-    model <- fit_panel_sem(data = data,
-                           time_varying_variables = list(paste0("x", 1:time_points),
-                                                         paste0("y", 1:time_points)),
-                           time_invariant_variables = list(c("z1", "z2"),
-                                                           c("z2", "z3")),
-                           heterogeneity = heterogeneity,
-                           use_open_mx = TRUE,
-                           linear = FALSE)
+        model <- fit_panel_sem(data = data,
+                               time_varying_variables = list(paste0("x", 1:time_points),
+                                                             paste0("y", 1:time_points)),
+                               time_invariant_variables = list(c("z1", "z2"),
+                                                               c("z2", "z3")),
+                               use_open_mx = use_open_mx,
+                               heterogeneity = heterogeneity,
+                               lbound_variances = use_open_mx,
+                               linear = linear)
 
-    testthat::expect_true(is(model, "panelSEM"))
-    testthat::expect_true(is(model$model_syntax$OpenMx, "MxRAMModel") |
-                            is(model$model_syntax$OpenMx, "MxModel"))
-    fit_mx <- OpenMx::mxTryHard(model$model_syntax$OpenMx)
-    # check if the fit was successful:
-    testthat::expect_true(is(fit_mx, "MxRAMModel") |
-                            is(fit_mx, "MxModel"))
+        coef_fit <- model$model_syntax$OpenMx |>
+          coef() |>
+          names() |>
+          unique() |>
+          sort()
 
+        # remove intercepts
+        coef_fit <- coef_fit[!grepl(pattern = "^untitled",
+                                    x = coef_fit)]
+
+        expected_model <- ""
+
+        if(linear){
+          expected_model <- paste0(
+            expected_model,
+            "\n# exogenous predictors
+  x1 ~ c_x1_z1 * z1
+  x1 ~ c_x1_z2 * z2
+  x1 ~ c_x1_z3 * z3
+
+  y1 ~ c_y1_z1 * z1
+  y1 ~ c_y1_z2 * z2
+  y1 ~ c_y1_z3 * z3
+
+  x2 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x3 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x4 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x5 ~ c_x_z1 * z1 + c_x_z2 * z2
+
+  y2 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y3 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y4 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y5 ~ c_y_z2 * z2 + c_y_z3 * z3
+
+  z1 ~~ psi_z1_z1*z1 + psi_z2_z1*z2 + psi_z3_z1*z3
+  z2 ~~ psi_z2_z2*z2 + psi_z3_z2*z3
+  z3 ~~ psi_z3_z3*z3
+        "
+          )
+        }else{
+          expected_model <- paste0(
+            expected_model,
+            "\n# exogenous predictors
+  x1 ~ c_x1_z1 * z1
+  x1 ~ c_x1_z2 * z2
+  x1 ~ c_x1_z3 * z3
+
+  y1 ~ c_y1_z1 * z1
+  y1 ~ c_y1_z2 * z2
+  y1 ~ c_y1_z3 * z3
+
+  x2 ~ {c_x_z1_t2 := c_x_z1 + c_x_y_z1 * data.y1}*z1 + {c_x_z2_t2 := c_x_z2 + c_x_y_z2 * data.y1}*z2
+  x3 ~ {c_x_z1_t3 := c_x_z1 + c_x_y_z1 * data.y2}*z1 + {c_x_z2_t3 := c_x_z2 + c_x_y_z2 * data.y2}*z2
+  x4 ~ {c_x_z1_t4 := c_x_z1 + c_x_y_z1 * data.y3}*z1 + {c_x_z2_t4 := c_x_z2 + c_x_y_z2 * data.y3}*z2
+  x5 ~ {c_x_z1_t5 := c_x_z1 + c_x_y_z1 * data.y4}*z1 + {c_x_z2_t5 := c_x_z2 + c_x_y_z2 * data.y4}*z2
+
+  y2 ~ c_y_x*x1 + c_y_y*y1 + {c_y_z2_t2 := c_y_z2 + c_y_x_z2 * data.x1}*z2 + {c_y_z3_t2 := c_y_z3 + c_y_x_z3 * data.x1}*z3
+  y3 ~ c_y_x*x2 + c_y_y*y2 + {c_y_z2_t3 := c_y_z2 + c_y_x_z2 * data.x2}*z2 + {c_y_z3_t3 := c_y_z3 + c_y_x_z3 * data.x2}*z3
+  y4 ~ c_y_x*x3 + c_y_y*y3 + {c_y_z2_t4 := c_y_z2 + c_y_x_z2 * data.x3}*z2 + {c_y_z3_t4 := c_y_z3 + c_y_x_z3 * data.x3}*z3
+  y5 ~ c_y_x*x4 + c_y_y*y4 + {c_y_z2_t5 := c_y_z2 + c_y_x_z2 * data.x4}*z2 + {c_y_z3_t5 := c_y_z3 + c_y_x_z3 * data.x4}*z3
+
+  z1 ~~ psi_z1_z1*z1 + psi_z2_z1*z2 + psi_z3_z1*z3
+  z2 ~~ psi_z2_z2*z2 + psi_z3_z2*z3
+  z3 ~~ psi_z3_z3*z3
+        "
+          )
+        }
+
+        if("additive" %in% heterogeneity){
+          expected_model <- paste0(
+            expected_model,
+            "\n# additive latent predictors
+  etax =~ c_x1_etax * x1 + c_y1_etax * y1 + 1*x2 + 1*x3 + 1*x4 + 1*x5
+  etay =~ c_x1_etay * x1 + c_y1_etay * y1 + 1*y2 + 1*y3 + 1*y4 + 1*y5
+
+  etax ~~ psi_etax_etax * etax + psi_etay_etax * etay
+  etay ~~ psi_etay_etay * etay
+        "
+          )
+        }
+        if("cross-lagged" %in% heterogeneity){
+          expected_model <- paste0(
+            expected_model,
+            "\n# cross-lagged latent predictors
+  etaxy =~ data.y1 * x2 + data.y2 * x3 + data.y3 * x4 + data.y4 * x5
+  etayx =~ data.x1 * y2 + data.x2 * y3 + data.x3 * y4 + data.x4 * y5
+
+  etaxy ~~ psi_etaxy_etaxy * etaxy + psi_etayx_etaxy * etayx
+  etayx ~~ psi_etayx_etayx * etayx
+        "
+          )
+        }
+
+        if("additive" %in% heterogeneity &&
+           "cross-lagged" %in% heterogeneity
+        ){
+          # add covariances
+          expected_model <- paste0(
+            expected_model,
+            "\n# (co-)variances
+  etaxy =~ data.y1 * x2 + data.y2 * x3 + data.y3 * x4 + data.y4 * x5
+  etayx =~ data.x1 * y2 + data.x2 * y3 + data.x3 * y4 + data.x4 * y5
+
+  etaxy ~~ psi_etaxy_etax * etax + psi_etaxy_etay * etay
+  etayx ~~ psi_etayx_etax * etax + psi_etayx_etay * etay
+        "
+          )
+        }
+
+        expected_model <- paste0(
+          expected_model,
+          "\n# autoregressive and cross-lagged effects
+  x2 ~ c_x_x*x1 + c_x_y*y1
+  x3 ~ c_x_x*x2 + c_x_y*y2
+  x4 ~ c_x_x*x3 + c_x_y*y3
+  x5 ~ c_x_x*x4 + c_x_y*y4
+
+  y2 ~ c_y_x*x1 + c_y_y*y1
+  y3 ~ c_y_x*x2 + c_y_y*y2
+  y4 ~ c_y_x*x3 + c_y_y*y3
+  y5 ~ c_y_x*x4 + c_y_y*y4
+
+# (co-)variances
+  x1 ~~ psi_x1_x1*x1 + psi_y1_x1*y1
+  y1 ~~ psi_y1_y1*y1
+
+  x2 ~~ psi_x_x*x2
+  x3 ~~ psi_x_x*x3
+  x4 ~~ psi_x_x*x4
+  x5 ~~ psi_x_x*x5
+  y2 ~~ psi_y_y*y2
+  y3 ~~ psi_y_y*y3
+  y4 ~~ psi_y_y*y4
+  y5 ~~ psi_y_y*y5
+      "
+        )
+
+        fit_mxsem_exp <- mxsem::mxsem(expected_model,
+                                      data = model$info_data$data,
+                                      scale_loadings = FALSE,
+                                      scale_latent_variances = FALSE)
+
+        coef_exp <- fit_mxsem_exp |>
+          coef() |>
+          names() |>
+          unique() |>
+          sort()
+        # remove intercepts
+        coef_exp <- coef_exp[!grepl("^one", coef_exp)]
+
+        testthat::expect_true(all(coef_fit == coef_exp))
+      }
+
+    }
   }
-
 })

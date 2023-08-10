@@ -46,7 +46,7 @@ auxiliary_model <- function(time_varying_variables,
   internal_list <- create_empty_list(verbose = verbose)
 
   # assign class causalSEM to internal list
-  internal_list <- create_panelSEM_s3_object(internal_list = internal_list)
+  class(internal_list) <- "panelSEM"
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_variables(internal_list = internal_list,

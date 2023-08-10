@@ -8,8 +8,6 @@
 #' unobserved heterogeneity.
 #' @param internal_list A list with various information extracted from the
 #'    model.
-#' @param rand Logical value indicating if (\code{TRUE}) random starting values
-#' should be chosen.
 #' @return An object of class \code{panelSEM} for which several methods
 #' are available including \code{\link{summary.panelSEM}} and
 #' \code{\link{print.panelSEM}}.

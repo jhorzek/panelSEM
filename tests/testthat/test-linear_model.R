@@ -1,14 +1,13 @@
-test_that("test linear model - lavaan", {
+test_that("test linear model", {
   library(panelSEM)
   library(testthat)
-  set.seed(23756)
+  set.seed(23)
 
-  time_points <- 10
+  time_points <- 5
 
   ############################################
   # set values of population parameters SET 1
   ############################################
-
 
   # covariance-matrix of the latent traits
   A_sigma_eta <- matrix(nrow = 2, ncol = 2, c(1, 0.5, 0.5, 1))
@@ -89,61 +88,128 @@ test_that("test linear model - lavaan", {
   data <- do.call(what = simulate_data,
                   args = population_parameters)
 
-  for(heterogeneity in c("additive")){
+  for(linear in c(TRUE)){
+    for(heterogeneity in c("homogeneous", "additive")){
+      for(use_open_mx in c(TRUE, FALSE)){
 
-    message("Testing heterogeneity = ", heterogeneity)
+        message("Testing:\n linear = ", linear, "\n heterogeneity = ", heterogeneity, "\n use_open_mx = ", use_open_mx)
 
-    model <- fit_panel_sem(data = data,
-                           time_varying_variables = list(paste0("x", 1:time_points),
-                                                         paste0("y", 1:time_points)),
-                           time_invariant_variables = list(c("z1", "z2"),
-                                                           c("z2", "z3")),
-                           use_open_mx = FALSE,
-                           heterogeneity = heterogeneity,
-                           lbound_variances = FALSE,
-                           linear = TRUE)
+        model <- fit_panel_sem(data = data,
+                               time_varying_variables = list(paste0("x", 1:time_points),
+                                                             paste0("y", 1:time_points)),
+                               time_invariant_variables = list(c("z1", "z2"),
+                                                               c("z2", "z3")),
+                               use_open_mx = use_open_mx,
+                               heterogeneity = heterogeneity,
+                               lbound_variances = use_open_mx,
+                               linear = linear)
+        if(use_open_mx){
+          coef_fit <- model$model_syntax$OpenMx |>
+            coef() |>
+            names() |>
+            unique() |>
+            sort()
 
-    fit_lavaan <- lavaan::lavaan(model$model_syntax$lavaan,
-                                 data = model$info_data$data)
+          # remove intercepts
+          coef_fit <- coef_fit[!grepl(pattern = "^untitled",
+                                      x = coef_fit)]
+        }else{
+          fit_lavaan <- lavaan::lavaan(model$model_syntax$lavaan,
+                                       data = model$info_data$data,
+                                       do.fit = FALSE)
+          coef_fit <- fit_lavaan |>
+            coef() |>
+            names() |>
+            unique() |>
+            sort()
+        }
 
-    expect_true(is(fit_lavaan, "lavaan"))
 
-    mx_model <- fit_panel_sem(data = data,
-                              time_varying_variables = list(paste0("x", 1:time_points),
-                                                            paste0("y", 1:time_points)),
-                              time_invariant_variables = list(c("z1", "z2"),
-                                                              c("z2", "z3")),
-                              use_open_mx = TRUE,
-                              heterogeneity = heterogeneity,
-                              linear = TRUE)
 
-    testthat::expect_true(is(mx_model, "panelSEM"))
-    testthat::expect_true(is(mx_model$model_syntax$OpenMx, "MxRAMModel") |
-                            is(mx_model$model_syntax$OpenMx, "MxModel"))
-    fit_mx <- OpenMx::mxTryHard(mx_model$model_syntax$OpenMx)
-    # check if the fit was succesful:
-    testthat::expect_true(is(fit_mx, "MxRAMModel") |
-                            is(fit_mx, "MxModel"))
+        expected_model <- ""
 
-    names_lavaan <- fit_lavaan |>
-      coef() |>
-      names() |>
-      unique() |>
-      sort()
+        if(linear){
+          expected_model <- paste0(
+            expected_model,
+            "\n# exogenous predictors
+  x1 ~ c_x1_z1 * z1
+  x1 ~ c_x1_z2 * z2
+  x1 ~ c_x1_z3 * z3
 
-    names_open_mx <- fit_mx |>
-      coef() |>
-      names() |>
-      unique() |>
-      sort()
+  y1 ~ c_y1_z1 * z1
+  y1 ~ c_y1_z2 * z2
+  y1 ~ c_y1_z3 * z3
 
-    names_open_mx <- names_open_mx[!grepl("^untitled[0-9]*\\.M", x = names_open_mx)]
+  x2 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x3 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x4 ~ c_x_z1 * z1 + c_x_z2 * z2
+  x5 ~ c_x_z1 * z1 + c_x_z2 * z2
 
-    testthat::expect_true(all(names_lavaan ==
-                                names_open_mx))
+  y2 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y3 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y4 ~ c_y_z2 * z2 + c_y_z3 * z3
+  y5 ~ c_y_z2 * z2 + c_y_z3 * z3
 
-    testthat::expect_true(abs(logLik(fit_mx) -
-                                  logLik(fit_lavaan)) < 10)
+  z1 ~~ psi_z1_z1*z1 + psi_z2_z1*z2 + psi_z3_z1*z3
+  z2 ~~ psi_z2_z2*z2 + psi_z3_z2*z3
+  z3 ~~ psi_z3_z3*z3
+        "
+          )
+        }
+
+        if(heterogeneity == "additive"){
+          expected_model <- paste0(
+            expected_model,
+            "\n# additive latent predictors
+  etax =~ c_x1_etax * x1 + c_y1_etax * y1 + 1*x2 + 1*x3 + 1*x4 + 1*x5
+  etay =~ c_x1_etay * x1 + c_y1_etay * y1 + 1*y2 + 1*y3 + 1*y4 + 1*y5
+
+  etax ~~ psi_etax_etax * etax + psi_etay_etax * etay
+  etay ~~ psi_etay_etay * etay
+        "
+          )
+        }
+
+        expected_model <- paste0(
+          expected_model,
+          "\n# autoregressive and cross-lagged effects
+  x2 ~ c_x_x*x1 + c_x_y*y1
+  x3 ~ c_x_x*x2 + c_x_y*y2
+  x4 ~ c_x_x*x3 + c_x_y*y3
+  x5 ~ c_x_x*x4 + c_x_y*y4
+
+  y2 ~ c_y_x*x1 + c_y_y*y1
+  y3 ~ c_y_x*x2 + c_y_y*y2
+  y4 ~ c_y_x*x3 + c_y_y*y3
+  y5 ~ c_y_x*x4 + c_y_y*y4
+
+# (co-)variances
+  x1 ~~ psi_x1_x1*x1 + psi_y1_x1*y1
+  y1 ~~ psi_y1_y1*y1
+
+  x2 ~~ psi_x_x*x2
+  x3 ~~ psi_x_x*x3
+  x4 ~~ psi_x_x*x4
+  x5 ~~ psi_x_x*x5
+  y2 ~~ psi_y_y*y2
+  y3 ~~ psi_y_y*y3
+  y4 ~~ psi_y_y*y4
+  y5 ~~ psi_y_y*y5
+      "
+        )
+
+        fit_lavaan_exp <- lavaan::lavaan(expected_model,
+                                         data = model$info_data$data,
+                                         do.fit = FALSE)
+
+        coef_exp <- fit_lavaan_exp |>
+          coef() |>
+          names() |>
+          unique() |>
+          sort()
+        testthat::expect_true(all(coef_fit == coef_exp))
+      }
+
+    }
   }
-
 })

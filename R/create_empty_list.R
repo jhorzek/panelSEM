@@ -34,7 +34,7 @@
 #'      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
 #'    \code{$info_parameters}: List of XX \tab \tab \cr
 #'      \code{..$parameter_table}: \code{data.frame} \tab \tab Table with model parameters.\cr
-#'      \code{..$has_algebra}: \code{data.frame} \tab \tab logical: are there algebras in the model?.\cr
+#'      \code{..$has_algebras}: \code{data.frame} \tab \tab logical: are there algebras in the model?.\cr
 #'   \code{$model_syntax}: List of XX \tab \tab \cr
 #'      \code{..$lavaan}: \code{list} \tab \tab Model specified in \code{lavaan}. \cr
 #'      \code{..$OpenMx}: \code{list} \tab \tab Model specified in \code{OpenMx}. \cr
@@ -138,7 +138,7 @@ create_empty_list <- function( verbose ){
 		  # data.frame holding all parameters
 		  parameter_table = data.frame(0),
 		  # does the model have mxAlgebras?
-		  has_algebra     = c()
+		  has_algebras    = c()
 
 		), # end info_parameter list
 

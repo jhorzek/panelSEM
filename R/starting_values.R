@@ -30,22 +30,6 @@ starting_values <- function(internal_list){
   # print console output
   if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
-  # check function arguments
-  ## get class of model object
-  model_class <- class(internal_list)
-
-  ## set supported classes of model objects
-  supported_model_classes <- c( "panelSEM" )
-
-  ## check if argument model is supported
-  if(!any(model_class %in% supported_model_classes)) stop(
-    paste0(
-      "Model of class ", model_class,
-      " not supported. Supported fit objects are: ",
-      paste(supported_model_classes, collapse = ", ")
-    )
-  )
-
   # extract model information from the arguments
   # TODO: check if we need to define all these objects or if we can directly
   # refer to the internal list

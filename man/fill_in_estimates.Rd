@@ -9,9 +9,6 @@ fill_in_estimates(internal_list)
 \arguments{
 \item{internal_list}{A list with various information extracted from the
 model.}
-
-\item{rand}{Logical value indicating if (\code{TRUE}) random starting values
-should be chosen.}
 }
 \value{
 An object of class \code{panelSEM} for which several methods

@@ -32,7 +32,9 @@
 #' print(omxGetParameters(model_start))
 #' print(starting_values)
 set_starting_values_openmx <- function(model, starting_values){
-  if(is.null(names(starting_values)) | !is(starting_values, "vector") | !is.numeric(starting_values))
+  if(is.null(names(starting_values)) |
+     !methods::is(starting_values, "vector") |
+     !is.numeric(starting_values))
     stop("starting_values must be a numeric vector with names")
 
   return(OpenMx::omxSetParameters(model = model,

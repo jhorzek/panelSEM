@@ -10,7 +10,8 @@ find_common_substring <- function(strings){
   # translate the strings to numbers representing the individual
   # characters:
   as_raw_char <- sapply(strings,
-                        charToRaw)
+                        charToRaw,
+                        simplify = FALSE)
 
   string_min_length <- as_raw_char |>
     lengths() |>

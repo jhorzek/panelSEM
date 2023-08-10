@@ -122,9 +122,9 @@ add_latent_trait <- function(internal_list){
   process_names <- internal_list$info_variables$names_processes["user_names",]
   effects       <- data.frame()
 
-  if(internal_list$info_model$heterogeneity == "homogeneous"){
+  if(all(internal_list$info_model$heterogeneity == "homogeneous")){
     # no eta-terms are added
-    message("No latent processes added.")
+    message("No additive latent trait added.")
     return()
   }
 
@@ -137,7 +137,12 @@ add_latent_trait <- function(internal_list){
     message("Adding cross-lagged latent processes.")
   }
 
-  etas             <- paste0("eta", process_names)
+  etas_base <- paste0("eta", process_names)
+  if(additive){
+    etas <- etas_base
+  }else{
+    etas <- c()
+  }
   etas_nonadditive <- c()
 
   if(cross_lagged){
@@ -156,7 +161,7 @@ add_latent_trait <- function(internal_list){
     if(additive && (i == 1)){
       # add additive effect for initial occasion
       # treat first occasion differently
-      for(out in c(etas, etas_nonadditive)){
+      for(out in etas){
         for(inc in incoming){
 
           effects <- rbind(effects,
@@ -201,10 +206,12 @@ add_latent_trait <- function(internal_list){
       }
 
       if(cross_lagged){
+        if(i == 1)
+          next
         previous_incoming <- observed[,i-1]
         effects <- rbind(effects,
                          data.frame(
-                           outgoing = paste0(etas[[j]], process_names[which(incoming != incoming[[j]])]),
+                           outgoing = paste0(etas_base[[j]], process_names[which(incoming != incoming[[j]])]),
                            incoming = incoming[[j]],
                            type     = "directed",
                            op       = "=~",
@@ -262,6 +269,12 @@ add_exogenous_predictors <- function(internal_list){
   linear <- internal_list$info_model$linear
 
   exogenous_predictors <- internal_list$info_variables$info_time_invariant_variables
+
+  if(is.null(exogenous_predictors)){
+    # no eta-terms are added
+    message("No exogenous predictors added.")
+    return()
+  }
 
   for(i in 1:ncol(observed)){
     incoming <- observed[,i]

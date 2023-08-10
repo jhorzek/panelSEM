@@ -27,7 +27,7 @@ fill_in_data <- function(data,
   if(internal_list$control$verbose >= 2) logger::log_info('Start.')
 
   ## check if argument model is supported
-  if(!is(object = internal_list, class2 = "panelSEM"))
+  if(!methods::is(object = internal_list, class2 = "panelSEM"))
     stop("Model of class ", class(internal_list),
          " is not supported. Fit objects must be of class panelSEM")
 
