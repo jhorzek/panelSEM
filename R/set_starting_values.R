@@ -44,10 +44,10 @@ set_starting_values_openmx <- function(model, starting_values){
 
 #' set_starting_values_lavaan
 #'
-#' change the starting values of a lavaan model object. Note: To fit the model, use
-#' lavaan::update(model, do.fit = TRUE)
+#' change the starting values of a lavaan model object.
 #' @param model lavaan model object
 #' @param starting_values labeled vector with values of the starting values
+#' @returns a lavaan parameter table with starting values
 #' @export
 #' @examples
 #' # Example copied from ?lavaan::sem
@@ -77,11 +77,10 @@ set_starting_values_openmx <- function(model, starting_values){
 #' # change values
 #' starting_values[] <- rnorm(length(starting_values))^2
 #'
-#' new_mod <- set_starting_values_lavaan(model           = fit,
-#'                                       starting_values = starting_values)
+#' new_pt <- set_starting_values_lavaan(model           = fit,
+#'                                      starting_values = starting_values)
 #' # print new values
-#' coef(new_mod)
-#' print(starting_values)
+#' new_pt
 set_starting_values_lavaan <- function(model, starting_values){
   if(is.null(names(starting_values)) | !is.numeric(starting_values))
     stop("starting_values must be a numeric vector with names")
@@ -104,8 +103,7 @@ set_starting_values_lavaan <- function(model, starting_values){
     parameter_table$start[parameter_table$label == current_label] <- current_value
   }
 
-  return(lavaan::update(object = model,
-                        start = parameter_table))
+  return(parameter_table)
 }
 
 

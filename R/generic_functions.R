@@ -1,5 +1,3 @@
-#' summary.panelSEM
-#'
 #' Summarize a panelSEM object
 #' @param object object of class panelSEM
 #' @param ... not used
@@ -9,8 +7,6 @@ summary.panelSEM <- function(object, ...){
   stop("Summary currently not implemented")
 }
 
-#' print.panelSEM
-#'
 #' print a panelSEM object
 #' @param x object of class panelSEM
 #' @param ... not used

@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic_functions.R
 \name{summary.panelSEM}
 \alias{summary.panelSEM}
-\title{summary.panelSEM}
+\title{Summarize a panelSEM object}
 \usage{
 summary.panelSEM(object, ...)
 }

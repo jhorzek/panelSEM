@@ -88,7 +88,7 @@ test_that("changing starting values - lavaan", {
   model_start <- set_starting_values_lavaan(model           = fit,
                                             starting_values = starting_values)
 
-  testthat::expect_true(all(coef(model_start)[names(starting_values)] == starting_values))
+  testthat::expect_true(all(model_start$start[model_start$label %in% names(starting_values)] == starting_values[model_start$label [model_start$label %in% names(starting_values)]]))
 
   # and check if passing a wrong parameter label results in an error:
   starting_values <- c(starting_values,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic_functions.R
 \name{print.panelSEM}
 \alias{print.panelSEM}
-\title{print.panelSEM}
+\title{print a panelSEM object}
 \usage{
 print.panelSEM(x, ...)
 }
