@@ -13,8 +13,7 @@ fit_panel_sem(
   use_resamples = FALSE,
   use_open_mx = FALSE,
   lbound_variances = TRUE,
-  verbose = 0,
-  ...
+  verbose = 0
 )
 }
 \arguments{
@@ -42,8 +41,6 @@ should be used.}
 \item{verbose}{Integer number describing the verbosity of console output.
 Admissible values: 0: no output (default), 1: user messages,
 2: debugging-relevant messages.}
-
-\item{...}{not used}
 }
 \value{
 An object of class \code{panelSEM} for which several methods

@@ -30,31 +30,16 @@ An empty internal list with the following structure:\cr
      \code{..$use_open_mx} \code{logical(0)}  \tab \tab If \code{TRUE}, \code{OpenMx} is used, otherwise \code{lavaan} is used.\cr
    \code{$info_variables}: List of XX        \tab \tab \cr
      \code{..$user_names_time_varying}: \code{char[0,0]}   \tab \tab User-Specified names of observed time-varying variables. \cr
-     \code{..$generic_names_time_varying}: \code{char[0,0]}   \tab \tab Generic names of observed time-varying variables. \cr
      \code{..$names_processes}: \code{char[0,0]}   \tab \tab Names of dynamic processes. \cr
-     \code{..$info_time_invariant_varianbles}: \code{char[0,0]}   \tab \tab Names and causal structure of observed time-invariant variables. \cr
      \code{..$names_time_invariant_unique}: \code{char[0,0]}   \tab \tab Names of unique observed time-invariant variables. \cr
-     \code{..$names_time_invariant_unobserved_additive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
-     \code{..$names_time_invariant_unobserved_autoregressive}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
-     \code{..$names_time_invariant_unobserved_cross_lagged}: \code{char[0,0]}   \tab \tab Names of UNobserved time-invariant variables. \cr
    \code{$info_parameters}: List of XX \tab \tab \cr
-     \code{..$C_table}: \code{data.frame} \tab \tab Table with labeled model parameters (structural coefficients).\cr
-     \code{..$Psi_table}: \code{data.frame} \tab \tab Table with labeled model parameters (covariance matrix).\cr
-   \code{model_matrices}: List of XX \tab \tab \cr
-    \code{..$C_labels}: \code{char[0,0]}  \tab \tab Character matrix of labels of structural coefficients. \cr
-    \code{..$Psi_labels}: \code{char[0,0]}  \tab \tab Character matrix of labels of covariance matrix. \cr
-    \code{..$select_observed_only}: \code{num[0,0]}  \tab \tab Numeric matrix to select observed variables. \cr
-    \code{..$C_start}: \code{num[0,0]}  \tab \tab Numeric matrix of starting values of structural coefficients. \cr
-    \code{..$Psi_start}: \code{num[0,0]}  \tab \tab Numeric matrix of starting values of covariance matrix. \cr
+     \code{..$parameter_table}: \code{data.frame} \tab \tab Table with model parameters.\cr
+     \code{..$has_algebra}: \code{data.frame} \tab \tab logical: are there algebras in the model?.\cr
   \code{$model_syntax}: List of XX \tab \tab \cr
      \code{..$lavaan}: \code{list} \tab \tab Model specified in \code{lavaan}. \cr
      \code{..$OpenMx}: \code{list} \tab \tab Model specified in \code{OpenMx}. \cr
    \code{$control}: List of XX     \tab \tab \cr
      \code{..$verbose}: \code{int(0)}     \tab \tab Verbosity of console output.\cr
-   \code{$tables}: List of XX      \tab \tab \cr
-     \code{..$summary}: \code{data.frame}  \tab \tab Information for \code{\link{summary.panelSEM}} function.\cr
-     \code{..$print}: \code{data.frame}  \tab \tab Information for \code{\link{print.panelSEM}}  function.\cr
-     \code{..$coef}: \code{data.frame}  \tab \tab Information for \code{\link{coef.panelSEM}}  function.
  }
 }
 \description{

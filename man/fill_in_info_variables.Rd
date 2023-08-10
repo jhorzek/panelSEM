@@ -10,8 +10,7 @@ fill_in_info_variables(
   time_invariant_variables,
   linear,
   heterogeneity,
-  use_open_mx,
-  ...
+  use_open_mx
 )
 }
 \arguments{
@@ -31,8 +30,6 @@ variables. List must have the same length as list in argument \code{time_varying
 
 \item{use_open_mx}{Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 should be used.}
-
-\item{...}{not used}
 }
 \value{
 The inputted internal_list with several slots filled in:
