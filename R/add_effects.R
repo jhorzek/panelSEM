@@ -122,15 +122,25 @@ add_latent_trait <- function(internal_list){
   process_names <- internal_list$info_variables$names_processes["user_names",]
   effects       <- data.frame()
 
-  additive      <- internal_list$info_model$heterogeneity == "additive"
-  if(!additive){
-    warning("Adding non-additive latent processes.")
+  if(internal_list$info_model$heterogeneity == "homogeneous"){
+    # no eta-terms are added
+    message("No latent processes added.")
+    return()
+  }
+
+  additive      <- "additive"     %in% internal_list$info_model$heterogeneity
+  cross_lagged  <- "cross-lagged" %in% internal_list$info_model$heterogeneity
+  if(additive){
+    message("Adding additive latent processes.")
+  }
+  if(cross_lagged){
+    message("Adding cross-lagged latent processes.")
   }
 
   etas             <- paste0("eta", process_names)
   etas_nonadditive <- c()
 
-  if(!additive){
+  if(cross_lagged){
     for(i in 1:length(process_names)){
       for(j in 1:length(process_names))
         if(i != j)
@@ -143,7 +153,8 @@ add_latent_trait <- function(internal_list){
   for(i in 1:ncol(observed)){
     incoming <- observed[,i]
 
-    if(i == 1){
+    if(additive && (i == 1)){
+      # add additive effect for initial occasion
       # treat first occasion differently
       for(out in c(etas, etas_nonadditive)){
         for(inc in incoming){
@@ -172,21 +183,24 @@ add_latent_trait <- function(internal_list){
     }
 
     for(j in 1:length(incoming)){
-      effects <- rbind(effects,
-                       data.frame(
-                         outgoing = etas[[j]],
-                         incoming = incoming[[j]],
-                         type     = "directed",
-                         op       = "=~",
-                         location = "C",
-                         label    = "",
-                         value    = 1,
-                         algebra  = "",
-                         free     = FALSE
-                       )
-      )
+      if(additive){
+        # additive effects at later occasions (time point > 1)
+        effects <- rbind(effects,
+                         data.frame(
+                           outgoing = etas[[j]],
+                           incoming = incoming[[j]],
+                           type     = "directed",
+                           op       = "=~",
+                           location = "C",
+                           label    = "",
+                           value    = 1,
+                           algebra  = "",
+                           free     = FALSE
+                         )
+        )
+      }
 
-      if(!additive){
+      if(cross_lagged){
         previous_incoming <- observed[,i-1]
         effects <- rbind(effects,
                          data.frame(
@@ -257,9 +271,6 @@ add_exogenous_predictors <- function(internal_list){
       for(out in unique(unlist(exogenous_predictors))){
         for(inc in incoming){
 
-          #if(!linear)
-          #  algebra <- paste0(c_x_z1_t2 := c_x_z1 + c_x_y_z1 * data.y1)
-
           effects <- rbind(effects,
                            data.frame(
                              outgoing = out,
@@ -294,9 +305,12 @@ add_exogenous_predictors <- function(internal_list){
         for(ex in exogenous_predictors[[j]]){
           algebra <- c(algebra,
                        paste0("c_", process_names[j], "_", ex, " + ",
-                              paste0(paste0("c_", process_names[j], "_", process_names[-j], "_", ex, " * data.", incoming_previous[-j]), collapse = " + ")
-                              )
+                              paste0(paste0("c_", process_names[j], "_",
+                                            process_names[-j], "_", ex,
+                                            " * data.", incoming_previous[-j]),
+                                     collapse = " + ")
                        )
+          )
         }
       }
 
@@ -307,7 +321,8 @@ add_exogenous_predictors <- function(internal_list){
                          type     = "directed",
                          op       = "~",
                          location = "C",
-                         label    = paste0("c_", incoming_label, "_", exogenous_predictors[[j]]),
+                         label    = paste0("c_", incoming_label, "_",
+                                           exogenous_predictors[[j]]),
                          value    = 0,
                          algebra  = algebra,
                          free     = algebra == ""
@@ -334,7 +349,9 @@ add_exogenous_predictors <- function(internal_list){
                                            unique_exogenous[[inc_index]],
                                            "_",
                                            unique_exogenous[[out_index]]),
-                         value    = ifelse(unique_exogenous[[out_index]] == unique_exogenous[[inc_index]],.6,0),
+                         value    = ifelse(unique_exogenous[[out_index]] == unique_exogenous[[inc_index]],
+                                           .6,
+                                           0),
                          algebra  = "",
                          free     = TRUE
                        )

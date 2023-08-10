@@ -63,26 +63,18 @@ auxiliary_model <- function(time_varying_variables,
                                   ", Sys.time(), "\n" ) )
 
   # fill in user-specified information about the model into the list
-  internal_list <-
-    fill_in_info_variables(internal_list = internal_list,
-                           time_varying_variables = time_varying_variables,
-                           time_invariant_variables = time_invariant_variables,
-                           linear = linear,
-                           heterogeneity  = heterogeneity,
-                           use_open_mx = use_open_mx)
+  internal_list <- fill_in_info_variables(internal_list = internal_list,
+                                          time_varying_variables = time_varying_variables,
+                                          time_invariant_variables = time_invariant_variables,
+                                          linear = linear,
+                                          heterogeneity  = heterogeneity,
+                                          use_open_mx = use_open_mx)
 
   # fill in user-specified information about the model into the list
-  internal_list <-
-    fill_in_info_model(internal_list = internal_list,
-                       time_varying_variables = time_varying_variables,
-                       time_invariant_variables = time_invariant_variables,
-                       linear = linear,
-                       heterogeneity  = heterogeneity,
-                       use_open_mx = use_open_mx)
+  internal_list <- fill_in_info_model(internal_list = internal_list)
 
   # fill in model syntax to the list
-  internal_list <-
-     fill_in_model_specification(internal_list = internal_list)
+  internal_list <- fill_in_model_specification(internal_list = internal_list)
 
   auxiliary_model <- internal_list
 

@@ -50,11 +50,6 @@ fill_in_info_model <- function(internal_list){
 
   internal_list$info_parameters$parameter_table <- parameter_table
 
-  # Create RAM matrices
-  RAM <- fill_RAM_matrices(parameter_table)
-
-  internal_list$info_parameters$RAM <- RAM
-
   internal_list$info_parameters$has_algebras <- any(parameter_table$algebra != "")
 
   # console output

@@ -51,8 +51,8 @@ check_panel_sem_specification <- function(specification){
          if(!is(verbose, "numeric"))
            stop("verbose must be an integer and not a ", class(verbose))
 
-         if(!all(sapply(dotdotdot, function(x) is(x,"NULL"))))
-           stop("... is currently not supported and only implemented for future use cases.")
+         # if(!all(sapply(dotdotdot, function(x) is(x,"NULL"))))
+         #   stop("... is currently not supported and only implemented for future use cases.")
 
        })
 }

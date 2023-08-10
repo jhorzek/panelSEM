@@ -23,7 +23,6 @@
 #' @param verbose Integer number describing the verbosity of console output.
 #' Admissible values: 0: no output (default), 1: user messages,
 #' 2: debugging-relevant messages.
-#' @param ... not used
 #' @return An object of class \code{panelSEM} for which several methods
 #' are available including \code{\link{summary.panelSEM}} and
 #' \code{\link{print.panelSEM}}.
@@ -140,8 +139,8 @@ fit_panel_sem <- function(data,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
                           lbound_variances = TRUE,
-                          verbose = 0,
-                          ...){
+                          verbose = 0
+                          ){
 
 
   # function name
@@ -171,8 +170,7 @@ fit_panel_sem <- function(data,
       heterogeneity = heterogeneity,
       use_resamples = use_resamples,
       use_open_mx = use_open_mx,
-      verbose = verbose,
-      dotdotdot = list(...)
+      verbose = verbose
     )
   )
 
@@ -180,7 +178,7 @@ fit_panel_sem <- function(data,
   internal_list <- create_empty_list(verbose = verbose)
 
   # assign class causalSEM to internal list
-  internal_list <- create_panelSEM_s3_object(internal_list = internal_list)
+  class(internal_list) <- "panelSEM"
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_variables(internal_list = internal_list,
@@ -192,9 +190,7 @@ fit_panel_sem <- function(data,
 
   # fill in user-specified data to the list
   internal_list <- fill_in_data(internal_list = internal_list,
-                                data = data,
-                                # add product terms of observed variables if model is nonlinear
-                                add_product_variables = !linear)
+                                data = data)
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_model(internal_list = internal_list)

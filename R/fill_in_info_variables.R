@@ -17,7 +17,6 @@
 #' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
-#' @param ... not used
 #' @return The inputted internal_list with several slots filled in:
 #' \tabular{lll}{
 #'  \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
@@ -41,8 +40,7 @@ fill_in_info_variables <- function(internal_list,
                                    time_invariant_variables,
                                    linear,
                                    heterogeneity,
-                                   use_open_mx,
-                                   ...){
+                                   use_open_mx){
 
   # function name
   fun.name <- "fill_in_info_variables"
@@ -68,11 +66,12 @@ fill_in_info_variables <- function(internal_list,
   # GENERAL MODEL INFORMATION
   ###########################
   ## extract model information from the arguments
-  internal_list$info_model$n_occasions <-
-    length(time_varying_variables[[1]])
+  internal_list$info_model$n_occasions <- length(time_varying_variables[[1]])
   internal_list$info_model$n_processes <- length(time_varying_variables)
-  internal_list$info_model$n_time_invariant <-
-    length(unique(unlist(time_invariant_variables)))
+  internal_list$info_model$n_time_invariant <- time_invariant_variables |>
+    unlist() |>
+    unique() |>
+    length()
   internal_list$info_model$linear <- linear
   internal_list$info_model$heterogeneity  <- heterogeneity
   internal_list$info_model$use_open_mx <- use_open_mx
@@ -81,43 +80,21 @@ fill_in_info_variables <- function(internal_list,
   # OBSERVED VARIABLES
   ####################
   ## time-varying variables
-  ### generic names time-varying variables
-  table_generic_names_colnames <-
-    as.character(1:internal_list$info_model$n_occasions)
-  table_generic_names_rownames <-
-    paste0("process_",LETTERS[1:internal_list$info_model$n_processes])
-
-  table_generic_names <-
-    matrix(
-      paste0(rep(gsub("process_", "",table_generic_names_rownames),
-                 each = internal_list$info_model$n_occasions),
-             rep(table_generic_names_colnames,
-                 internal_list$info_model$n_processes)),
-      byrow = TRUE,
-      ncol = internal_list$info_model$n_occasions,
-      nrow = internal_list$info_model$n_processes,
-      dimnames = list(table_generic_names_rownames,
-                      table_generic_names_colnames))
-
-  internal_list$info_variables$generic_names_time_varying <-
-    table_generic_names
-
   ### user-specified names time-varying variables
   table_user_names <- matrix(data = unlist(time_varying_variables),
                              ncol = internal_list$info_model$n_occasions,
                              nrow = internal_list$info_model$n_processes,
                              byrow = TRUE,
                              dimnames = list(
-                               table_generic_names_rownames,
-                               table_generic_names_colnames
+                               paste0("process_",LETTERS[1:internal_list$info_model$n_processes]),
+                               as.character(1:internal_list$info_model$n_occasions)
                              ))
 
-  internal_list$info_variables$user_names_time_varying <-
-    table_user_names
+  internal_list$info_variables$user_names_time_varying <- table_user_names
 
   ### names of processes
-  user_names_processes <-
-    vector("character", length = internal_list$info_model$n_processes)
+  user_names_processes <- vector("character",
+                                 length = internal_list$info_model$n_processes)
 
   for (i in 1:internal_list$info_model$n_processes){
 
@@ -127,23 +104,19 @@ fill_in_info_variables <- function(internal_list,
       warning("Could not find a good name for the process of the following variables: ",
               paste0(internal_list$info_variables$user_names_time_varying[i,], collapse = ", "),
               ". Using process_", LETTERS[i])
-      common_substring <- pasete0("process_", LETTERS[i])
+      common_substring <- paste0("process_", LETTERS[i])
     }
 
     user_names_processes[i] <- common_substring
   }
 
-  table_names_processes <-
-    matrix(ncol = internal_list$info_model$n_processes,
-           nrow = 2)
+  table_names_processes <- matrix(ncol = internal_list$info_model$n_processes,
+                                  nrow = 1,
+                                  dimnames = list("user_names", NULL))
 
   table_names_processes[1,] <- user_names_processes
-  table_names_processes[2,] <- LETTERS[1:internal_list$info_model$n_processes]
 
-  rownames(table_names_processes) <- c("user_names","generic_names")
-
-  internal_list$info_variables$names_processes <-
-    table_names_processes
+  internal_list$info_variables$names_processes <- table_names_processes
 
   ## time-invariant variables
   user_names_time_invariant_variables <- time_invariant_variables
@@ -152,194 +125,6 @@ fill_in_info_variables <- function(internal_list,
 
   internal_list$info_variables$info_time_invariant_variables <-
     user_names_time_invariant_variables
-
-  table_time_invariant <-
-    matrix(ncol = internal_list$info_model$n_time_invariant,
-           nrow = 2)
-
-  table_time_invariant[1,] <- unique(unlist(time_invariant_variables))
-  table_time_invariant[2,] <-
-    paste0("z",1:internal_list$info_model$n_time_invariant)
-
-  rownames(table_time_invariant) <- c("user_names","generic_names")
-
-  internal_list$info_variables$names_time_invariant_unique <-
-    table_time_invariant
-
-  ######################
-  # UNOBSERVED VARIABLES
-  ######################
-  # TODO: fill in the structural error terms if desired. These are
-  # the error terms (epsilon-terms) of the time-varying and time-invariant
-  # variables
-
-  #------------------------------------------
-  # additive random coefficients
-  #------------------------------------------
-
-  if("additive" %in% heterogeneity){
-
-    ## time-invariant variables
-    time_invariant_variables_unobserved_user_names <-
-      paste0("eta", user_names_processes)
-
-    time_invariant_variables_unobserved_generic_names <-
-      paste0("eta",
-             gsub("process_",
-                  "",
-                  rownames(internal_list$info_variables$user_names_time_varying)))
-
-    table_user_names_processes <-
-      matrix(ncol = internal_list$info_model$n_processes,
-             nrow = 2)
-
-    table_user_names_processes[1,] <-
-      time_invariant_variables_unobserved_user_names
-    table_user_names_processes[2,] <-
-      time_invariant_variables_unobserved_generic_names
-
-    rownames(table_user_names_processes) <- c("user_names","generic_names")
-
-    internal_list$info_variables$names_time_invariant_unobserved_additive <-
-      table_user_names_processes
-  }
-
-  #------------------------------------------
-  # autoregressive random coefficients
-  #------------------------------------------
-
-  if("autoregressive" %in% heterogeneity){
-
-    ## time-invariant variables user names
-
-    auto_regressive <-
-      matrix(ncol = internal_list$info_model$n_processes,
-             nrow = internal_list$info_model$n_processes)
-
-    rownames(auto_regressive) <- colnames(auto_regressive) <-
-      user_names_processes
-
-    auto_regressive[,] <-
-      paste0("eta",
-             apply(expand.grid(rownames(auto_regressive),
-                               colnames(auto_regressive)),
-                   1,
-                   paste,
-                   collapse = ""))
-
-    auto_regressive_user <- character(0)
-
-    for (i in 1:internal_list$info_model$n_processes){
-
-      auto_regressive_add <- auto_regressive[i, i]
-      auto_regressive_user <- c(auto_regressive_user, auto_regressive_add)
-
-    }
-
-    ## time-invariant variables generic names
-    auto_regressive <-
-      matrix(ncol = internal_list$info_model$n_processes,
-             nrow = internal_list$info_model$n_processes)
-
-    rownames(auto_regressive) <- colnames(auto_regressive) <-
-      internal_list$info_variables$names_processes["generic_names", ]
-
-    auto_regressive[,] <-
-      paste0("eta",
-             apply(expand.grid(rownames(auto_regressive),
-                               colnames(auto_regressive)),
-                   1,
-                   paste,
-                   collapse = ""))
-
-    auto_regressive_generic <- character(0)
-
-    for (i in 1:internal_list$info_model$n_processes){
-
-      auto_regressive_add <- auto_regressive[i,][-i]
-      auto_regressive_generic <- c(auto_regressive_generic, auto_regressive_add)
-
-    }
-
-    auto_regressive_matrix <-
-      matrix(c(auto_regressive_user, auto_regressive_generic),
-             nrow = internal_list$info_model$n_processes,
-             ncol = internal_list$info_model$n_processes,
-             byrow = TRUE)
-
-    rownames(auto_regressive_matrix) <- c("user_names","generic_names")
-
-    internal_list$info_variables$names_time_invariant_unobserved_autoregressive <-
-      auto_regressive_matrix
-
-  }
-
-  #------------------------------------------
-  # cross-lagged random coefficients
-  #------------------------------------------
-
-  if("cross-lagged" %in% heterogeneity){
-
-    ## time-invariant variables user names
-
-    cross_lagged <-
-      matrix(ncol = internal_list$info_model$n_processes,
-             nrow = internal_list$info_model$n_processes)
-
-    rownames(cross_lagged) <- colnames(cross_lagged) <-
-      user_names_processes
-
-    cross_lagged[,] <-
-      paste0("eta",
-             apply(expand.grid(rownames(cross_lagged), colnames(cross_lagged)),
-                   1,
-                   paste,
-                   collapse = ""))
-
-    cross_lagged_user <- character(0)
-
-    for (i in 1:internal_list$info_model$n_processes){
-
-      cross_lagged_add <- cross_lagged[i,][-i]
-      cross_lagged_user <- c(cross_lagged_user, cross_lagged_add)
-
-    }
-
-    ## time-invariant variables generic names
-    cross_lagged <-
-      matrix(ncol = internal_list$info_model$n_processes,
-             nrow = internal_list$info_model$n_processes)
-
-    rownames(cross_lagged) <- colnames(cross_lagged) <-
-      internal_list$info_variables$names_processes["generic_names", ]
-
-    cross_lagged[,] <-
-      paste0("eta",
-             apply(expand.grid(rownames(cross_lagged), colnames(cross_lagged)),
-                   1,
-                   paste,
-                   collapse = ""))
-
-    cross_lagged_generic <- character(0)
-
-    for (i in 1:internal_list$info_model$n_processes){
-
-      cross_lagged_add <- cross_lagged[i,][-i]
-      cross_lagged_generic <- c(cross_lagged_generic, cross_lagged_add)
-
-    }
-
-    cross_lagged_matrix <- matrix(c(cross_lagged_user, cross_lagged_generic),
-                                  nrow = internal_list$info_model$n_processes,
-                                  ncol = internal_list$info_model$n_processes,
-                                  byrow = TRUE)
-
-    rownames(cross_lagged_matrix) <- c("user_names","generic_names")
-
-    internal_list$info_variables$names_time_invariant_unobserved_cross_lagged <-
-      cross_lagged_matrix
-
-  }
 
   # console output
   if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",

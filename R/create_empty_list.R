@@ -96,10 +96,6 @@ create_empty_list <- function( verbose ){
 	    # data.frame object
 	    "data" = data.frame(0),
 
-	    # data set
-	    # data.frame object
-	    "data_product_terms" = data.frame(0),
-
 	    # number of observations
 	    # Integer number
 	    "n_obs" = integer(0),
@@ -155,68 +151,24 @@ create_empty_list <- function( verbose ){
 		  # character matrix
 		  "user_names_time_varying" = character(0),
 
-		  # generic names of observed time-varying variables
-		  # character matrix
-		  "generic_names_time_varying" = character(0),
-
 		  # names of dynamic processes
 		  # character matrix
 		  "names_processes" = character(0),
 
 		  # names and causal structure of observed time-invariant variables
 		  # character matrix
-		  "info_time_invariant_variables" = character(0),
-
-		  # names of observed time-invariant variables
-		  # character matrix
-		  "names_time_invariant_unique" = character(0),
-
-		  # names of unobserved time-invariant variables
-		  # character matrix
-		  "names_time_invariant_unobserved_additive" = character(0),
-
-		  # names of unobserved time-invariant variables
-		  # character matrix
-		  "names_time_invariant_unobserved_autoregressive" = character(0),
-
-		  # names of unobserved time-invariant variables
-		  # character matrix
-		  "names_time_invariant_unobserved_cross_lagged" = character(0)
+		  "info_time_invariant_variables" = character(0)
 
 		), # end info_variables list
 
 		info_parameters = list(
 
-		    # list of structural coefficients contains labels, starting values and
-		    # several other information
-		    "C_table" = data.frame(0),
-
-		    # list of covariance parameters contains labels, starting values and
-		    # several other information
-		    "Psi_table" = data.frame(0)
+		  # data.frame holding all parameters
+		  parameter_table = data.frame(0),
+		  # does the model have mxAlgebras?
+		  has_algebra     = c()
 
 		), # end info_parameter list
-
-		model_matrices = list(
-
-		  # matrix of labels of structural coefficients
-
-		  # matrix of structural coefficients
-		  "C_labels" = character(0),
-
-		  # covariance matrix
-		  "Psi_labels" = character(0),
-
-		  # filter matrix / selection matrix for selecting observed variables only
-		  "select_observed_only" = numeric(0),
-
-		  # starting values for matrix of structural coefficients
-		  "C_start" = character(0),
-
-		  # starting values for covariance matrix
-		  "Psi_start" = character(0)
-
-		), # end model_matrices list
 
 		model_syntax = list(
 
@@ -225,8 +177,7 @@ create_empty_list <- function( verbose ){
 
 		  "lavaan" = character(0),
 
-		  # model syntax for lavaan
-		  # list of characters
+		  # model for OpenMx
 
 		  "OpenMx" = character(0)
 
