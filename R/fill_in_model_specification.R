@@ -63,8 +63,8 @@ fill_in_model_specification_open_mx <- function(internal_list,
                                              type = "raw"),
                               OpenMx::mxPath(from = "one",
                                              to = variables$manifests,
+                                             labels = paste0("intercept_", variables$manifests),
                                              free = TRUE))
-  warning("Freely estimating all intercepts of observed variables. Is this correct?")
 
   for(i in 1:nrow(parameter_table)){
 

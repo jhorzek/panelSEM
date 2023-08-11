@@ -111,7 +111,7 @@ test_that("test linear model", {
             sort()
 
           # remove intercepts
-          coef_fit <- coef_fit[!grepl(pattern = "^untitled",
+          coef_fit <- coef_fit[!grepl(pattern = "^intercept_",
                                       x = coef_fit)]
         }else{
           fit_lavaan <- lavaan::lavaan(model$model_syntax$lavaan,
