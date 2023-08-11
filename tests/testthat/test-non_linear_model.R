@@ -108,7 +108,7 @@ test_that("test linear model", {
                                lbound_variances = use_open_mx,
                                linear = linear)
 
-        coef_fit <- model$model_syntax$OpenMx |>
+        coef_fit <- model$model |>
           coef() |>
           names() |>
           unique() |>

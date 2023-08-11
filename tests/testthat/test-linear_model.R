@@ -104,7 +104,7 @@ test_that("test linear model", {
                                lbound_variances = use_open_mx,
                                linear = linear)
         if(use_open_mx){
-          coef_fit <- model$model_syntax$OpenMx |>
+          coef_fit <- model$model |>
             coef() |>
             names() |>
             unique() |>
@@ -114,7 +114,7 @@ test_that("test linear model", {
           coef_fit <- coef_fit[!grepl(pattern = "^intercept_",
                                       x = coef_fit)]
         }else{
-          fit_lavaan <- lavaan::lavaan(model$model_syntax$lavaan,
+          fit_lavaan <- lavaan::lavaan(model$model,
                                        data = model$info_data$data,
                                        do.fit = FALSE)
           coef_fit <- fit_lavaan |>
@@ -123,8 +123,6 @@ test_that("test linear model", {
             unique() |>
             sort()
         }
-
-
 
         expected_model <- ""
 

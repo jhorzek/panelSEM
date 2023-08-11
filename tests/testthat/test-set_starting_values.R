@@ -72,11 +72,13 @@ test_that("changing starting values - lavaan", {
   starting_values[] <- runif(length(starting_values), min = 0, max = 1)
 
   suppressWarnings(
-  model_start <- set_starting_values_lavaan(model           = fit,
+  model_start <- set_starting_values_lavaan(model           = model,
                                             starting_values = starting_values)
   )
 
-  testthat::expect_true(all(coef(model_start)[names(starting_values)] == starting_values))
+  testthat::expect_true(
+    all(model_start$ustart[model_start$label %in% names(starting_values)] ==
+    starting_values[model_start$label[model_start$label %in% names(starting_values)]]))
 
   # Let's check if this also works if we only supply starting values for a subset
   # of the parameters:
@@ -85,15 +87,17 @@ test_that("changing starting values - lavaan", {
   starting_values[] <- rnorm(length(starting_values))^2
 
   # set starting values
-  model_start <- set_starting_values_lavaan(model           = fit,
+  model_start <- set_starting_values_lavaan(model           = model,
                                             starting_values = starting_values)
 
-  testthat::expect_true(all(model_start$start[model_start$label %in% names(starting_values)] == starting_values[model_start$label [model_start$label %in% names(starting_values)]]))
+  testthat::expect_true(
+    all(model_start$ustart[model_start$label %in% names(starting_values)] ==
+          starting_values[model_start$label[model_start$label %in% names(starting_values)]]))
 
   # and check if passing a wrong parameter label results in an error:
   starting_values <- c(starting_values,
                        "hjshdf" = 2)
-  testthat::expect_error(model_start <- set_starting_values_lavaan(model           = fit,
+  testthat::expect_error(model_start <- set_starting_values_lavaan(model           = model,
                                                                    starting_values = starting_values)
   )
 })
