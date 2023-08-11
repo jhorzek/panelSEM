@@ -4,16 +4,18 @@
 \alias{set_starting_values_lavaan}
 \title{set_starting_values_lavaan}
 \usage{
-set_starting_values_lavaan(model, starting_values)
+set_starting_values_lavaan(model_syntax, starting_values)
 }
 \arguments{
-\item{model}{lavaan model object}
+\item{model_syntax}{lavaan model syntax}
 
 \item{starting_values}{labeled vector with values of the starting values}
 }
+\value{
+a lavaan parameter table with starting values
+}
 \description{
-change the starting values of a lavaan model object. Note: To fit the model, use
-lavaan::update(model, do.fit = TRUE)
+change the starting values of a lavaan model object.
 }
 \examples{
 # Example copied from ?lavaan::sem
@@ -43,9 +45,8 @@ starting_values <- coef(fit)
 # change values
 starting_values[] <- rnorm(length(starting_values))^2
 
-new_mod <- set_starting_values_lavaan(model           = fit,
-                                      starting_values = starting_values)
+new_pt <- set_starting_values_lavaan(model_syntax    = model,
+                                     starting_values = starting_values)
 # print new values
-coef(new_mod)
-print(starting_values)
+new_pt
 }

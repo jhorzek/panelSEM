@@ -10,8 +10,7 @@ auxiliary_model(
   linear,
   heterogeneity,
   use_open_mx,
-  verbose,
-  ...
+  verbose
 )
 }
 \arguments{
@@ -33,8 +32,6 @@ should be used.}
 \item{verbose}{Integer number describing the verbosity of console output.
 Admissible values: 0: no output (default), 1: user messages,
 2: debugging-relevant messages.}
-
-\item{...}{not used}
 }
 \value{
 An object of class \code{panelSEM}.
