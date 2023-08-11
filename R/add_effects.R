@@ -400,3 +400,76 @@ add_exogenous_predictors <- function(internal_list){
   rownames(effects) <- NULL
   return(effects)
 }
+
+#' add_homogeneous_covariances
+#'
+#' Creates variances between the lagged time varying variables in a
+#' homogeneous model and covariances between contemporaneous variables
+#' @param internal_list internal list with info_variables
+#' @returns data.frame with covariances
+#' @keywords internal
+add_homogeneous_covariances <- function(internal_list){
+  if(!all(internal_list$info_model$heterogeneity == "homogeneous"))
+    return()
+
+  observed      <- internal_list$info_variables$user_names_time_varying
+  process_names <- internal_list$info_variables$names_processes["user_names",]
+  effects       <- data.frame()
+
+  for(i in 2:ncol(observed)){
+
+    # add contemporaneous covariance
+    outgoing <- observed[,i]
+    incoming <- observed[,i]
+
+    for(out in outgoing){
+      for(inc in incoming[which(incoming == out):length(incoming)]){
+        # skip variances; they already exist
+        if(out == inc)
+          next
+
+        effects <- rbind(effects,
+                         data.frame(
+                           outgoing = out,
+                           incoming = inc,
+                           type     = "undirected",
+                           op       = "~~",
+                           location = "C",
+                           label    = paste0("psi_",
+                                             process_names[[which(incoming == inc)]],
+                                             "_",
+                                             process_names[[which(outgoing == out)]]),
+                           value   = .4,
+                           algebra = "",
+                           free    = TRUE
+                         ))
+
+      }
+    }
+
+    # add cross-lagged covariance
+    outgoing <- observed[,i]
+    incoming <- observed[,i-1]
+
+    effects <- rbind(effects,
+                     data.frame(
+                       outgoing = outgoing,
+                       incoming = incoming,
+                       type     = "undirected",
+                       op       = "~~",
+                       location = "C",
+                       label    = paste0("psi_",
+                                         incoming,
+                                         "_",
+                                         outgoing),
+                       value   = .4,
+                       algebra = "",
+                       free    = TRUE
+                     ))
+
+  }
+
+  rownames(effects) <- NULL
+  return(effects)
+
+}

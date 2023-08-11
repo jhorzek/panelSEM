@@ -13,7 +13,14 @@ fill_RAM_matrices <- function(parameter_table){
   # Fill C matrix with directed effects
   for(i in which(parameter_table$op %in% c("=~", "~"))){
 
-    RAM$C$labels[parameter_table$incoming[i], parameter_table$outgoing[i]] <- parameter_table$label[i]
+    RAM$C$labels[parameter_table$incoming[i], parameter_table$outgoing[i]] <- ifelse(
+      parameter_table$algebra[i] == "",
+      # OpenMx wants labels to not be "", so we replace "" with NA
+      ifelse(parameter_table$label[i] == "", NA, parameter_table$label[i]),
+      # if the parameter is an algebra, we must use the following syntax to access
+      # the result in the OpenMx model
+      paste0(parameter_table$label[i], "[1,1]")
+      )
     RAM$C$values[parameter_table$incoming[i], parameter_table$outgoing[i]] <- parameter_table$value[i]
     RAM$C$free[parameter_table$incoming[i], parameter_table$outgoing[i]] <- parameter_table$free[i]
 
@@ -22,8 +29,22 @@ fill_RAM_matrices <- function(parameter_table){
   # fill Psi matrix with undirected effects
   for(i in which(parameter_table$op %in% c("~~"))){
 
-    RAM$Psi$labels[parameter_table$outgoing[i], parameter_table$incoming[i]] <- parameter_table$label[i]
-    RAM$Psi$labels[parameter_table$incoming[i], parameter_table$outgoing[i]] <- parameter_table$label[i]
+    RAM$Psi$labels[parameter_table$outgoing[i], parameter_table$incoming[i]] <- ifelse(
+      parameter_table$algebra[i] == "",
+      # OpenMx wants labels to not be "", so we replace "" with NA
+      ifelse(parameter_table$label[i] == "", NA, parameter_table$label[i]),
+      # if the parameter is an algebra, we must use the following syntax to access
+      # the result in the OpenMx model
+      paste0(parameter_table$label[i], "[1,1]")
+    )
+    RAM$Psi$labels[parameter_table$incoming[i], parameter_table$outgoing[i]] <- ifelse(
+      parameter_table$algebra[i] == "",
+      # OpenMx wants labels to not be "", so we replace "" with NA
+      ifelse(parameter_table$label[i] == "", NA, parameter_table$label[i]),
+      # if the parameter is an algebra, we must use the following syntax to access
+      # the result in the OpenMx model
+      paste0(parameter_table$label[i], "[1,1]")
+    )
 
     RAM$Psi$values[parameter_table$outgoing[i], parameter_table$incoming[i]] <- parameter_table$value[i]
     RAM$Psi$values[parameter_table$incoming[i], parameter_table$outgoing[i]] <- parameter_table$value[i]
@@ -54,8 +75,8 @@ create_RAM_matrices <- function(parameter_table){
                                                                                    ncol = n_variables,
                                                                                    dimnames = list(c(variables$latents, variables$manifests),
                                                                                                    c(variables$latents, variables$manifests)))
-  Psi_labels[] <- ""
-  C_labels[]   <- ""
+  Psi_labels[] <- NA
+  C_labels[]   <- NA
   Psi_free[]   <- FALSE
   C_free[]     <- FALSE
 
@@ -64,8 +85,8 @@ create_RAM_matrices <- function(parameter_table){
                                            ncol = n_variables,
                                            dimnames = list(NULL,
                                                            c(variables$latents, variables$manifests)))
-  M_labels[] <- ""
-  M_free[]   <- FALSE
+  M_labels[] <- paste0("intercept_", c(variables$latents, variables$manifests))
+  M_free[]   <- c(variables$latents, variables$manifests) %in% variables$manifests
 
   F_values <- cbind(
     matrix(0,
@@ -76,7 +97,7 @@ create_RAM_matrices <- function(parameter_table){
   dimnames(F_values) <- list(variables$manifests,
                              c(variables$latents, variables$manifests))
   F_labels   <- F_values
-  F_labels[] <- ""
+  F_labels[] <- NA
   F_free     <- F_values
   F_free[]   <- FALSE
 

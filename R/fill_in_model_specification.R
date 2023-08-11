@@ -55,48 +55,43 @@ fill_in_model_specification_open_mx <- function(internal_list,
 
   variables <- get_variables(parameter_table)
 
+  RAM <- fill_RAM_matrices(parameter_table = parameter_table)
+
   # add parameters from parameter table
   mx_model <- OpenMx::mxModel(type = "RAM",
                               manifestVars = variables$manifests,
                               latentVars = variables$latents,
                               OpenMx::mxData(observed = internal_list$info_data$data,
                                              type = "raw"),
-                              OpenMx::mxPath(from = "one",
-                                             to = variables$manifests,
-                                             labels = paste0("intercept_", variables$manifests),
-                                             free = TRUE))
-
-  for(i in 1:nrow(parameter_table)){
-
-    is_algebra <- parameter_table$algebra[i] != ""
-
-    if(lbound_variances &&
-       parameter_table$free[i] &&
-       !is_algebra &&
-       (parameter_table$outgoing[i] == parameter_table$incoming[i]) &&
-       (parameter_table$op[i] == "~~")){
-      lbound <- 1e-4
-    }else{
-      lbound <- NA
-    }
-
-    mx_model <- OpenMx::mxModel(mx_model,
-                                OpenMx::mxPath(
-                                  from = parameter_table$outgoing[i],
-                                  to = parameter_table$incoming[i],
-                                  values = parameter_table$value[i],
-                                  labels =  ifelse(parameter_table$label[i] == "", NA,
-                                                   ifelse(is_algebra,
-                                                          # is an algebra -> use label and add the
-                                                          # location
-                                                          paste0(parameter_table$label[i], "[1,1]"),
-                                                          # no an algebra -> use label
-                                                          parameter_table$label[i])),
-                                  free =  parameter_table$free[i],
-                                  arrows =  ifelse(parameter_table$op[i] %in% c("=~", "~"), 1, 2),
-                                  lbound = lbound
-                                ))
-  }
+                              OpenMx::mxMatrix(type = "Full",
+                                       name = "A",
+                                       nrow = nrow(RAM$C$values),
+                                       ncol = ncol(RAM$C$values),
+                                       free = RAM$C$free == 1,
+                                       values = RAM$C$values,
+                                       labels = RAM$C$labels),
+                              OpenMx::mxMatrix(type = "Full",
+                                       name = "S",
+                                       nrow = nrow(RAM$Psi$values),
+                                       ncol = ncol(RAM$Psi$values),
+                                       free = RAM$Psi$free == 1,
+                                       values = RAM$Psi$values,
+                                       labels = RAM$Psi$labels),
+                              OpenMx::mxMatrix(type = "Full",
+                                       name = "M",
+                                       nrow = nrow(RAM$M$values),
+                                       ncol = ncol(RAM$M$values),
+                                       free = RAM$M$free == 1,
+                                       values = RAM$M$values,
+                                       labels = RAM$M$labels),
+                              OpenMx::mxMatrix(type = "Full",
+                                       name = "F",
+                                       nrow = nrow(RAM$F$values),
+                                       ncol = ncol(RAM$F$values),
+                                       free = RAM$F$free == 1,
+                                       values = RAM$F$values,
+                                       labels = RAM$F$labels),
+                              OpenMx::mxExpectationRAM())
 
   # check for algebras
   if(internal_list$info_parameters$has_algebras){
