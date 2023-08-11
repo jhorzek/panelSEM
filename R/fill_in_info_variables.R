@@ -83,6 +83,7 @@ fill_in_info_variables <- function(internal_list,
   user_names_processes <- vector("character",
                                  length = internal_list$info_model$n_processes)
 
+  #TODO: Change back to Christian's implementation
   for (i in 1:internal_list$info_model$n_processes){
 
     common_substring <- find_common_substring(internal_list$info_variables$user_names_time_varying[i,])

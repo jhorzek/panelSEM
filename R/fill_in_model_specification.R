@@ -87,7 +87,10 @@ fill_in_model_specification_open_mx <- function(internal_list,
                                   values = parameter_table$value[i],
                                   labels =  ifelse(parameter_table$label[i] == "", NA,
                                                    ifelse(is_algebra,
+                                                          # is an algebra -> use label and add the
+                                                          # location
                                                           paste0(parameter_table$label[i], "[1,1]"),
+                                                          # no an algebra -> use label
                                                           parameter_table$label[i])),
                                   free =  parameter_table$free[i],
                                   arrows =  ifelse(parameter_table$op[i] %in% c("=~", "~"), 1, 2),

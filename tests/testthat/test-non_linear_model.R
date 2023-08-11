@@ -164,10 +164,10 @@ test_that("test linear model", {
   x4 ~ {c_x_z1_t4 := c_x_z1 + c_x_y_z1 * data.y3}*z1 + {c_x_z2_t4 := c_x_z2 + c_x_y_z2 * data.y3}*z2
   x5 ~ {c_x_z1_t5 := c_x_z1 + c_x_y_z1 * data.y4}*z1 + {c_x_z2_t5 := c_x_z2 + c_x_y_z2 * data.y4}*z2
 
-  y2 ~ c_y_x*x1 + c_y_y*y1 + {c_y_z2_t2 := c_y_z2 + c_y_x_z2 * data.x1}*z2 + {c_y_z3_t2 := c_y_z3 + c_y_x_z3 * data.x1}*z3
-  y3 ~ c_y_x*x2 + c_y_y*y2 + {c_y_z2_t3 := c_y_z2 + c_y_x_z2 * data.x2}*z2 + {c_y_z3_t3 := c_y_z3 + c_y_x_z3 * data.x2}*z3
-  y4 ~ c_y_x*x3 + c_y_y*y3 + {c_y_z2_t4 := c_y_z2 + c_y_x_z2 * data.x3}*z2 + {c_y_z3_t4 := c_y_z3 + c_y_x_z3 * data.x3}*z3
-  y5 ~ c_y_x*x4 + c_y_y*y4 + {c_y_z2_t5 := c_y_z2 + c_y_x_z2 * data.x4}*z2 + {c_y_z3_t5 := c_y_z3 + c_y_x_z3 * data.x4}*z3
+  y2 ~ {c_y_z2_t2 := c_y_z2 + c_y_x_z2 * data.x1}*z2 + {c_y_z3_t2 := c_y_z3 + c_y_x_z3 * data.x1}*z3
+  y3 ~ {c_y_z2_t3 := c_y_z2 + c_y_x_z2 * data.x2}*z2 + {c_y_z3_t3 := c_y_z3 + c_y_x_z3 * data.x2}*z3
+  y4 ~ {c_y_z2_t4 := c_y_z2 + c_y_x_z2 * data.x3}*z2 + {c_y_z3_t4 := c_y_z3 + c_y_x_z3 * data.x3}*z3
+  y5 ~ {c_y_z2_t5 := c_y_z2 + c_y_x_z2 * data.x4}*z2 + {c_y_z3_t5 := c_y_z3 + c_y_x_z3 * data.x4}*z3
 
   z1 ~~ psi_z1_z1*z1 + psi_z2_z1*z2 + psi_z3_z1*z3
   z2 ~~ psi_z2_z2*z2 + psi_z3_z2*z3
@@ -192,8 +192,8 @@ test_that("test linear model", {
           expected_model <- paste0(
             expected_model,
             "\n# cross-lagged latent predictors
-  etaxy =~ data.y1 * x2 + data.y2 * x3 + data.y3 * x4 + data.y4 * x5
-  etayx =~ data.x1 * y2 + data.x2 * y3 + data.x3 * y4 + data.x4 * y5
+  etaxy =~ c_x1_etaxy*x1 + c_y1_etaxy*y1 + data.y1 * x2 + data.y2 * x3 + data.y3 * x4 + data.y4 * x5
+  etayx =~ c_x1_etayx*x1 + c_y1_etayx*y1 + data.x1 * y2 + data.x2 * y3 + data.x3 * y4 + data.x4 * y5
 
   etaxy ~~ psi_etaxy_etaxy * etaxy + psi_etayx_etaxy * etayx
   etayx ~~ psi_etayx_etayx * etayx

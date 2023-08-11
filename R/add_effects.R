@@ -158,31 +158,56 @@ add_latent_trait <- function(internal_list){
   for(i in 1:ncol(observed)){
     incoming <- observed[,i]
 
-    if(additive && (i == 1)){
-      # add additive effect for initial occasion
+    if(i == 1){
       # treat first occasion differently
-      for(out in etas){
-        for(inc in incoming){
+      if(additive){
+        # add additive effect for initial occasion
+        for(out in etas){
+          for(inc in incoming){
 
-          effects <- rbind(effects,
-                           data.frame(
-                             outgoing = out,
-                             incoming = inc,
-                             type     = "directed",
-                             op       = "=~",
-                             location = "C",
-                             label    = paste0("c_",
-                                               inc,
-                                               "_",
-                                               out),
-                             value   = .5,
-                             algebra = "",
-                             free = TRUE
-                           ))
+            effects <- rbind(effects,
+                             data.frame(
+                               outgoing = out,
+                               incoming = inc,
+                               type     = "directed",
+                               op       = "=~",
+                               location = "C",
+                               label    = paste0("c_",
+                                                 inc,
+                                                 "_",
+                                                 out),
+                               value   = .5,
+                               algebra = "",
+                               free = TRUE
+                             ))
 
+          }
         }
       }
+      if(cross_lagged){
+        # add cross-lagged effect for initial occasion
+        for(out in etas_nonadditive){
+          for(inc in incoming){
 
+            effects <- rbind(effects,
+                             data.frame(
+                               outgoing = out,
+                               incoming = inc,
+                               type     = "directed",
+                               op       = "=~",
+                               location = "C",
+                               label    = paste0("c_",
+                                                 inc,
+                                                 "_",
+                                                 out),
+                               value   = .3,
+                               algebra = "",
+                               free = TRUE
+                             ))
+
+          }
+        }
+      }
       # go to next iteration
       next
     }
