@@ -31,8 +31,8 @@ fill_in_info_model <- function(internal_list){
   parameter_table <- rbind(
     add_autoregressive_cross_lagged(internal_list = internal_list),
     add_process_residual_variances(internal_list = internal_list),
-    add_latent_trait(internal_list = internal_list),
-    add_exogenous_predictors(internal_list = internal_list),
+    add_latent_residual(internal_list = internal_list),
+    add_time_invariant_predictors(internal_list = internal_list),
     add_homogeneous_covariances(internal_list = internal_list)
   )
 

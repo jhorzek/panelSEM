@@ -110,13 +110,13 @@ add_process_residual_variances <- function(internal_list){
 
 }
 
-#' add_latent_trait
+#' add_latent_residual
 #'
 #' Creates latent traits for each of the observed variables
 #' @param internal_list internal list with info_variables
 #' @returns data.frame with latent traits
 #' @keywords internal
-add_latent_trait <- function(internal_list){
+add_latent_residual <- function(internal_list){
 
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
@@ -279,13 +279,13 @@ add_latent_trait <- function(internal_list){
   return(effects)
 }
 
-#' add_exogenous_predictors
+#' add_time_invariant_predictors
 #'
 #' Creates exogenous predictors as specified in internal_list$info_variables$info_time_invariant_variables
 #' @param internal_list internal list with info_variables
 #' @returns data.frame with exogenous predictors
 #' @keywords internal
-add_exogenous_predictors <- function(internal_list){
+add_time_invariant_predictors <- function(internal_list){
 
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
