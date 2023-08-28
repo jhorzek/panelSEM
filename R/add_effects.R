@@ -293,9 +293,9 @@ add_time_invariant_predictors <- function(internal_list){
 
   linear <- internal_list$info_model$linear
 
-  exogenous_predictors <- internal_list$info_variables$info_time_invariant_variables
+  time_invariant_variables <- internal_list$info_variables$info_time_invariant_variables
 
-  if(is.null(exogenous_predictors)){
+  if(is.null(time_invariant_variables)){
     # no eta-terms are added
     message("No exogenous predictors added.")
     return()
@@ -306,7 +306,7 @@ add_time_invariant_predictors <- function(internal_list){
 
     if(i == 1){
       # treat first occasion differently
-      for(out in unique(unlist(exogenous_predictors))){
+      for(out in unique(unlist(time_invariant_variables))){
         for(inc in incoming){
 
           effects <- rbind(effects,
@@ -334,13 +334,23 @@ add_time_invariant_predictors <- function(internal_list){
     for(j in 1:length(incoming)){
 
       if(linear){
+        # If the effect of the time_invariant_variables is linear, all we have to do
+        # is add an effect time_invariant_variables -> time_varying_variables
         incoming_label <- process_names[j]
-        algebra        <- rep("", length(exogenous_predictors[[j]]))
+        algebra        <- rep("", length(time_invariant_variables[[j]]))
       }else{
+        # If the effect of the time_invariant_variables is non linear, there is a main
+        # effect of the previous time_varying_variables on the current time_varying_variables
+        # (cross-lagged effect), added with add_autoregressive_cross_lagged
+        # and a main effect of the time_invariant_variables. Additionally, there
+        # is an interaction effect of time_invariant_variables and time_varying_variables.
+        # Here, we only implement the direct effect of the time_invariant_variables
+        # and the interaction effect time_invariant_variables*time_varying_variables.
+        # That is (c_x_z1 + c_x_y_z1*y1)*z1
         incoming_label <- incoming[[j]]
         incoming_previous <- observed[,i-1]
         algebra <- c()
-        for(ex in exogenous_predictors[[j]]){
+        for(ex in time_invariant_variables[[j]]){
           algebra <- c(algebra,
                        paste0("c_", process_names[j], "_", ex, " + ",
                               paste0(paste0("c_", process_names[j], "_",
@@ -354,13 +364,13 @@ add_time_invariant_predictors <- function(internal_list){
 
       effects <- rbind(effects,
                        data.frame(
-                         outgoing = exogenous_predictors[[j]],
+                         outgoing = time_invariant_variables[[j]],
                          incoming = incoming[[j]],
                          type     = "directed",
                          op       = "~",
                          location = "C",
                          label    = paste0("c_", incoming_label, "_",
-                                           exogenous_predictors[[j]]),
+                                           time_invariant_variables[[j]]),
                          value    = 0,
                          algebra  = algebra,
                          free     = algebra == ""
@@ -370,7 +380,7 @@ add_time_invariant_predictors <- function(internal_list){
   }
 
   # add exogenous variances and covariances
-  unique_exogenous <- exogenous_predictors |>
+  unique_exogenous <- time_invariant_variables |>
     unlist() |>
     unique()
   for(out_index in 1:length(unique_exogenous)){

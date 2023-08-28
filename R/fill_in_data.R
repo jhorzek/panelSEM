@@ -38,10 +38,13 @@ fill_in_data <- function(data,
   internal_list$info_data$n_var <- ncol(data)
   internal_list$info_data$var_names <- colnames(data)
 
+  # add product variables in case of nonlinear models
+  internal_list <- add_product_terms(internal_list = internal_list)
+
   # print console output
   if(internal_list$control$verbose >= 2) logger::log_info('End.')
 
   # return internal list
-  return( internal_list )
+  return(internal_list)
 
 }
