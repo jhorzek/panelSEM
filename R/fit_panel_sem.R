@@ -214,7 +214,8 @@ fit_panel_sem <- function(data,
 
   # fill in starting values to the list
   internal_list <- fill_in_starting_values(internal_list = internal_list)
-
+  # CG: commented out the add starting values function because it
+  # creates an error using lavaan for the linear additive model
   # add starting values to model object
   # internal_list <- add_starting_values(internal_list = internal_list)
 
