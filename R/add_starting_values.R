@@ -50,41 +50,12 @@ add_starting_values <- function(internal_list){
     starting_values <- c(starting_values_C, starting_values_Psi)
 
     model_syntax <- internal_list$model_syntax$lavaan
-    model <- lavaan::lavaan(model = model_syntax,
-                            data = internal_list$info_data$data,
-                            do.fit = FALSE)
+    parameter_table <- lavaan::lavaanify(model = model_syntax)
 
-    set_starting_values_lavaan <- function(model, starting_values){
-      if(is.null(names(starting_values)) | !is.numeric(starting_values))
-        stop("starting_values must be a numeric vector with names")
+    parameter_table_with_start <- set_starting_values_lavaan(parameter_table,
+                                                             starting_values)
 
-      parameter_table <- lavaan::parameterTable(object = model)
-
-      # change labels if none are given
-      parameter_table$label[parameter_table$label == ""] <- paste0(parameter_table$lhs,
-                                                                   parameter_table$op,
-                                                                   parameter_table$rhs)[parameter_table$label == ""]
-
-      for(i in 1:length(starting_values)){
-        current_label <- names(starting_values)[i]
-        current_value <- starting_values[i]
-
-        if(!current_label %in% parameter_table$label)
-          stop("Could not find the following parameter in the model: ", current_label)
-
-        parameter_table$est[parameter_table$label == current_label] <- current_value
-        parameter_table$start[parameter_table$label == current_label] <- current_value
-
-      }
-
-      return(lavaan::update(model,
-                            start = parameter_table))
-    }
-
-    model_with_start <- set_starting_values_lavaan(model,
-                                                   starting_values)
-
-    internal_list$model_syntax$lavaan$starting_values <- model_with_start
+    internal_list$model_syntax$lavaan <- parameter_table_with_start
   }
 
   # console output
@@ -94,4 +65,27 @@ add_starting_values <- function(internal_list){
   # return output
   return(internal_list)
 
+}
+
+set_starting_values_lavaan <- function(parameter_table, starting_values){
+  if(is.null(names(starting_values)) | !is.numeric(starting_values))
+    stop("starting_values must be a numeric vector with names")
+
+  # change labels if none are given
+  parameter_table$label[parameter_table$label == ""] <- paste0(parameter_table$lhs,
+                                                               parameter_table$op,
+                                                               parameter_table$rhs)[parameter_table$label == ""]
+
+  for(i in 1:length(starting_values)){
+    current_label <- names(starting_values)[i]
+    current_value <- starting_values[i]
+
+    if(!current_label %in% parameter_table$label)
+      stop("Could not find the following parameter in the model: ", current_label)
+
+    parameter_table$ustart[parameter_table$label == current_label] <- current_value
+
+  }
+
+  return(parameter_table)
 }
