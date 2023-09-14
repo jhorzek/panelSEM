@@ -55,7 +55,27 @@ add_starting_values <- function(internal_list){
     parameter_table_with_start <- set_starting_values_lavaan(parameter_table,
                                                              starting_values)
 
-    internal_list$model_syntax$lavaan <- parameter_table_with_start
+    internal_list$model_syntax$lavaan$starting_values <- parameter_table_with_start
+  }
+
+  if (internal_list$info_model$use_open_mx){
+
+    internal_list$model_syntax$OpenMx$starting_values <-
+      internal_list$model_syntax$OpenMx
+
+    # set starting values for structural coefficients
+    valuesA <- internal_list$model_matrices$C_start
+    valuesA[is.na(valuesA)] <- 0
+    internal_list$model_syntax$OpenMx$starting_values$A$values <-
+      valuesA
+
+    # set starting values for (co-)variances
+    valuesS <- internal_list$model_matrices$Psi_start
+    valuesS[is.na(valuesS)] <- 0
+    internal_list$model_syntax$OpenMx$starting_values$S$values <-
+      valuesS
+
+
   }
 
   # console output
@@ -66,6 +86,7 @@ add_starting_values <- function(internal_list){
   return(internal_list)
 
 }
+
 
 set_starting_values_lavaan <- function(parameter_table, starting_values){
   if(is.null(names(starting_values)) | !is.numeric(starting_values))
