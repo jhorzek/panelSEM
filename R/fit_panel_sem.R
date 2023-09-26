@@ -217,7 +217,7 @@ fit_panel_sem <- function(data,
   # CG: commented out the add starting values function because it
   # creates an error using lavaan for the linear additive model
   # add starting values to model object
-  internal_list <- add_starting_values(internal_list = internal_list)
+  # internal_list <- add_starting_values(internal_list = internal_list)
 
   # TODO: decide on default settings for (i) when to include resampling and
   # (ii) the default settings of the resampling procedure
