@@ -104,6 +104,12 @@ test_that("test linear model", {
                                lbound_variances = use_open_mx,
                                linear = linear)
         if(use_open_mx){
+
+          does_run <- try(OpenMx::mxRun(model = model$model,
+                                        useOptimizer = FALSE))
+          if(is(does_run, "try-error") && !(grepl("fit is not finite", attr(does_run, "condition"))))
+            stop("Model does not run")
+
           coef_fit <- model$model |>
             coef() |>
             names() |>
@@ -114,9 +120,12 @@ test_that("test linear model", {
           coef_fit <- coef_fit[!grepl(pattern = "^intercept_",
                                       x = coef_fit)]
         }else{
-          fit_lavaan <- lavaan::lavaan(model$model,
-                                       data = model$info_data$data,
-                                       do.fit = FALSE)
+          fit_lavaan <- try(lavaan::lavaan(model$model,
+                                           data = model$info_data$data,
+                                           do.fit = FALSE))
+          if(is(fit_lavaan, "try-error"))
+            stop("Model does not run")
+
           coef_fit <- fit_lavaan |>
             coef() |>
             names() |>

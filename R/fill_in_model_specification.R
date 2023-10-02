@@ -91,7 +91,10 @@ fill_in_model_specification_open_mx <- function(internal_list,
                                        free = RAM$F$free == 1,
                                        values = RAM$F$values,
                                        labels = RAM$F$labels),
-                              OpenMx::mxExpectationRAM())
+                              OpenMx::mxExpectationRAM(A = "A",
+                                                       S = "S",
+                                                       F = "F",
+                                                       M = "M"))
 
   # check for algebras
   if(internal_list$info_parameters$has_algebras){
