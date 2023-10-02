@@ -8,14 +8,52 @@ add_autoregressive_cross_lagged <- function(internal_list){
 
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
-  effects       <- data.frame()
+  linear        <- internal_list$info_model$linear
 
+  time_invariant_variables     <- internal_list$info_variables$info_time_invariant_variables
+
+  effects <- data.frame()
+
+  # We have to iterate over all time points but the last one and predict the
+  # next time point (e.g., x1 -> x2)
   for(i in 1:(ncol(observed)-1)){
     outgoing <- observed[,i]
     incoming <- observed[,i+1]
 
     for(out in outgoing){
       for(inc in incoming){
+        # If the effect of the time_invariant_variables is linear, all we have to do
+        # is add an effect of out on inc (out -> inc). The same is true if it is
+        # an autoregressive effect or if there are no time invariant variables.
+        if(linear |
+           (which(incoming == inc) == which(outgoing == out)) |
+           is.null(time_invariant_variables[[which(incoming == inc)]])){
+
+          label    <- paste0("c_",
+                             process_names[[which(incoming == inc)]],
+                             "_",
+                             process_names[[which(outgoing == out)]])
+          algebra  <- ""
+
+        }else{
+          # If the effect of the time_invariant_variables is non-linear and it is
+          # not an autoregressive effect, there is a main effect of the previous
+          # observation that is moderated by the time_invariant_variables
+          # y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...
+          label <- paste0("c_", process_names[[which(incoming == inc)]], "_", out)
+
+          algebra <- paste0(
+            # main effect of previous occasion
+            paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]]),
+            " + ",
+            # interaction effect with time invariant variables
+            paste0(paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]],
+                          "_", time_invariant_variables[[which(incoming == inc)]],
+                          " * data.", time_invariant_variables[[which(incoming == inc)]]),
+                   collapse = " + ")
+          )
+
+        }
 
         effects <- rbind(effects,
                          data.frame(
@@ -24,18 +62,13 @@ add_autoregressive_cross_lagged <- function(internal_list){
                            type     = "directed",
                            op       = "~",
                            location = "C",
-                           label    = paste0("c_",
-                                             process_names[[which(incoming == inc)]],
-                                             "_",
-                                             process_names[[which(outgoing == out)]]),
+                           label    = label,
                            value   = .1,
-                           algebra = "",
-                           free    = TRUE
+                           algebra = algebra,
+                           free    = algebra == ""
                          ))
-
       }
     }
-
   }
 
   rownames(effects) <- NULL
@@ -279,6 +312,7 @@ add_latent_residual <- function(internal_list){
   return(effects)
 }
 
+
 #' add_time_invariant_predictors
 #'
 #' Creates exogenous predictors as specified in internal_list$info_variables$info_time_invariant_variables
@@ -290,8 +324,6 @@ add_time_invariant_predictors <- function(internal_list){
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
   effects       <- data.frame()
-
-  linear <- internal_list$info_model$linear
 
   time_invariant_variables <- internal_list$info_variables$info_time_invariant_variables
 
@@ -305,7 +337,9 @@ add_time_invariant_predictors <- function(internal_list){
     incoming <- observed[,i]
 
     if(i == 1){
-      # treat first occasion differently
+      # treat first occasion differently. Here, we only have
+      # the effect of the latent variables eta_x, eta_y, ...
+      # on the initial observations x_1, y_1, ...
       for(out in unique(unlist(time_invariant_variables))){
         for(inc in incoming){
 
@@ -333,35 +367,10 @@ add_time_invariant_predictors <- function(internal_list){
 
     for(j in 1:length(incoming)){
 
-      if(linear){
-        # If the effect of the time_invariant_variables is linear, all we have to do
-        # is add an effect time_invariant_variables -> time_varying_variables
-        incoming_label <- process_names[j]
-        algebra        <- rep("", length(time_invariant_variables[[j]]))
-      }else{
-        # If the effect of the time_invariant_variables is non linear, there is a main
-        # effect of the previous time_varying_variables on the current time_varying_variables
-        # (cross-lagged effect), added with add_autoregressive_cross_lagged
-        # and a main effect of the time_invariant_variables. Additionally, there
-        # is an interaction effect of time_invariant_variables and time_varying_variables.
-        # Here, we only implement the direct effect of the time_invariant_variables
-        # and the interaction effect time_invariant_variables*time_varying_variables.
-        # That is (c_x_z1 + c_x_y_z1*y1)*z1
-        incoming_label <- incoming[[j]]
-        incoming_previous <- observed[,i-1]
-        algebra <- c()
-        for(ex in time_invariant_variables[[j]]){
-          algebra <- c(algebra,
-                       paste0("c_", process_names[j], "_", ex, " + ",
-                              paste0(paste0("c_", process_names[j], "_",
-                                            process_names[-j], "_", ex,
-                                            " * data.", incoming_previous[-j]),
-                                     collapse = " + ")
-                       )
-          )
-        }
-      }
-
+      # Note: We are only adding main effects here. All interactions with the
+      # variables x1, x2, ... are taken care of by add_autoregressive_cross_lagged.
+      # Therefore, we don't have to check if there is anything non-linear etc. going
+      # on.
       effects <- rbind(effects,
                        data.frame(
                          outgoing = time_invariant_variables[[j]],
@@ -369,11 +378,11 @@ add_time_invariant_predictors <- function(internal_list){
                          type     = "directed",
                          op       = "~",
                          location = "C",
-                         label    = paste0("c_", incoming_label, "_",
+                         label    = paste0("c_", process_names[j], "_",
                                            time_invariant_variables[[j]]),
                          value    = 0,
-                         algebra  = algebra,
-                         free     = algebra == ""
+                         algebra  = "",
+                         free     = TRUE
                        )
       )
     }
