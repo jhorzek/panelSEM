@@ -108,6 +108,11 @@ test_that("test linear model", {
                                lbound_variances = use_open_mx,
                                linear = linear)
 
+        does_run <- try(OpenMx::mxRun(model = model$model,
+                                      useOptimizer = FALSE))
+        if(is(does_run, "try-error") && !(grepl("fit is not finite", attr(does_run, "condition"))))
+          stop("Model does not run")
+
         coef_fit <- model$model |>
           coef() |>
           names() |>
