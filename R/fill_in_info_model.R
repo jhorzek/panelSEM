@@ -33,7 +33,8 @@ fill_in_info_model <- function(internal_list){
     add_process_residual_variances(internal_list = internal_list),
     add_latent_residual(internal_list = internal_list),
     add_time_invariant_predictors(internal_list = internal_list),
-    add_homogeneous_covariances(internal_list = internal_list)
+    add_homogeneous_covariances(internal_list = internal_list),
+    add_product_covariances(internal_list = internal_list)
   )
 
   internal_list$info_parameters$parameter_table <- parameter_table

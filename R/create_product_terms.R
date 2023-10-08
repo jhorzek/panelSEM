@@ -32,32 +32,27 @@ add_product_terms <- function(internal_list){
 
   # iterate over processes
   for(pr in seq_len(nrow(observed))){
-
-    time_invariant_variables_pr <- time_invariant_variables[[pr]]
+    # time_invariant_variables of other processes
+    time_invariant_variables_pr <- time_invariant_variables[[-pr]] |>
+      unlist()
 
     # iterate over time points
     for(tp in seq_len(ncol(observed))){
-      # skip first
-      if(tp == 1){
-        info_products[[process_names[pr]]] <- vector("list", ncol(observed))
-        names(info_products[[process_names[pr]]]) <- paste0("occ_",  seq_len(ncol(observed)))
-        next
-      }
-
-      # add product terms of previous observation and corresponding time_invariant_variables
+      # add product terms of observation and time_invariant_variables of other processes
       observed_pr_tp <- observed[pr,tp]
       if(length(observed_pr_tp) != 1)
         stop("Error while creating product variables: Too many process variables selected.")
 
       product_terms <- apply(data[,time_invariant_variables_pr, drop = FALSE],
                              2, function(x) x*data[,observed_pr_tp])
-      colnames(product_terms) <- paste0(observed_pr_tp,
-                                        time_invariant_variables_pr)
+      colnames(product_terms) <- paste0("prod_",
+                                        time_invariant_variables_pr,
+                                        "_",
+                                        observed_pr_tp)
 
       data <- cbind(data, product_terms)
 
-      info_products[[process_names[pr]]][[tp]] <- paste0(observed_pr_tp,
-                                                         time_invariant_variables_pr)
+      info_products[[process_names[pr]]][[tp]] <- colnames(product_terms)
     }
 
     internal_list$info_data$product_names  <- info_products

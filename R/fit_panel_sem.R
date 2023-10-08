@@ -19,6 +19,10 @@
 #' @param use_resamples Logical (TRUE / FALSE = default) indicating if a resampling procedure is used for the computation of starting values and model diagnostics.
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
+#' @param use_definition_variables When setting linear = FALSE, there are two ways to add interactions
+#'  between the previous observation and the time invariant predictors (e.g., y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...)).
+#'  First, definition variables can be used (currently only supported by OpenMx). Second, product terms
+#'  can be added explicitly.
 #' @param lbound_variances should variances be assigned a lower bound of 1e-4?
 #' @param verbose Integer number describing the verbosity of console output.
 #' Admissible values: 0: no output (default), 1: user messages,
@@ -138,6 +142,7 @@ fit_panel_sem <- function(data,
                           heterogeneity,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
+                          use_definition_variables = FALSE,
                           lbound_variances = TRUE,
                           verbose = 0
                           ){
@@ -177,7 +182,8 @@ fit_panel_sem <- function(data,
 
   # fill in user-specified data to the list
   internal_list <- fill_in_data(internal_list = internal_list,
-                                data = data)
+                                data = data,
+                                use_definition_variables = use_definition_variables)
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_model(internal_list = internal_list)

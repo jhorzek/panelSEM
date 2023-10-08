@@ -10,6 +10,10 @@
 #' @param data A data.frame containing the data in the wide format.
 #' @param internal_list A list with various information extracted from the
 #'    model.
+#' @param use_definition_variables When setting linear = FALSE, there are two ways to add interactions
+#'  between the previous observation and the time invariant predictors (e.g., y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...)).
+#'  First, definition variables can be used (currently only supported by OpenMx). Second, product terms
+#'  can be added explicitly.
 #' @return The inputted list with several slots in \code{..$info_data} filled
 #' in.
 #' @references Gische, C., Voelkle, M.C. (2022) Beyond the Mean: A Flexible
@@ -21,7 +25,8 @@
 #'  DOI: 10.1080/10705511.2020.1780598
 
 fill_in_data <- function(data,
-                         internal_list){
+                         internal_list,
+                         use_definition_variables){
 
   # print console output
   if(internal_list$control$verbose >= 2) logger::log_info('Start.')
@@ -39,7 +44,9 @@ fill_in_data <- function(data,
   internal_list$info_data$var_names <- colnames(data)
 
   # add product variables in case of nonlinear models
-  internal_list <- add_product_terms(internal_list = internal_list)
+  internal_list$use_definition_variables <- use_definition_variables
+  if(!use_definition_variables)
+    internal_list <- add_product_terms(internal_list = internal_list)
 
   # print console output
   if(internal_list$control$verbose >= 2) logger::log_info('End.')
