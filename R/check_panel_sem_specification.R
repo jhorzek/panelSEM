@@ -42,6 +42,10 @@ check_panel_sem_specification <- function(specification){
                 ".")
          }
 
+         if(!use_definition_variables){
+           warning("use_definition_variables = FALSE is experimental. Proceed with caution!")
+         }
+
          if(!methods::is(use_resamples, "logical"))
            stop("use_resamples must be a logical and not a ", class(use_resamples))
 

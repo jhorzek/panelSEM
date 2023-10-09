@@ -11,51 +11,51 @@ test_that("test linear model", {
   ############################################
 
   # covariance-matrix of the latent traits
-  A_sigma_eta <- matrix(nrow = 2, ncol = 2, c(1, 0.5, 0.5, 1))
+  A_sigma_eta <- matrix(nrow = 2, ncol = 2, c(1, 0.2, 0.2, 1))
   sigma_epsilon_eta <- t(A_sigma_eta) %*% A_sigma_eta
 
   # covariance-matrix of the epsilon_z variables
-  A_sigma_z <- matrix(nrow = 3, ncol = 3, c(1, 0.75, 0.3, 0.75, 1, 0.25,
-                                            0.3, 0.25, 1))
+  A_sigma_z <- matrix(nrow = 3, ncol = 3, c(1, 0.15, 0.03, 0.15, 1, 0.1,
+                                            0.03, 0.1, 1))
   sigma_epsilon_z <- t(A_sigma_z) %*% A_sigma_z
 
   # covariance matrix of the initial residuals
-  A_sigma_eps_init <- matrix(nrow = 2, ncol = 2, c(1, 2, 2, 1))
+  A_sigma_eps_init <- matrix(nrow = 2, ncol = 2, c(1, .1, .1, 1))
   sigma_epsilon_init <- t(A_sigma_eps_init) %*% A_sigma_eps_init
 
   population_parameters <- data.frame(
     N = NA,
     # directed effects
     ## latent traits
-    c_x1_etax = -4,
-    c_x1_etay = 8,
+    c_x1_etax = -.8,
+    c_x1_etay = .5,
 
-    c_y1_etax = -12,
-    c_y1_etay = 19,
+    c_y1_etax = -.4,
+    c_y1_etay = .19,
 
     c_x_etax = 1,
     c_y_etay = 1,
 
     ## time independent predictors
-    c_x1_z1 = -5,
-    c_x1_z2 = -1,
-    c_x1_z3 = 4,
+    c_x1_z1 = -.5,
+    c_x1_z2 = -.1,
+    c_x1_z3 = .4,
 
-    c_y1_z1 = - 8,
-    c_y1_z2 = 2,
-    c_y1_z3 = 6,
+    c_y1_z1 = -.8,
+    c_y1_z2 = .2,
+    c_y1_z3 = .6,
 
-    c_x_z1 = 0.5,
-    c_x_z2 = 2,
+    c_x_z1 = .5,
+    c_x_z2 = .2,
 
-    c_y_z2 = 1.5,
-    c_y_z3 = 2,
+    c_y_z2 = .15,
+    c_y_z3 = .2,
 
     ## autoregressive and cross-lagged effects
-    c_x_x = 0.05,
-    c_x_y = 0.4,
-    c_y_x = -0.6,
-    c_y_y = 1.2,
+    c_x_x = 0.35,
+    c_x_y = 0.1,
+    c_y_x = -0.2,
+    c_y_y = .7,
 
     # undirected effects
     ## trait
@@ -288,8 +288,9 @@ test_that("test linear model", {
           names() |>
           unique() |>
           sort()
-        # remove intercepts
-        coef_exp <- coef_exp[!grepl("^one", coef_exp)]
+        # remove intercepts and (co-)variances of exogenous predictors as the
+        # latter are fixed to the observed values in panelSEM.
+        coef_exp <- coef_exp[!grepl("^one", coef_exp) & !grepl("^psi_z[0-9]_z[0-9]", coef_exp)]
 
         testthat::expect_true(all(coef_fit == coef_exp))
       }

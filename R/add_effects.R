@@ -536,7 +536,7 @@ add_homogeneous_covariances <- function(internal_list){
 #' @param internal_list internal list
 #' @returns data.frame with covariances
 #' @keywords internal
-add_product_covariances <- function(internal_list){
+add_observed_exogenous_covariances <- function(internal_list){
   effects <- c()
   exogenous_names <- unique(unlist(internal_list$info_variables$info_time_invariant_variables))
   if(!internal_list$use_definition_variables){
@@ -570,6 +570,44 @@ add_product_covariances <- function(internal_list){
                          value   = product_cov[i, j],
                          algebra = "",
                          free    = free
+                       ))
+    }
+  }
+
+  return(effects)
+}
+
+#' add_product_covariances
+#'
+#' Add covariances between exogenous product terms and x1, x2, ..., y1, y2, ... if use_definition_variables = FALSE
+#' @param internal_list internal list
+#' @returns data.frame with covariances
+#' @keywords internal
+add_product_covariances <- function(internal_list){
+  if(internal_list$use_definition_variables){
+    return(c())
+  }
+
+  exogenous_names <- unique(unlist(internal_list$info_data$product_names))
+  process_names <- unique(c(internal_list$info_variables$user_names_time_varying))
+  effects <- c()
+
+  for(outgoing in exogenous_names){
+    for(incoming in process_names){
+      effects <- rbind(effects,
+                       data.frame(
+                         outgoing = outgoing,
+                         incoming = incoming,
+                         type     = "undirected",
+                         op       = "~~",
+                         location = "C",
+                         label    = paste0("psi_",
+                                           outgoing,
+                                           "_",
+                                           incoming),
+                         value   = 0.0,
+                         algebra = "",
+                         free    = TRUE
                        ))
     }
   }
