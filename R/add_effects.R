@@ -44,7 +44,7 @@ add_autoregressive_cross_lagged <- function(internal_list){
                              op       = "~",
                              location = "C",
                              label    = label,
-                             value   = .1,
+                             value   = 0.0,
                              algebra = algebra,
                              free    = algebra == ""
                            ))
@@ -78,7 +78,7 @@ add_autoregressive_cross_lagged <- function(internal_list){
                                op       = "~",
                                location = "C",
                                label    = label,
-                               value   = .1,
+                               value   = 0.0,
                                algebra = algebra,
                                free    = algebra == ""
                              ))
@@ -97,7 +97,7 @@ add_autoregressive_cross_lagged <- function(internal_list){
                                location = "C",
                                label    = paste0("c_", process_names[[which(incoming == inc)]],
                                                  "_", process_names[[which(outgoing == out)]]),
-                               value   = .1,
+                               value   = 0.0,
                                algebra = "",
                                free    = TRUE
                              ))
@@ -115,7 +115,7 @@ add_autoregressive_cross_lagged <- function(internal_list){
                                  op       = "~",
                                  location = "C",
                                  label    = label,
-                                 value   = .1,
+                                 value   = 0.0,
                                  algebra = "",
                                  free    = TRUE
                                ))
@@ -163,7 +163,9 @@ add_process_residual_variances <- function(internal_list){
                                                incoming[[inc_index]],
                                                "_",
                                                outgoing[[out_index]]),
-                             value   = .6,
+                             value   = ifelse(outgoing[[out_index]] == incoming[[inc_index]],
+                                              1.0,
+                                              0.0),
                              algebra = "",
                              free = TRUE
                            )
@@ -185,7 +187,9 @@ add_process_residual_variances <- function(internal_list){
                                          process_names,
                                          "_",
                                          process_names),
-                       value   = .6,
+                       value   = ifelse(outgoing == incoming,
+                                        1.0,
+                                        0.0),
                        algebra = "",
                        free = TRUE
                      )
@@ -264,7 +268,7 @@ add_latent_residual <- function(internal_list){
                                                  inc,
                                                  "_",
                                                  out),
-                               value   = .5,
+                               value   = 0.0,
                                algebra = "",
                                free = TRUE
                              ))
@@ -288,7 +292,7 @@ add_latent_residual <- function(internal_list){
                                                  inc,
                                                  "_",
                                                  out),
-                               value   = .3,
+                               value   = 0.0,
                                algebra = "",
                                free = TRUE
                              ))
@@ -355,7 +359,9 @@ add_latent_residual <- function(internal_list){
                                            etas_combined[[inc_index]],
                                            "_",
                                            etas_combined[[out_index]]),
-                         value    = .6,
+                         value    = ifelse(etas_combined[[out_index]] == etas_combined[[inc_index]],
+                                           1.0,
+                                           0.0),
                          algebra  = "",
                          free     = TRUE
                        )
@@ -409,7 +415,7 @@ add_time_invariant_predictors <- function(internal_list){
                                                inc,
                                                "_",
                                                out),
-                             value    = .2,
+                             value    = 0.0,
                              algebra  = "",
                              free     = TRUE
                            ))
@@ -435,7 +441,7 @@ add_time_invariant_predictors <- function(internal_list){
                          location = "C",
                          label    = paste0("c_", process_names[j], "_",
                                            time_invariant_variables[[j]]),
-                         value    = 0,
+                         value    = 0.0,
                          algebra  = "",
                          free     = TRUE
                        )
@@ -485,7 +491,9 @@ add_homogeneous_covariances <- function(internal_list){
                                              process_names[[which(incoming == inc)]],
                                              "_",
                                              process_names[[which(outgoing == out)]]),
-                           value   = .4,
+                           value   = ifelse(out == inc,
+                                            1.0,
+                                            0.0),
                            algebra = "",
                            free    = TRUE
                          ))
@@ -508,7 +516,9 @@ add_homogeneous_covariances <- function(internal_list){
                                          incoming,
                                          "_",
                                          outgoing),
-                       value   = .4,
+                       value   = ifelse(outgoing == incoming,
+                                        1.0,
+                                        0.0),
                        algebra = "",
                        free    = TRUE
                      ))
@@ -537,6 +547,13 @@ add_product_covariances <- function(internal_list){
   product_cov <- ((N-1)/N) * cov(internal_list$info_data$data[,exogenous_names],
                                  use = "all.obs")
 
+  if(any(eigen(product_cov)$values < 0)){
+    warning("The covariance matrix of the exogenous variables is not positive definite.")
+    free <- TRUE
+  }else{
+    free <- FALSE
+  }
+
   for(i in 1:nrow(product_cov)){
     for(j in i:ncol(product_cov)){
       effects <- rbind(effects,
@@ -552,7 +569,7 @@ add_product_covariances <- function(internal_list){
                                            colnames(product_cov)[j]),
                          value   = product_cov[i, j],
                          algebra = "",
-                         free    = FALSE
+                         free    = free
                        ))
     }
   }
