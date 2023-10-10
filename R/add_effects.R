@@ -9,6 +9,8 @@ add_autoregressive_cross_lagged <- function(internal_list){
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
   linear        <- internal_list$info_model$linear
+  use_definition_variables <- internal_list$use_definition_variables
+
 
   time_invariant_variables     <- internal_list$info_variables$info_time_invariant_variables
 
@@ -34,39 +36,92 @@ add_autoregressive_cross_lagged <- function(internal_list){
                              "_",
                              process_names[[which(outgoing == out)]])
           algebra  <- ""
-
+          effects <- rbind(effects,
+                           data.frame(
+                             outgoing = out,
+                             incoming = inc,
+                             type     = "directed",
+                             op       = "~",
+                             location = "C",
+                             label    = label,
+                             value   = 0.0,
+                             algebra = algebra,
+                             free    = algebra == ""
+                           ))
+          next
         }else{
           # If the effect of the time_invariant_variables is non-linear and it is
           # not an autoregressive effect, there is a main effect of the previous
           # observation that is moderated by the time_invariant_variables
           # y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...
-          label <- paste0("c_", process_names[[which(incoming == inc)]], "_", out)
 
-          algebra <- paste0(
-            # main effect of previous occasion
-            paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]]),
-            " + ",
-            # interaction effect with time invariant variables
-            paste0(paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]],
-                          "_", time_invariant_variables[[which(incoming == inc)]],
-                          " * data.", time_invariant_variables[[which(incoming == inc)]]),
-                   collapse = " + ")
-          )
+          # There are two ways to handle such cases: (1) with definition variables,
+          # and (2) with product terms added to the data set
+          if(use_definition_variables){
+            label <- paste0("c_", process_names[[which(incoming == inc)]], "_", out)
 
+            algebra <- paste0(
+              # main effect of previous occasion
+              paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]]),
+              " + ",
+              # interaction effect with time invariant variables
+              paste0(paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]],
+                            "_", time_invariant_variables[[which(incoming == inc)]],
+                            " * data.", time_invariant_variables[[which(incoming == inc)]]),
+                     collapse = " + ")
+            )
+            effects <- rbind(effects,
+                             data.frame(
+                               outgoing = out,
+                               incoming = inc,
+                               type     = "directed",
+                               op       = "~",
+                               location = "C",
+                               label    = label,
+                               value   = 0.0,
+                               algebra = algebra,
+                               free    = algebra == ""
+                             ))
+          }else{
+
+            # the product terms are already added to the data set and
+            # can be used directly
+
+            # add main effect
+            effects <- rbind(effects,
+                             data.frame(
+                               outgoing = out,
+                               incoming = inc,
+                               type     = "directed",
+                               op       = "~",
+                               location = "C",
+                               label    = paste0("c_", process_names[[which(incoming == inc)]],
+                                                 "_", process_names[[which(outgoing == out)]]),
+                               value   = 0.0,
+                               algebra = "",
+                               free    = TRUE
+                             ))
+
+            # add interactions
+            for(ti in time_invariant_variables[[which(incoming == inc)]]){
+              label <- paste0("c_", process_names[[which(incoming == inc)]], "_", process_names[[which(outgoing == out)]],
+                              "_", ti)
+              out_and_z <- paste0("prod_", ti, "_", out)
+              effects <- rbind(effects,
+                               data.frame(
+                                 outgoing = out_and_z,
+                                 incoming = inc,
+                                 type     = "directed",
+                                 op       = "~",
+                                 location = "C",
+                                 label    = label,
+                                 value   = 0.0,
+                                 algebra = "",
+                                 free    = TRUE
+                               ))
+            }
+          }
         }
-
-        effects <- rbind(effects,
-                         data.frame(
-                           outgoing = out,
-                           incoming = inc,
-                           type     = "directed",
-                           op       = "~",
-                           location = "C",
-                           label    = label,
-                           value   = .1,
-                           algebra = algebra,
-                           free    = algebra == ""
-                         ))
       }
     }
   }
@@ -108,7 +163,9 @@ add_process_residual_variances <- function(internal_list){
                                                incoming[[inc_index]],
                                                "_",
                                                outgoing[[out_index]]),
-                             value   = .6,
+                             value   = ifelse(outgoing[[out_index]] == incoming[[inc_index]],
+                                              1.0,
+                                              0.0),
                              algebra = "",
                              free = TRUE
                            )
@@ -130,7 +187,9 @@ add_process_residual_variances <- function(internal_list){
                                          process_names,
                                          "_",
                                          process_names),
-                       value   = .6,
+                       value   = ifelse(outgoing == incoming,
+                                        1.0,
+                                        0.0),
                        algebra = "",
                        free = TRUE
                      )
@@ -209,7 +268,7 @@ add_latent_residual <- function(internal_list){
                                                  inc,
                                                  "_",
                                                  out),
-                               value   = .5,
+                               value   = 0.0,
                                algebra = "",
                                free = TRUE
                              ))
@@ -233,7 +292,7 @@ add_latent_residual <- function(internal_list){
                                                  inc,
                                                  "_",
                                                  out),
-                               value   = .3,
+                               value   = 0.0,
                                algebra = "",
                                free = TRUE
                              ))
@@ -300,7 +359,9 @@ add_latent_residual <- function(internal_list){
                                            etas_combined[[inc_index]],
                                            "_",
                                            etas_combined[[out_index]]),
-                         value    = .6,
+                         value    = ifelse(etas_combined[[out_index]] == etas_combined[[inc_index]],
+                                           1.0,
+                                           0.0),
                          algebra  = "",
                          free     = TRUE
                        )
@@ -354,7 +415,7 @@ add_time_invariant_predictors <- function(internal_list){
                                                inc,
                                                "_",
                                                out),
-                             value    = .2,
+                             value    = 0.0,
                              algebra  = "",
                              free     = TRUE
                            ))
@@ -380,35 +441,7 @@ add_time_invariant_predictors <- function(internal_list){
                          location = "C",
                          label    = paste0("c_", process_names[j], "_",
                                            time_invariant_variables[[j]]),
-                         value    = 0,
-                         algebra  = "",
-                         free     = TRUE
-                       )
-      )
-    }
-  }
-
-  # add exogenous variances and covariances
-  unique_exogenous <- time_invariant_variables |>
-    unlist() |>
-    unique()
-  for(out_index in 1:length(unique_exogenous)){
-    for(inc_index in out_index:length(unique_exogenous)){
-      # we add all variances and covariances
-      effects <- rbind(effects,
-                       expand.grid(
-                         outgoing = unique_exogenous[[out_index]],
-                         incoming = unique_exogenous[[inc_index]],
-                         type     = "undirected",
-                         op       = "~~",
-                         location = "Psi",
-                         label    = paste0("psi_",
-                                           unique_exogenous[[inc_index]],
-                                           "_",
-                                           unique_exogenous[[out_index]]),
-                         value    = ifelse(unique_exogenous[[out_index]] == unique_exogenous[[inc_index]],
-                                           .6,
-                                           0),
+                         value    = 0.0,
                          algebra  = "",
                          free     = TRUE
                        )
@@ -458,7 +491,9 @@ add_homogeneous_covariances <- function(internal_list){
                                              process_names[[which(incoming == inc)]],
                                              "_",
                                              process_names[[which(outgoing == out)]]),
-                           value   = .4,
+                           value   = ifelse(out == inc,
+                                            1.0,
+                                            0.0),
                            algebra = "",
                            free    = TRUE
                          ))
@@ -481,7 +516,9 @@ add_homogeneous_covariances <- function(internal_list){
                                          incoming,
                                          "_",
                                          outgoing),
-                       value   = .4,
+                       value   = ifelse(outgoing == incoming,
+                                        1.0,
+                                        0.0),
                        algebra = "",
                        free    = TRUE
                      ))
@@ -491,4 +528,89 @@ add_homogeneous_covariances <- function(internal_list){
   rownames(effects) <- NULL
   return(effects)
 
+}
+
+#' add_observed_exogenous_covariances
+#'
+#' Add covariances between observed exogenous variables if use_definition_variables = FALSE
+#' @param internal_list internal list
+#' @returns data.frame with covariances
+#' @keywords internal
+add_observed_exogenous_covariances <- function(internal_list){
+  effects <- c()
+  exogenous_names <- unique(unlist(internal_list$info_variables$info_time_invariant_variables))
+  if(!internal_list$use_definition_variables){
+    exogenous_names <- c(exogenous_names,
+                         unique(unlist(internal_list$info_data$product_names)))
+  }
+  N <- internal_list$info_data$n_obs
+  product_cov <- ((N-1)/N) * cov(internal_list$info_data$data[,exogenous_names],
+                                 use = "all.obs")
+
+  if(any(eigen(product_cov)$values < 0)){
+    warning("The covariance matrix of the exogenous variables is not positive definite.")
+    free <- TRUE
+  }else{
+    free <- FALSE
+  }
+
+  for(i in 1:nrow(product_cov)){
+    for(j in i:ncol(product_cov)){
+      effects <- rbind(effects,
+                       data.frame(
+                         outgoing = rownames(product_cov)[i],
+                         incoming = colnames(product_cov)[j],
+                         type     = "undirected",
+                         op       = "~~",
+                         location = "C",
+                         label    = paste0("psi_",
+                                           rownames(product_cov)[i],
+                                           "_",
+                                           colnames(product_cov)[j]),
+                         value   = product_cov[i, j],
+                         algebra = "",
+                         free    = free
+                       ))
+    }
+  }
+
+  return(effects)
+}
+
+#' add_product_covariances
+#'
+#' Add covariances between exogenous product terms and x1, x2, ..., y1, y2, ... if use_definition_variables = FALSE
+#' @param internal_list internal list
+#' @returns data.frame with covariances
+#' @keywords internal
+add_product_covariances <- function(internal_list){
+  if(internal_list$use_definition_variables){
+    return(c())
+  }
+
+  exogenous_names <- unique(unlist(internal_list$info_data$product_names))
+  process_names <- unique(c(internal_list$info_variables$user_names_time_varying))
+  effects <- c()
+
+  for(outgoing in exogenous_names){
+    for(incoming in process_names){
+      effects <- rbind(effects,
+                       data.frame(
+                         outgoing = outgoing,
+                         incoming = incoming,
+                         type     = "undirected",
+                         op       = "~~",
+                         location = "C",
+                         label    = paste0("psi_",
+                                           outgoing,
+                                           "_",
+                                           incoming),
+                         value   = 0.0,
+                         algebra = "",
+                         free    = TRUE
+                       ))
+    }
+  }
+
+  return(effects)
 }
