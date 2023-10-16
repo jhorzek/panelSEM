@@ -1,11 +1,13 @@
 Package: panelSEM
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.2.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Title: Fit Dynamic Panel Data Models
+Version: 0.2.1
+Author: Christian Gische, Chiara Di Maria, Jannik H. Orzek
+Maintainer: Christian Gische <yourself@somewhere.net>
+Description: The package provides a simplified interface to fit dynamic panel data models. 
+    The class of models that can be estimated ranges from simple linear models 
+    (e.g., the cross-lagged panel model) to complex nonlinear nonadditive models 
+    with observed and unobserved effect heterogeneity.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
