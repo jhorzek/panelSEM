@@ -141,6 +141,21 @@ fill_in_model_specification_open_mx <- function(internal_list){
 
   }
 
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity){
+    # TODO: fill in the model specification for the linear non-additive part
+    # get verbose argument
+    verbose <- internal_list$control$verbose
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+    # return internal list
+    return(internal_list)
+
+  }
+
 }
 
 #' fill_in_model_specification_lavaan
