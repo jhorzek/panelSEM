@@ -19,7 +19,8 @@ Depends:
     lavaan,
     mvtnorm,
     R (>= 2.10),
-    logger
+    logger,
+    tidyr
 Suggests: 
     testthat (>= 3.0.0),
     mxsem
