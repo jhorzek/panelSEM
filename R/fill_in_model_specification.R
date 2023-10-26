@@ -69,16 +69,41 @@ fill_in_model_specification_open_mx <- function(internal_list){
   nvar <- length(var_names)
   nobs <- length(obs_var)
 
-  # TODO: find a way to replace ALL numeric values in the labels
   # matrices by non-numeric characters
   labelsA <- as.vector(t(psem.matA))
-  labelsA[which(labelsA=="1")] <- "fixed_number"
-  freeA <- ifelse(is.na(psem.matA)==TRUE | psem.matA=="1", F, T)
+
+  # CG: replace ALL numeric values in the labels by the term "fixed_number_"
+  # and the corresponding numeric value
+  labelsA[which(!is.na(as.numeric(labelsA)))] <-
+    paste0("fixed_number_",
+           labelsA[which(!is.na(as.numeric(labelsA)))])
+
+  # CG: create a matrix indicating which parameters are freely estimated
+  # parameters corresponding to NA entries are FIXED
+  # parameters corresponding to numerical entries are FIXED
+  freeA <- psem.matA
+  freeA[which(!is.na(as.numeric(freeA)))] <- FALSE
+  freeA[is.na(freeA)] <- FALSE
+  freeA[freeA!="FALSE"] <- TRUE
+  freeA <- freeA == "TRUE"
   freeA_vec <- as.vector(t(freeA))
 
+
   labelsS <- as.vector(t(psem.matS))
-  labelsS[which(labelsS=="1")] <- "fixed_number"
-  freeS <- ifelse(is.na(psem.matS)==TRUE, F, T)
+  # CG: replace ALL numeric values in the labels by the term "fixed_number_"
+  # and the corresponding numeric value
+  labelsS[which(!is.na(as.numeric(labelsS)))] <-
+    paste0("fixed_number_",
+           labelsS[which(!is.na(as.numeric(labelsS)))])
+
+  # CG: create a matrix indicating which parameters are freely estimated
+  # parameters corresponding to NA entries are FIXED
+  # parameters corresponding to numerical entries are FIXED
+  freeS <- psem.matS
+  freeS[which(!is.na(as.numeric(freeS)))] <- FALSE
+  freeS[is.na(freeS)] <- FALSE
+  freeS[freeS!="FALSE"] <- TRUE
+  freeS <- freeS == "TRUE"
   freeS_vec <- as.vector(t(freeS))
 
   valuesF <- as.vector(t(psem.matF))
@@ -86,47 +111,53 @@ fill_in_model_specification_open_mx <- function(internal_list){
   raw_data <- mxData(observed = internal_list$info_data$data ,
                      type = 'raw')
 
-  matrA <- mxMatrix( type="Full",
-                     nrow=nvar,
-                     ncol=nvar,
-                     free=freeA_vec,
-                     labels=labelsA,
-                     byrow=TRUE,
-                     name="A",
+  matrA <- mxMatrix( type = "Full",
+                     nrow = nvar,
+                     ncol = nvar,
+                     free = freeA_vec,
+                     labels = labelsA,
+                     byrow = TRUE,
+                     name = "A",
                      dimnames = list(var_names,var_names))
 
-  matrS <- mxMatrix( type="Symm",
-                     nrow=nvar,
-                     ncol=nvar,
-                     free=freeS_vec,
-                     labels=labelsS,
-                     byrow=TRUE,
+  matrS <- mxMatrix( type = "Symm",
+                     nrow = nvar,
+                     ncol = nvar,
+                     free = freeS_vec,
+                     labels = labelsS,
+                     byrow = TRUE,
                      name="S",
                      dimnames = list(var_names,var_names))
 
-  matrF <- mxMatrix( type="Full",
-                     nrow=nobs,
-                     ncol=nvar,
-                     name="F",
+  matrF <- mxMatrix( type = "Full",
+                     nrow = nobs,
+                     ncol = nvar,
+                     name = "F",
                      byrow = T,
                      values = valuesF,
                      free = FALSE,
                      dimnames = list(NULL,var_names))
 
-  matrM <- mxMatrix( type="Full",
-                     nrow=1,
-                     ncol=nvar,
-                     free=c(rep(F,nvar-nobs),
-                            rep(T,nobs)),
-                     values=rep(0,nvar),
-                     name="M",
+  matrM <- mxMatrix( type = "Full",
+                     nrow = 1,
+                     ncol = nvar,
+                     free = c(rep(F,nvar-nobs),
+                              rep(T,nobs)),
+                     values = rep(0,nvar),
+                     name = "M",
                      labels = paste0('mean_', var_names),
                      dimnames = list(NULL, var_names))
 
-  expRAM <- mxExpectationRAM("A","S","F","M", dimnames=var_names)
+  expRAM <- mxExpectationRAM("A", "S", "F", "M", dimnames = var_names)
   funML <- mxFitFunctionML()
-  model <- mxModel("linear additive model",
-                         raw_data, matrA, matrS, matrF, matrM, expRAM, funML)
+  model <- mxModel("linear_additive",
+                   raw_data,
+                   matrA,
+                   matrS,
+                   matrF,
+                   matrM,
+                   expRAM,
+                   funML)
 
   internal_list$model_syntax$OpenMx <- model
 

@@ -34,42 +34,43 @@ add_starting_values <- function(internal_list){
   # print console output
   if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, "
                                   ", Sys.time(), "\n" ) )
-  
-  # Define function 
+
+  # Define function
   set_starting_values_lavaan <- function(parameter_table, starting_values){
     if(is.null(names(starting_values)) | !is.numeric(starting_values))
       stop("starting_values must be a numeric vector with names")
-    
+
     # change labels if none are given
-    parameter_table$label[parameter_table$label == ""] <- paste0(parameter_table$lhs,
-                                                                 parameter_table$op,
-                                                                 parameter_table$rhs)[parameter_table$label == ""]
-    
+    parameter_table$label[parameter_table$label == ""] <-
+      paste0(parameter_table$lhs,
+             parameter_table$op,
+             parameter_table$rhs)[parameter_table$label == ""]
+
     for(i in 1:length(starting_values)){
       current_label <- names(starting_values)[i]
       current_value <- starting_values[i]
-      
+
       if(!current_label %in% parameter_table$label)
         stop("Could not find the following parameter in the model: ", current_label)
-      
+
       parameter_table$ustart[parameter_table$label == current_label] <- current_value
-      
+
     }
-    
+
     return(parameter_table)
   }
-  
+
   if(linear == FALSE &&
     "additive" %in% heterogeneity  &&
     "cross-lagged" %in% heterogeneity) {
-    
+
     # console output
     if( verbose >= 2 ) cat( paste0( "  end of function ",
                                     fun.name.version, " ", Sys.time(), "\n" ) )
-    
+
     # return output
     return(internal_list)
-    
+
   } else {
 
   if (!internal_list$info_model$use_open_mx){
@@ -97,19 +98,17 @@ add_starting_values <- function(internal_list){
 
   if (internal_list$info_model$use_open_mx){
 
-    internal_list$model_syntax$OpenMx$starting_values <-
-      internal_list$model_syntax$OpenMx
 
     # set starting values for structural coefficients
     valuesA <- internal_list$model_matrices$C_start
     valuesA[is.na(valuesA)] <- 0
-    internal_list$model_syntax$OpenMx$starting_values$A$values <-
+    internal_list$model_syntax$OpenMx$A$values <-
       valuesA
 
     # set starting values for (co-)variances
     valuesS <- internal_list$model_matrices$Psi_start
     valuesS[is.na(valuesS)] <- 0
-    internal_list$model_syntax$OpenMx$starting_values$S$values <-
+    internal_list$model_syntax$OpenMx$S$values <-
       valuesS
 
 
