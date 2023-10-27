@@ -39,11 +39,53 @@ fill_in_estimates <- function(internal_list,
   if( verbose >= 2 ) cat( paste0( "start of function ", fun.name.version, "
                                   ", Sys.time(), "\n" ) )
 
-  # console output
-  if( verbose >= 2 ) cat( paste0( "  end of function ",
-                                  fun.name.version, " ", Sys.time(), "\n" ) )
 
-  # return output
-  return(internal_list)
+  if(linear == TRUE &&
+     identical("homogeneous", sort(heterogeneity)) ){
+
+    ##TODO: fill in estimation for the linear homogeneous model
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+    # return output
+    return(internal_list)
+  }
+
+  if(linear == TRUE &&
+     identical("additive", sort(heterogeneity))){
+
+  if (use_open_mx == TRUE){
+  model_fit <- mxTryHard(internal_list$model_syntax$OpenMx)
+  internal_list$model_estimation$estimates <- model_fit
+  }
+
+  if (!use_open_mx == TRUE){
+      model_fit <-
+        lavaan(internal_list$model_syntax$lavaan$starting_values,
+               data = internal_list$info_data$data)
+      internal_list$model_estimation$estimates <- model_fit
+  }
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+    # return output
+    return(internal_list)
+
+  }
+
+  if(linear == FALSE &&
+     "additive" %in% heterogeneity  &&
+     "cross-lagged" %in% heterogeneity){
+
+    ##TODO: fill in estimation for the nonlinear nonadditive model
+
+    # console output
+    if( verbose >= 2 ) cat( paste0( "  end of function ", fun.name.version, " ",
+                                    Sys.time(), "\n" ) )
+    # return output
+    return(internal_list)
+  }
 
 }

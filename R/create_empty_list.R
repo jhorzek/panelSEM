@@ -228,6 +228,14 @@ create_empty_list <- function( verbose ){
 
 		), # end of model_syntax list
 
+		model_estimation = list(
+
+		  # estimation results as obtained by lavaan or OpenMx
+
+		  "estimates" = list()
+
+		), # end of estimate list
+
 		# control list
 		control = list(
 

@@ -19,6 +19,7 @@
 #' @param use_resamples Logical (TRUE / FALSE = default) indicating if a resampling procedure is used for the computation of starting values and model diagnostics.
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
+#' @param fit_model Logical (TRUE = default / FALSE) indicating if the model should be fit to the data.
 #' @param verbose Integer number describing the verbosity of console output.
 #' Admissible values: 0: no output (default), 1: user messages,
 #' 2: debugging-relevant messages.
@@ -137,6 +138,7 @@ fit_panel_sem <- function(data,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
                           verbose = 0,
+                          fit_model = TRUE,
                           ...){
 
 
@@ -230,7 +232,8 @@ fit_panel_sem <- function(data,
   #}
 
   # fill in estimation results to the list
-  #internal_list <- fill_in_estimates(internal_list = internal_list)
+  if (fit_model == TRUE){
+  internal_list <- fill_in_estimates(internal_list = internal_list)}
 
   # fill in diagnostic results into the list
   #internal_list <- fill_in_diagnostics(internal_list = internal_list)
