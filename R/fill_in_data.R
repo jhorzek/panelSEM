@@ -69,39 +69,78 @@ internal_list$info_data$var_names <- colnames(data)
 # add product terms of observed variables models are nonlinear
 if(add_product_variables == TRUE){
 
- product_terms_names <- character(0)
+# get names of product terms
+  product_terms_names <- character(0)
 
- for (i in 1:internal_list$info_model$n_processes){
-   names_product <-
-   as.vector(outer(
-   internal_list$info_variables$info_time_invariant_variables[[i]],
-   internal_list$info_variables$user_names_time_varying[
-     i,
-     -internal_list$info_model$n_occasions],
-   paste,
-   sep="_"))
+  for (i in 1:internal_list$info_model$n_processes){
+    j <- (internal_list$info_model$n_processes - i + 1)
+    names_product <-
+      as.vector(outer(
+        internal_list$info_variables$info_time_invariant_variables[[j]],
+        internal_list$info_variables$user_names_time_varying[
+          i,
+          -internal_list$info_model$n_occasions],
+        paste,
+        sep="_"))
 
-   product_terms_names <- c(product_terms_names, names_product)
- }
+    product_terms_names <- c(product_terms_names, names_product)
+  }
 
- product_terms_names <- paste0("prod_",product_terms_names)
- product_final <- numeric(0)
+  product_terms_names <- paste0("prod_",product_terms_names)
 
-   for (i in 1:internal_list$info_model$n_processes){
-       mat <- internal_list$info_variables$info_time_invariant_variables[[i]]
-       vec <- internal_list$info_variables$user_names_time_varying[
-         i,
-         -internal_list$info_model$n_occasions]
+# compute product terms
+  product_final <- numeric(0)
 
-       for (j in 1:(internal_list$info_model$n_occasions - 1)){
-         product <- sweep(as.matrix(data[, mat]),
-                          MARGIN=1,
-                          as.numeric(data[, vec[j]]),
-                          `*`)
+  for (i in 1:internal_list$info_model$n_processes){
+    k <- (internal_list$info_model$n_processes - i + 1)
+    mat <- internal_list$info_variables$info_time_invariant_variables[[k]]
+    vec <- internal_list$info_variables$user_names_time_varying[
+      i,
+      -internal_list$info_model$n_occasions]
 
-         product_final <- cbind(product_final, product)
-       }
-       }
+    for (j in 1:(internal_list$info_model$n_occasions - 1)){
+      product <- sweep(as.matrix(data[, mat]),
+                       MARGIN=1,
+                       as.numeric(data[, vec[j]]),
+                       `*`)
+
+      product_final <- cbind(product_final, product)
+    }
+  }
+
+# product_terms_names <- character(0)
+
+# for (i in 1:internal_list$info_model$n_processes){
+#   names_product <-
+#   as.vector(outer(
+#   internal_list$info_variables$info_time_invariant_variables[[i]],
+#   internal_list$info_variables$user_names_time_varying[
+#     i,
+#     -internal_list$info_model$n_occasions],
+#   paste,
+#   sep="_"))
+#
+#   product_terms_names <- c(product_terms_names, names_product)
+# }
+
+# product_terms_names <- paste0("prod_",product_terms_names)
+# product_final <- numeric(0)
+
+#   for (i in 1:internal_list$info_model$n_processes){
+#       mat <- internal_list$info_variables$info_time_invariant_variables[[i]]
+#       vec <- internal_list$info_variables$user_names_time_varying[
+#         i,
+#         -internal_list$info_model$n_occasions]
+#
+#       for (j in 1:(internal_list$info_model$n_occasions - 1)){
+#         product <- sweep(as.matrix(data[, mat]),
+#                          MARGIN=1,
+#                          as.numeric(data[, vec[j]]),
+#                          `*`)
+#
+#         product_final <- cbind(product_final, product)
+#       }
+#       }
 
    data_product_terms <- as.data.frame(product_final)
    colnames(data_product_terms) <- product_terms_names
