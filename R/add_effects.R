@@ -229,6 +229,7 @@ add_latent_residual <- function(internal_list){
     message("Adding cross-lagged latent processes.")
   }
 
+  # add etax, etay, ...
   etas_base <- paste0("eta", process_names)
   if(additive){
     etas <- etas_base
@@ -237,6 +238,7 @@ add_latent_residual <- function(internal_list){
   }
   etas_nonadditive <- c()
 
+  # add etaxy, etayx, ...
   if(cross_lagged){
     for(i in 1:length(process_names)){
       for(j in 1:length(process_names))

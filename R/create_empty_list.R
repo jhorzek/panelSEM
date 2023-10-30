@@ -166,9 +166,7 @@ create_empty_list <- function( verbose ){
       # 2...debugging-relevant messages
       "verbose" = verbose
 
-    ), # end of control list
-
-    control = list()
+    ) # end of control list
   ) # end of internal list
 
   # print console output

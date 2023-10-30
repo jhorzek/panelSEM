@@ -1,0 +1,218 @@
+<mxfile host="app.diagrams.net" modified="2023-10-30T13:36:05.107Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0" etag="4PEtG4fJ2nYm-B6wdC-s" version="22.0.8" type="device">
+  <diagram name="Page-1" id="5vB9o8ruIQnVQMiHFnip">
+    <mxGraphModel dx="3804" dy="837" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-1" target="70_Alr4ufh0Yjp-dV16d-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-1" value="fit_panel_sem" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-260" y="380" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-2" target="70_Alr4ufh0Yjp-dV16d-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-2" value="&lt;div&gt;&lt;b&gt;check_panel_sem_specification&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Checks if all specifications are valid&lt;/div&gt;&lt;div&gt;Also provides some warnings in case of unrecommended settings&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="520" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-4" target="70_Alr4ufh0Yjp-dV16d-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-4" value="&lt;div&gt;&lt;b&gt;create_empty_list&lt;/b&gt;&lt;/div&gt;Create template list to be filled by subsequent functions" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="660" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-6" target="70_Alr4ufh0Yjp-dV16d-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-6" value="&lt;div&gt;&lt;b&gt;fill_in_info_variables&lt;/b&gt;&lt;/div&gt;Saves variable names, checks for common substring to name processes, checks number of occasions, processes, and time-invariant variables" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="780" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-8" target="70_Alr4ufh0Yjp-dV16d-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-8" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-8" value="&lt;div&gt;&lt;b&gt;fill_in_data&lt;/b&gt;&lt;/div&gt;Saves the number of persons, variables, and their names found in the data set." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="940" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-10" target="70_Alr4ufh0Yjp-dV16d-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-10" value="if &lt;b&gt;nonlinear&lt;/b&gt; and &lt;b&gt;use_definition_variables is&lt;/b&gt; &lt;b&gt;false&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-20" y="920" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-12" value="&lt;div&gt;&lt;b&gt;add_product_terms&lt;/b&gt;&lt;/div&gt;&lt;div&gt;adds products between observed time-varying and time invariant variables (e.g., x2*z1)&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="200" y="910" width="120" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-19">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-20" y="1370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-14" target="70_Alr4ufh0Yjp-dV16d-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-14" value="&lt;div&gt;&lt;b&gt;fill_in_info_model&lt;/b&gt;&lt;/div&gt;Creates a parameter table" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="1100" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-16" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1150" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-16" value="&lt;div&gt;&lt;b&gt;add_autoregressive_cross_lagged&lt;/b&gt;&lt;/div&gt;Adds autoregressive and cross-lagged parameters (e.g., x1 -&amp;gt; x2 and x1 -&amp;gt; y2). For non-linear models, the cross-lagged effects are defined as y2 = (c_y_x + c_y_x_z2*z2)*x1 + .... In this case, the product terms (e.g., z2*x1) are either added using definition variables (if &lt;b&gt;use_definition_variables &lt;/b&gt;is TRUE) or using pre-computed product terms&amp;nbsp;(if &lt;b&gt;use_definition_variables &lt;/b&gt;is FALSE)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1060" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-19">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-90" y="1160" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="250" y="1290" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-19" value="&lt;div&gt;&lt;b&gt;add_autoregressive_cross_lagged&lt;/b&gt;&lt;/div&gt;Adds residual variances and covariances for time varying variables (x1, x2, ...). Initial occasions are treated differently from remaining occasions" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1250" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-21" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1385" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-21" value="&lt;div&gt;&lt;b&gt;add_latent_residual&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Adds eta-variables (etax, etay, etaxy, ...):&lt;/div&gt;&lt;div&gt;- adds (co-)variances for latent variables&lt;/div&gt;&lt;div&gt;- adds loadings for latent variables (in case of cross-lagged heterogeneity, these are added using algebras)&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1340" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-23" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1495" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-23" value="&lt;div&gt;&lt;b&gt;add_time_invariant_predictors&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Adds time invariant predictors to the model. Note that only main effects of time invariant predictors are added here. The interaction effects (e.g., c_y_x_z2 in &lt;br&gt;&lt;/div&gt;&lt;div&gt;y2 = (c_y_x + c_y_x_z2*z2)*x1) is added in &lt;b&gt;add_autoregressive_cross_lagged&lt;/b&gt;.&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1440" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-25" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1585" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-25" value="&lt;div&gt;&lt;b&gt;add_homogeneous_covariances&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Adds covariances for lagged variables in case of heterogeneity = &quot;homogeneous&quot;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1560" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-27" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-90" y="1163.076923076923" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="250" y="1675" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-27" value="&lt;div&gt;&lt;b&gt;add_observed_exogenous_covariances&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Adds (co)variances for observed exogenous variables (z1, z2, ...). These (co-)variances can be fixed to the biased observed covariances and don&#39;t have to be estimated. This reduces the runtime.&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1620" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-28" target="70_Alr4ufh0Yjp-dV16d-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-90" y="1170" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="250" y="1820" />
+              <mxPoint x="250" y="1960" />
+              <mxPoint x="-70" y="1960" />
+              <mxPoint x="-70" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-28" value="&lt;div&gt;&lt;b&gt;add_product_covariances&lt;/b&gt;&lt;/div&gt;&lt;div&gt;If use_definition_variables = FALSE, the covariances between product terms (e.g., x1*z1 and x2*z1) are added as parameters. Additionally, covariances between time varying variables and product terms are added.&lt;/div&gt;&lt;div&gt;&lt;b&gt;QUESTION&lt;/b&gt;: Should&amp;nbsp; covariances between product terms and z1, z2, ... also be estimated?&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="1740" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-30" target="70_Alr4ufh0Yjp-dV16d-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-30" target="70_Alr4ufh0Yjp-dV16d-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-30" value="&lt;div&gt;&lt;b&gt;fill_in_model_specification&lt;/b&gt;&lt;/div&gt;Traslates the parameter table to lavaan or OpenMx models." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="1260" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-35" value="TRUE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-32" target="70_Alr4ufh0Yjp-dV16d-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-37" value="FALSE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-32" target="70_Alr4ufh0Yjp-dV16d-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-32" value="use_open_mx" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-570" y="1260" width="110" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-34" target="70_Alr4ufh0Yjp-dV16d-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-34" value="&lt;div&gt;&lt;b&gt;fill_in_model_specification_open_mx&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Creates an OpenMx model using the parameter table. &lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;- get_variables &lt;/b&gt;extracts the names of the observed and latent variables from the parameter table. These have to be specified in order to use OpenMx (manifestVars, latentVars)&lt;/div&gt;&lt;div&gt;&lt;b&gt;- fill_RAM_matrices &lt;/b&gt;creates RAM matrices using the parameter table. &lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Finally, &lt;b&gt;algebras&lt;/b&gt; are added to the model to allow for the nonlinearity and heterogeneity&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;The model is saved in internal_list$model_syntax&lt;br&gt;&lt;/b&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;align=left;" vertex="1" parent="1">
+          <mxGeometry x="-900" y="1195" width="254" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-36" target="70_Alr4ufh0Yjp-dV16d-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-36" value="&lt;div&gt;fill_in_model_specification_lavaan&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;Creates a model&amp;nbsp; string to be used by lavaans lavaan-functions&lt;/span&gt;&lt;/div&gt;&lt;div&gt;The model is saved in internal_list$model_syntax&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="-627.5" y="1430" width="225" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-41" target="70_Alr4ufh0Yjp-dV16d-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-41" value="&lt;div&gt;&lt;b&gt;set_starting_values&lt;/b&gt;&lt;/div&gt;Changes the starting values to those specified in the parameter_table. The model with adjusted starting values is saved in internal_list$model" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="1500" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-43" value="&lt;b&gt;RETURN&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="1660" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="70_Alr4ufh0Yjp-dV16d-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.836;entryY=1.011;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="70_Alr4ufh0Yjp-dV16d-12" target="70_Alr4ufh0Yjp-dV16d-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-126" y="1050" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
