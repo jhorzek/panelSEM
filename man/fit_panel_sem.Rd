@@ -11,7 +11,7 @@ fit_panel_sem(
   linear = TRUE,
   heterogeneity,
   use_resamples = FALSE,
-  use_open_mx = FALSE,
+  use_open_mx = TRUE,
   use_definition_variables = TRUE,
   lbound_variances = use_open_mx,
   verbose = 0
