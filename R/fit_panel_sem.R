@@ -7,7 +7,9 @@
 #' @description Fit a model from the class of dynamic panel data models to longitudinal data.
 #' Models include linear and nonlinear cross-lagged panel models with additive or nonadditive
 #' unobserved heterogeneity.
-#' @param data A \code{data.frame} containing the data with named columns. Data MUST be in wide format.
+#' @param data A \code{data.frame} containing the data with named columns. Data MUST be in wide format. If set to NULL,
+#' only the lavaan or OpenMx model will be returned. This model can be used to simulate data or check the
+#' specification without providing data.
 #' @param time_varying_variables List of character vectors containing names of the time-varying
 #'  variables. The number entries in the list corresponds to the number of univariate time-series.
 #'  Each character vector contains the time-ordered variable names of a univariate time-series
@@ -26,7 +28,8 @@
 #'  These will then be used to predict the time varying variables (e.g., y2). Additionally, panelSEM will add
 #'  all covariances between product terms (e.g., prod_z2_x1 ~~ prod_z3_x1), product terms and exogenous predictors (e.g., prod_z2_x1 ~~ z3),
 #'  and product terms and time varying variables (e.g., prod_z2_x1 ~~ y5). This will result in fairly large models and long run times.
-#' @param lbound_variances should variances be assigned a lower bound of 1e-4?
+#' @param lbound_variances should variances be assigned a lower bound of 1e-4? This will be set to TRUE for OpenMx models and FALSE for
+#' lavaan models. In lavaan, bounds can increase the run time substantially.
 #' @param verbose Integer number describing the verbosity of console output.
 #' Admissible values: 0: no output (default), 1: user messages,
 #' 2: debugging-relevant messages.
@@ -146,7 +149,7 @@ fit_panel_sem <- function(data,
                           use_resamples = FALSE,
                           use_open_mx = FALSE,
                           use_definition_variables = TRUE,
-                          lbound_variances = TRUE,
+                          lbound_variances = use_open_mx,
                           verbose = 0
                           ){
 
@@ -182,12 +185,12 @@ fit_panel_sem <- function(data,
                                           time_invariant_variables = time_invariant_variables,
                                           linear = linear,
                                           heterogeneity  = heterogeneity,
-                                          use_open_mx = use_open_mx)
+                                          use_open_mx = use_open_mx,
+                                          use_definition_variables = use_definition_variables)
 
   # fill in user-specified data to the list
   internal_list <- fill_in_data(internal_list = internal_list,
-                                data = data,
-                                use_definition_variables = use_definition_variables)
+                                data = data)
 
   # fill in user-specified information about the model into the list
   internal_list <- fill_in_info_model(internal_list = internal_list)
@@ -197,7 +200,7 @@ fit_panel_sem <- function(data,
                                                lbound_variances = lbound_variances)
 
   # fill in starting values to the list
-  internal_list <- starting_values(internal_list = internal_list)
+  #internal_list <- starting_values(internal_list = internal_list)
 
   internal_list$model <- set_starting_values(internal_list)
 

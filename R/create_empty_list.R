@@ -57,121 +57,125 @@ create_empty_list <- function( verbose ){
   # print console output
   if(verbose >= 2) logger::log_info('Start.')
 
-	# internal list
+  # internal list
 
-	internal_list <- list(
+  internal_list <- list(
 
-		# data
-	  info_data = list(
+    # data
+    info_data = list(
 
-	    # data set
-	    # data.frame object
-	    "data" = data.frame(0),
+      # data set
+      # data.frame object
+      "data" = data.frame(0),
 
-	    # number of observations
-	    # Integer number
-	    "n_obs" = integer(0),
+      # number of observations
+      # Integer number
+      "n_obs" = integer(0),
 
-	    # total number of observed variables in data set
-	    # Integer number
-	    "n_var" = integer(0),
+      # total number of observed variables in data set
+      # Integer number
+      "n_var" = integer(0),
 
-	    # names of observed variables in data set
-	    # character vector
-	    "var_names" = character(0)
+      # names of observed variables in data set
+      # character vector
+      "var_names" = character(0)
 
-	  ), # end of data list
+    ), # end of data list
 
-		# model info
-		info_model = list(
+    # model info
+    info_model = list(
 
-			# number of measurement occasions
-			# a single number, normally an integer
-			"n_occasions" = as.integer(0),
+      # number of measurement occasions
+      # a single number, normally an integer
+      "n_occasions" = as.integer(0),
 
-			# number of dynamic processes
-			# a single number, normally an integer
-			"n_processes" = as.integer(0),
+      # number of dynamic processes
+      # a single number, normally an integer
+      "n_processes" = as.integer(0),
 
-			# number of observed time-invariant variables
-			# a single number, normally an integer
-			"n_time_invariant" = as.integer(0),
+      # number of observed time-invariant variables
+      # a single number, normally an integer
+      "n_time_invariant" = as.integer(0),
 
-			# Is the model linear in observed variables?
-			# If yes, linear == TRUE.
-			# a single logical value
-			"linear" = logical(0),
+      # Is the model linear in observed variables?
+      # If yes, linear == TRUE.
+      # a single logical value
+      "linear" = logical(0),
 
-			# Type of unobserved heterogeneity.
-			# a character vector
-			"heterogeneity" = character(0),
+      # Type of unobserved heterogeneity.
+      # a character vector
+      "heterogeneity" = character(0),
 
-			# Use a resampling procedure?.
-			# a character vector
-			"use_resamples" = logical(0),
+      # should definition variables be used or products be computed explicitly?
+      "use_definition_variables" = logical(0),
 
-			# Is OpenMx used?
-			# If yes, use_open_mx == TRUE. If FALSE, lavaan is used.
-			# a single logical value
-			"use_open_mx" = logical(0)
+      # Use a resampling procedure?.
+      # a character vector
+      "use_resamples" = logical(0),
 
-		), # end info_model_list
+      # Is OpenMx used?
+      # If yes, use_open_mx == TRUE. If FALSE, lavaan is used.
+      # a single logical value
+      "use_open_mx" = logical(0)
 
-		info_variables = list(
+    ), # end info_model_list
 
-		  # user-specified names of observed time-varying variables
-		  # character matrix
-		  "user_names_time_varying" = character(0),
+    info_variables = list(
 
-		  # names of dynamic processes
-		  # character matrix
-		  "names_processes" = character(0),
+      # user-specified names of observed time-varying variables
+      # character matrix
+      "user_names_time_varying" = character(0),
 
-		  # names and causal structure of observed time-invariant variables
-		  # character matrix
-		  "info_time_invariant_variables" = character(0)
+      # names of dynamic processes
+      # character matrix
+      "names_processes" = character(0),
 
-		), # end info_variables list
+      # names and causal structure of observed time-invariant variables
+      # character matrix
+      "info_time_invariant_variables" = character(0)
 
-		info_parameters = list(
+    ), # end info_variables list
 
-		  # data.frame holding all parameters
-		  parameter_table = data.frame(0),
-		  # does the model have mxAlgebras?
-		  has_algebras    = c()
+    info_parameters = list(
 
-		), # end info_parameter list
+      # data.frame holding all parameters
+      parameter_table = data.frame(0),
+      # does the model have mxAlgebras?
+      has_algebras    = c()
 
-		model_syntax = list(
+    ), # end info_parameter list
 
-		  # model syntax for lavaan
-		  # list of characters
+    model_syntax = list(
 
-		  "lavaan" = character(0),
+      # model syntax for lavaan
+      # list of characters
 
-		  # model for OpenMx
+      "lavaan" = character(0),
 
-		  "OpenMx" = character(0)
+      # model for OpenMx
 
-		), # end of model_syntax list
+      "OpenMx" = character(0)
 
-		# control list
-		control = list(
+    ), # end of model_syntax list
 
-		# verbosity of console output
-		# a number, 0...no output (default), 1...user messages,
-		# 2...debugging-relevant messages
-		"verbose" = verbose
+    # control list
+    control = list(
 
-		) # end of control list
+      # verbosity of console output
+      # a number, 0...no output (default), 1...user messages,
+      # 2...debugging-relevant messages
+      "verbose" = verbose
 
-	) # end of internal list
+    ), # end of control list
 
-	# print console output
-	if(verbose >= 2) logger::log_info('End.')
+    control = list()
+  ) # end of internal list
 
-	# return internal list
-	return( internal_list )
+  # print console output
+  if(verbose >= 2) logger::log_info('End.')
+
+  # return internal list
+  return( internal_list )
 }
 
 ## test/development

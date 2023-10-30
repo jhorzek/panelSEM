@@ -17,6 +17,13 @@
 #' @param heterogeneity Character vector indicating the type of unobserved heterogeneity. Admissible values are \code{"homogeneous"}, \code{"additive"}, \code{"autoregressive"}, and \code{"cross-lagged"} (or any non-conflicting combination).
 #' @param use_open_mx Logical (TRUE / FALSE default) indicating if \code{lavaan} (FALSE) or \code{OpenMx} (TRUE)
 #' should be used.
+#' @param use_definition_variables When setting linear = FALSE, there are two ways to add interactions
+#'  between the previous observation and the time invariant predictors (e.g., y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...)).
+#'  First, definition variables can be used (currently only supported by OpenMx). Second, product terms
+#'  can be added explicitly. When setting use_definition_variables = FALSE, panelSEM will compute the product terms (e.g., z2*x1).
+#'  These will then be used to predict the time varying variables (e.g., y2). Additionally, panelSEM will add
+#'  all covariances between product terms (e.g., prod_z2_x1 ~~ prod_z3_x1), product terms and exogenous predictors (e.g., prod_z2_x1 ~~ z3),
+#'  and product terms and time varying variables (e.g., prod_z2_x1 ~~ y5). This will result in fairly large models and long run times.
 #' @return The inputted internal_list with several slots filled in:
 #' \tabular{lll}{
 #'  \code{..$n_ocassions}: \code{int(0)}  \tab \tab Number of measurement occasions. \cr
@@ -40,7 +47,8 @@ fill_in_info_variables <- function(internal_list,
                                    time_invariant_variables,
                                    linear,
                                    heterogeneity,
-                                   use_open_mx){
+                                   use_open_mx,
+                                   use_definition_variables){
 
   # console output
   if(internal_list$control$verbose >= 2) logger::log_info('Start.')
@@ -62,6 +70,8 @@ fill_in_info_variables <- function(internal_list,
   internal_list$info_model$linear <- linear
   internal_list$info_model$heterogeneity  <- heterogeneity
   internal_list$info_model$use_open_mx <- use_open_mx
+
+  internal_list$info_model$use_definition_variables <- use_definition_variables
 
   ####################
   # OBSERVED VARIABLES

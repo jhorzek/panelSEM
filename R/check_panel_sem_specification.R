@@ -9,8 +9,11 @@ check_panel_sem_specification <- function(specification){
   with(data = specification,
        expr = {
 
-         if((!methods::is(data, "matrix")) && (!is(data, "data.frame")))
+         if(is.null(data)){
+           warning("Data is NULL. Returning a model without data!")
+         }else if((!methods::is(data, "matrix")) && (!is(data, "data.frame"))){
            stop("data must be a matrix or data.frame")
+         }
 
          if(!methods::is(time_varying_variables, "list"))
            stop("time_varying_variables must be a list and not a ", class(time_varying_variables))
@@ -57,6 +60,16 @@ check_panel_sem_specification <- function(specification){
 
          # if(!all(sapply(dotdotdot, function(x) is(x,"NULL"))))
          #   stop("... is currently not supported and only implemented for future use cases.")
+
+         tested <- tested_settings()
+         was_tested <- FALSE
+         for(i in tested){
+           if(i$linear == linear && identical(sort(i$heterogeneity), sort(heterogeneity)))
+             was_tested <- TRUE
+         }
+         if(!was_tested)
+           warning("Your current setting for linear and heterogeneity has not yet been tested.",
+                   "See tested_settings() for all thoroughly tested settings.")
 
        })
 }

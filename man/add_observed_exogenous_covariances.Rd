@@ -13,6 +13,7 @@ add_observed_exogenous_covariances(internal_list)
 data.frame with covariances
 }
 \description{
-Add covariances between observed exogenous variables if use_definition_variables = FALSE
+Add covariances between observed exogenous variables if use_definition_variables = FALSE. These
+can be computed from the observed data.
 }
 \keyword{internal}
