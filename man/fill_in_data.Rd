@@ -4,18 +4,13 @@
 \alias{fill_in_data}
 \title{fill_in_data}
 \usage{
-fill_in_data(data, internal_list, use_definition_variables)
+fill_in_data(data, internal_list)
 }
 \arguments{
 \item{data}{A data.frame containing the data in the wide format.}
 
 \item{internal_list}{A list with various information extracted from the
 model.}
-
-\item{use_definition_variables}{When setting linear = FALSE, there are two ways to add interactions
-between the previous observation and the time invariant predictors (e.g., y2 = (c_y_x + c_y_x_z2*z2)*x1 + ...)).
-First, definition variables can be used (currently only supported by OpenMx). Second, product terms
-can be added explicitly.}
 }
 \value{
 The inputted list with several slots in \code{..$info_data} filled

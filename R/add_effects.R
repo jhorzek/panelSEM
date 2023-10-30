@@ -9,7 +9,7 @@ add_autoregressive_cross_lagged <- function(internal_list){
   observed      <- internal_list$info_variables$user_names_time_varying
   process_names <- internal_list$info_variables$names_processes["user_names",]
   linear        <- internal_list$info_model$linear
-  use_definition_variables <- internal_list$use_definition_variables
+  use_definition_variables <- internal_list$info_model$use_definition_variables
 
 
   time_invariant_variables     <- internal_list$info_variables$info_time_invariant_variables
@@ -532,28 +532,41 @@ add_homogeneous_covariances <- function(internal_list){
 
 #' add_observed_exogenous_covariances
 #'
-#' Add covariances between observed exogenous variables if use_definition_variables = FALSE
+#' Add covariances between observed exogenous variables if use_definition_variables = FALSE. These
+#' can be computed from the observed data.
 #' @param internal_list internal list
 #' @returns data.frame with covariances
+#' @importFrom stats cov
 #' @keywords internal
 add_observed_exogenous_covariances <- function(internal_list){
+
   effects <- c()
   exogenous_names <- unique(unlist(internal_list$info_variables$info_time_invariant_variables))
-  if(!internal_list$use_definition_variables){
+  if(!internal_list$info_model$use_definition_variables){
     exogenous_names <- c(exogenous_names,
                          unique(unlist(internal_list$info_data$product_names)))
   }
-  N <- internal_list$info_data$n_obs
-  product_cov <- ((N-1)/N) * cov(internal_list$info_data$data[,exogenous_names],
-                                 use = "all.obs")
 
-  if(any(eigen(product_cov)$values < 0)){
-    warning("The covariance matrix of the exogenous variables is not positive definite.")
-    free <- TRUE
+  if(internal_list$info_data$has_data){
+    # If data was provided, we compute the observed (co-)variances and fix the parameters
+    # to those values.
+    N <- internal_list$info_data$n_obs
+    product_cov <- ((N-1)/N) * stats::cov(internal_list$info_data$data[,exogenous_names],
+                                   use = "all.obs")
+
+    if(any(eigen(product_cov)$values < 0)){
+      warning("The covariance matrix of the exogenous variables is not positive definite.")
+      free <- TRUE
+    }else{
+      free <- FALSE
+    }
   }else{
-    free <- FALSE
+    # If no data was provided, we add covariance parameters and do not
+    # fix them.
+    product_cov <- diag(1, length(exogenous_names))
+    dimnames(product_cov) <- list(exogenous_names, exogenous_names)
+    free <- TRUE
   }
-
   for(i in 1:nrow(product_cov)){
     for(j in i:ncol(product_cov)){
       effects <- rbind(effects,
@@ -584,7 +597,7 @@ add_observed_exogenous_covariances <- function(internal_list){
 #' @returns data.frame with covariances
 #' @keywords internal
 add_product_covariances <- function(internal_list){
-  if(internal_list$use_definition_variables){
+  if(internal_list$info_model$use_definition_variables){
     return(c())
   }
 

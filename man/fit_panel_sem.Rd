@@ -13,12 +13,14 @@ fit_panel_sem(
   use_resamples = FALSE,
   use_open_mx = FALSE,
   use_definition_variables = TRUE,
-  lbound_variances = TRUE,
+  lbound_variances = use_open_mx,
   verbose = 0
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} containing the data with named columns. Data MUST be in wide format.}
+\item{data}{A \code{data.frame} containing the data with named columns. Data MUST be in wide format. If set to NULL,
+only the lavaan or OpenMx model will be returned. This model can be used to simulate data or check the
+specification without providing data.}
 
 \item{time_varying_variables}{List of character vectors containing names of the time-varying
 variables. The number entries in the list corresponds to the number of univariate time-series.
@@ -45,7 +47,8 @@ These will then be used to predict the time varying variables (e.g., y2). Additi
 all covariances between product terms (e.g., prod_z2_x1 ~~ prod_z3_x1), product terms and exogenous predictors (e.g., prod_z2_x1 ~~ z3),
 and product terms and time varying variables (e.g., prod_z2_x1 ~~ y5). This will result in fairly large models and long run times.}
 
-\item{lbound_variances}{should variances be assigned a lower bound of 1e-4?}
+\item{lbound_variances}{should variances be assigned a lower bound of 1e-4? This will be set to TRUE for OpenMx models and FALSE for
+lavaan models. In lavaan, bounds can increase the run time substantially.}
 
 \item{verbose}{Integer number describing the verbosity of console output.
 Admissible values: 0: no output (default), 1: user messages,

@@ -33,7 +33,7 @@ create_long_data <- function(data,
   }
   colnames(temporary_data) <- current_names
 
-  long_data <- temporary_data %>%
+  long_data <- temporary_data |>
     pivot_longer(
       unlist(temporary_names),
       cols_vary = "slowest",
