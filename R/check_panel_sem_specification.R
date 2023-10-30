@@ -64,7 +64,7 @@ check_panel_sem_specification <- function(specification){
          tested <- tested_settings()
          was_tested <- FALSE
          for(i in tested){
-           if(i$additive == additive && identical(sort(i$heterogeneity), sort(heterogeneity)))
+           if(i$linear == linear && identical(sort(i$heterogeneity), sort(heterogeneity)))
              was_tested <- TRUE
          }
          if(!was_tested)
