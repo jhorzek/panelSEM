@@ -216,8 +216,8 @@ Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span>what <span class="op">=</span> <span class="va">simulate_data</span>,</span></span>
 <span class="r-in"><span>                args <span class="op">=</span> <span class="va">population_parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> start of function simulate_data (0.0.2 2022-12-31) 2023-10-09 11:49:57.013572</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   end of function simulate_data (0.0.2 2022-12-31) 2023-10-09 11:49:57.031485</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> start of function simulate_data (0.0.2 2022-12-31) 2023-10-31 11:56:21.780563</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   end of function simulate_data (0.0.2 2022-12-31) 2023-10-31 11:56:21.813428</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">fit_panel_sem</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>,</span></span>
 <span class="r-in"><span>                       time_varying_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">time_points</span><span class="op">)</span>,</span></span>
@@ -225,6 +225,7 @@ Framework for Studying Causal Effects Using Linear Models. Psychometrika 87,
 <span class="r-in"><span>                       time_invariant_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z1"</span>, <span class="st">"z2"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                                                       <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z2"</span>, <span class="st">"z3"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       heterogeneity <span class="op">=</span> <span class="st">"additive"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in add_starting_values(internal_list = internal_list):</span> object 'linear' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
